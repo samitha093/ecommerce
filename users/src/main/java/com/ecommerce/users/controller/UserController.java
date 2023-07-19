@@ -18,8 +18,9 @@ public class UserController {
         this.userServices = userServices;
     }
     @PostMapping("/addUser")
-    public void addUser(@RequestBody User user){
-        userServices.addNewUser(user);
+    public String addUser(@RequestBody User user){
+        String userAddedResponse = userServices.addNewUser(user);
+        return userAddedResponse;
     }
     @GetMapping("/getUser")
     public User getUser(@RequestParam Long id){

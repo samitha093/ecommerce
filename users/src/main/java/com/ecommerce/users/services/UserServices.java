@@ -20,10 +20,16 @@ public class UserServices {
         this.userRepository = userRepository;
     }
 
-    public void addNewUser(User user) {
+    public String addNewUser(User user) {
+
+        // Check if the email already exists
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            return "Email already exists";
+        }
         String plainPassword =user.getPassword();
         user.setPassword( BCrypt.hashpw(plainPassword, BCrypt.gensalt()));
         userRepository.save(user);
+        return "New user added successfully";
     }
 
     public User getUserId(Long id) {
