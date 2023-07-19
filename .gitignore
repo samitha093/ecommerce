@@ -25,7 +25,8 @@ dist-ssr
 
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+/.mvn/wrapper/
+# !.mvn/wrapper/maven-wrapper.jar
 !**client/src/main/**/target/
 !**client/src/test/**/target/
 
