@@ -48,8 +48,9 @@ function Profile() {
         password: password,
       };
       console.log(userDetails);
+      const myHost = sessionStorage.getItem('host');
       axios
-        .post('YOUR_API_ENDPOINT', userDetails)
+        .post(`${myHost}/createaccount`, userDetails)
         .then(() => {
           console.log("User registered successfully!");
         })

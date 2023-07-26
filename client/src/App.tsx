@@ -4,8 +4,13 @@ import Home from './pages/home';
 import Authentication from './pages/authentication';
 import Navbar from './components/navbar/navbar';
 import Dashboard from './pages/dashboard';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    var hostname = window.location.hostname;
+    sessionStorage.setItem('host', 'http://'+hostname+':5001');
+  }, []);
   return (
     <BrowserRouter>
     <Navbar/>
