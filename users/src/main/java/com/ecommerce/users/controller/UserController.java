@@ -7,34 +7,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.ResponseEntity;
 
 @RestController
-
 public class UserController {
 
     private final UserServices userServices;
+
     @Autowired
     public UserController(UserServices userServices) {
         this.userServices = userServices;
     }
-    @PostMapping("/addUser")
-    public String addUser(@RequestBody User user){
-        String userAddedResponse = userServices.addNewUser(user);
-        return userAddedResponse;
-    }
-    @GetMapping("/getUser")
-    public User getUser(@RequestParam Long id){
-        User user = userServices.getUserId(id);
-        return user;
 
+    @CrossOrigin(origins = "http://localhost:5173") // Add this annotation to enable CORS for loginUser
+    @PostMapping("/addUser")
+    public ResponseEntity<String> addUser(@RequestBody User user) {
+        boolean userAddedResponse = userServices.addNewUser(user);
+        if(userAddedResponse == true){
+            return ResponseEntity.ok("User added successfully");
+        }
+        else {
+            return ResponseEntity.ok("User already exist");
+        }
     }
+
+    @GetMapping("/getUser")
+    public ResponseEntity<User> getUser(@RequestParam Long id) {
+        User user = userServices.getUserId(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173") // Add this annotation to enable CORS for loginUser
     @PostMapping("/loginUser")
     public ResponseEntity<String> loginUser(@RequestBody RequestLogin user) {
-
         try {
             // Call the service to attempt login
             ResponseLogin login = userServices.loginUser(user);
-
             if (login.isLogin()) {
                 return ResponseEntity.ok(login.toJson());
             } else {

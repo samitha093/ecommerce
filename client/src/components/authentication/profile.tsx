@@ -1,11 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
+import Toast from "../modules/toast";
 
 function Profile() {
   const [isChecked, setIsChecked] = useState(false);
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [useremail, setEmail] = useState('');
+  const [address, setAddress] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
 
@@ -23,6 +25,9 @@ function Profile() {
 
   const handlePasswordChange = (event: any) => {
     setPassword(event.target.value);
+  };
+  const handleAddressChange = (event: any) => {
+    setAddress(event.target.value);
   };
 
   const handleConfirmPasswordChange = (event: any) => {
@@ -43,16 +48,35 @@ function Profile() {
     } else {
       setPasswordMatch(true);
       const userDetails = {
-        name: username,
+        userName: username,
         email: useremail,
-        password: password,
+        passwordHash: password,
+        address:address,
+        role:"user"
       };
       console.log(userDetails);
       const myHost = sessionStorage.getItem('host');
+      console.log(myHost);
       axios
-        .post(`${myHost}/createaccount`, userDetails)
-        .then(() => {
-          console.log("User registered successfully!");
+        .post(`${myHost}/addUser`, userDetails)
+        .then((response) => {
+          if(response.data =="User added successfully"){
+            console.log(response.data);
+            Toast.fire({
+              icon: 'success',
+              title: 'New user added successfully'
+            })
+          }
+          else{
+            console.log(response.data);
+            Toast.fire({
+              icon: 'error',
+              title: 'User exising in system'
+            })
+          }
+   
+
+
         })
         .catch((error) => {
           console.error("Error registering user:", error);
@@ -84,6 +108,15 @@ function Profile() {
               type="text"
               value={useremail}
               onChange={handleEmailChange} // Update email state on input change
+              style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '50px', width: '300px' }}
+            />
+          </div>
+          <div className="mt-2" style={{ textAlign: 'left' }}>
+            <input
+              placeholder="Address"
+              type="text"
+              value={address}
+              onChange={handleAddressChange} // Update username state on input change
               style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '50px', width: '300px' }}
             />
           </div>

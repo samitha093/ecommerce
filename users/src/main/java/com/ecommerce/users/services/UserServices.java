@@ -1,6 +1,6 @@
 package com.ecommerce.users.services;
 
-
+import org.springframework.beans.factory.annotation.Value;
 import com.ecommerce.users.request.RequestLogin;
 import com.ecommerce.users.entity.User;
 import com.ecommerce.users.repository.UserRepository;
@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserServices {
-
+    @Value("${myapp.password.pepper}")
+    private String passwordPepper;
     private final UserRepository userRepository;
 
     @Autowired
@@ -20,44 +21,73 @@ public class UserServices {
         this.userRepository = userRepository;
     }
 
-    public String addNewUser(User user) {
+    public boolean addNewUser(User user) {
 
-        // Check if the email already exists
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            return "Email already exists";
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        // Check if the user already exists in the database
+        if (userRepository.findByEmail(user.getEmail()) == null) {
+            user.setPassword(hashedPassword);
+            userRepository.save(user);
+            System.out.println(user);
+            return true; // User registered successfully
         }
-        String plainPassword =user.getPassword();
-        user.setPassword( BCrypt.hashpw(plainPassword, BCrypt.gensalt()));
-        userRepository.save(user);
-        return "New user added successfully";
+        else {
+            return false;
+        }
+
+
     }
 
     public User getUserId(Long id) {
         return userRepository.getById(id);
 
     }
-    public ResponseLogin loginUser(RequestLogin user) {
 
-        //response login
+
+    public ResponseLogin loginUser(RequestLogin requestLogin) {
         ResponseLogin responseLogin = new ResponseLogin();
-        User responseUser =  userRepository.findByEmail(user.getEmail());
+        User storedUser = userRepository.findByEmail(requestLogin.getEmail());
 
-        if (responseUser != null) {
-            if(BCrypt.checkpw(user.getPassword(), responseUser.getPassword())){
-                responseLogin.setLogin(true);
-                responseLogin.setRole(responseUser.getRole());
-                responseLogin.setUserName(responseUser.getUserName());
-                responseLogin.setEmail(responseUser.getEmail());
-                return responseLogin;
+        if (storedUser != null) {
+            String plainPassword = requestLogin.getPassword();
+
+            // Retrieve hashed password from the database
+            String storedHashedPassword = storedUser.getPassword();
+
+            // Verify the entered password with the stored hashed password
+            if (BCrypt.checkpw(plainPassword, storedHashedPassword)) {
+                responseLogin.setLogin(true); // Login successful
+                responseLogin.setRole(storedUser.getRole());
+                responseLogin.setUserName(storedUser.getUserName());
+                responseLogin.setEmail(storedUser.getEmail());
+                System.out.println(responseLogin);
+            } else {
+                responseLogin.setLogin(false); // Invalid credentials
             }
-            else {
-                responseLogin.setLogin(false);
-                return responseLogin;
-            }
+        } else {
+            responseLogin.setLogin(false); // User not found
         }
-        responseLogin.setLogin(false);
-        return responseLogin; // User not found
+
+        return responseLogin;
+    }
 
 
+    //testing
+    public void addTestData() {
+        // Sample static user data
+        String username = "testuser";
+        String email = "testuser@example.com";
+        String plainPassword = "testpassword";
+        String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+
+        // Check if the user already exists in the database
+        if (userRepository.findByEmail(email) == null) {
+            User user = new User();
+            user.setUserName(username);
+            user.setEmail(email);
+            user.setPassword(hashedPassword);
+
+            userRepository.save(user);
+        }
     }
 }

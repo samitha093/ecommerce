@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 function App() {
   useEffect(() => {
     var hostname = window.location.hostname;
-    sessionStorage.setItem('host', 'http://'+hostname+':5001');
+    sessionStorage.setItem('host', 'http://'+hostname+':8085');
   }, []);
   return (
     <BrowserRouter>
