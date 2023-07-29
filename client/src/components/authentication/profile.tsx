@@ -1,6 +1,14 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import Toast from "../modules/toast";
+import jwtDecode from 'jwt-decode';
+
+
+
+interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+}
 
 function Profile() {
   const [isChecked, setIsChecked] = useState(false);
@@ -48,20 +56,25 @@ function Profile() {
     } else {
       setPasswordMatch(true);
       const userDetails = {
-        userName: username,
+        fistname: username,
+        lastname: username,
         email: useremail,
-        passwordHash: password,
-        address:address,
-        role:"user"
+        password: password,
+        role:"USER"
       };
       console.log(userDetails);
       const myHost = sessionStorage.getItem('host');
       console.log(myHost);
       axios
-        .post(`${myHost}/addUser`, userDetails)
-        .then((response) => {
-          if(response.data =="User added successfully"){
-            console.log(response.data);
+        .post(`${myHost}/api/v1/auth/register`, userDetails)
+        .then((response: AxiosResponse<AuthResponse>) => {
+          // Extract the access_token from the response.data object
+          const accessToken = response.data.access_token;
+          if(accessToken !=="Email already exists"){
+            console.log(accessToken); //
+            // The decodedToken variable now holds the decoded payload information
+            const decodedToken = jwtDecode(accessToken);
+            console.log(decodedToken); // {username: "john", iat: 1598616022, exp: 1598619622}
             Toast.fire({
               icon: 'success',
               title: 'New user added successfully'
@@ -71,7 +84,7 @@ function Profile() {
             console.log(response.data);
             Toast.fire({
               icon: 'error',
-              title: 'User exising in system'
+              title: 'Email already exists'
             })
           }
    

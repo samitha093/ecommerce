@@ -1,6 +1,13 @@
 import { useState } from "react";
-import axios from "axios";
 import Toast from "../modules/toast";
+import axios, { AxiosResponse } from "axios";
+import jwtDecode from 'jwt-decode';
+
+
+interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+}
 
 function Login() {
   const imageUrl = 'https://nest.botble.com/storage/general/login-1.png';
@@ -37,32 +44,40 @@ function Login() {
     // Prepare the user details object with email and password
     const userDetails = {
       email: useremail,
-      passwordHash: password,
+      password: password,
     };
     
     const myHost = sessionStorage.getItem('host');
     
     // Send a POST request to the /loginUser endpoint with the user details
-    axios.post(`${myHost}/loginUser`, userDetails)
-      .then((response) => {
-        console.log(response);
-        if(response.data =="User login successfully"){
-          console.log(response.data);
-          Toast.fire({
-            icon: 'success',
-            title: 'User successfully Login' 
-          })
-        }
-        else{
-          console.log(response.data);
-          Toast.fire({
-            icon: 'error',
-            title: 'Can no loging'
-          })
-        }
-      })
+    axios.post(`${myHost}/api/v1/auth/authenticate`, userDetails)
+    .then((response: AxiosResponse<AuthResponse>) => {
+      // Extract the access_token from the response.data object
+      const accessToken = response.data.access_token;
+      if(accessToken !=="Email already exists"){
+        console.log(accessToken); //
+        // The decodedToken variable now holds the decoded payload information
+        const decodedToken = jwtDecode(accessToken);
+        console.log(decodedToken); // {username: "john", iat: 1598616022, exp: 1598619622}
+        Toast.fire({
+          icon: 'success',
+          title: 'Succeessfully logged in'
+        })
+      }
+      else{
+        console.log(response.data);
+        Toast.fire({
+          icon: 'error',
+          title: 'Email or password is incorrect'
+        })
+      }
+    })
       .catch((error) => {
         console.error("Error login user:", error);
+        Toast.fire({
+          icon: 'error',
+          title: 'Email or password is incorrect'
+        })
       });
   }
   
