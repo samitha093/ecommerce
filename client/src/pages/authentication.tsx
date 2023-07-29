@@ -1,17 +1,26 @@
 import Login from "../components/authentication/login";
 import Profile from "../components/authentication/profile";
-import { CSSProperties } from "react";
+import { useEffect } from "react";
 
-function Authentication() {
+interface authProps {
+  message: string;
+}
+
+
+function Authentication({ message }: authProps) {
+  useEffect(() => {
+   const auth =  localStorage.getItem('auth');
+   console.log(auth);
+
+  }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-    <h1 className="text-4xl font-bold text-blue-500">Authentication</h1>
-    <div className="h-56 grid grid-cols-1 gap-0 content-center mt-40">
-      <Login/>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="h-56 grid grid-cols-1 gap-0 content-center mt-40">
+        {message === 'LOGIN' ? <Login /> : <Profile />}
+      </div>
     </div>
-  </div>
-  )
+  );
 }
 
 export default Authentication;

@@ -11,6 +11,7 @@ interface AuthResponse {
 }
 
 function Profile() {
+  const imageUrl = 'https://nest.botble.com/storage/general/login-1.png';
   const [isChecked, setIsChecked] = useState(false);
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
@@ -18,8 +19,20 @@ function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
 
+  const imageStyle: React.CSSProperties = {
+    width: '400px',
+    borderRadius: '10px',
+    objectFit: 'cover',
+  };
+
+  const containerStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+   
+  };
   const containerRightStyle: React.CSSProperties = {
-    marginTop: '-200px',
+    marginTop:'-200px',
     display: 'flex',
     justifyContent: 'left',
     alignItems: 'center',
@@ -92,11 +105,15 @@ function Profile() {
     }
   }
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-0 content-center ...">
+      <div style={containerStyle}>
+        <img src={imageUrl} style={imageStyle} />
+      </div>
+
       <div style={containerRightStyle}>
-        <div className="h-56 grid grid-cols-1 gap-0 mt-0">
+        <div className="h-56 grid grid-cols-1 gap-0 mt-0" style={{ textAlign: 'left' }}>
           <div style={{ textAlign: 'left' }}>
-            <h1 style={{ fontSize: '44px', fontWeight: 'bold', color: '#001C30' }}>Register</h1>
+            <h1 style={{ fontSize: '44px', fontWeight: 'bold',textAlign:'left', color: '#001C30' }}>Register</h1>
           </div>
           <div style={{ textAlign: 'left' }}>
             <h1>Please fill in the information below</h1>

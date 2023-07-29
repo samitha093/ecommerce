@@ -13,6 +13,7 @@ function Login() {
   const imageUrl = 'https://nest.botble.com/storage/general/login-1.png';
   const [password, setPassword] = useState('');
   const [useremail, setEmail] = useState('');
+
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -130,16 +131,16 @@ function Login() {
               <div style={{color:'#B5C99A'}}>Forgot Password?</div>
             </div>
             <div style={{ textAlign: 'left' }} className="mt-8">
-           <button style={{padding:'15px',width:'130px'}} onClick={handleLogingClick} className="bg-blue-900 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-        Login
-      </button>
-    </div>
+              <button 
+              style={{padding:'15px',width:'130px'}} 
+              onClick={handleLogingClick} 
+              className="bg-blue-900 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Login
+          </button>
+            </div>
         </div>
       </div>
     </div>
-
-
-
   )
 }
 export default Login;
