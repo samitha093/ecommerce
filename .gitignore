@@ -57,4 +57,7 @@ build/
 
 ### VS Code ###
 .vscode/
+### remove this if you're not using a VCS
+*.mvn/
+yarn.lock
 
