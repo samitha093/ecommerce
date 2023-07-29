@@ -15,7 +15,6 @@ function Profile() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [useremail, setEmail] = useState('');
-  const [address, setAddress] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
 
@@ -33,9 +32,6 @@ function Profile() {
 
   const handlePasswordChange = (event: any) => {
     setPassword(event.target.value);
-  };
-  const handleAddressChange = (event: any) => {
-    setAddress(event.target.value);
   };
 
   const handleConfirmPasswordChange = (event: any) => {
@@ -56,8 +52,7 @@ function Profile() {
     } else {
       setPasswordMatch(true);
       const userDetails = {
-        fistname: username,
-        lastname: username,
+        username: username,
         email: useremail,
         password: password,
         role:"USER"
@@ -121,15 +116,6 @@ function Profile() {
               type="text"
               value={useremail}
               onChange={handleEmailChange} // Update email state on input change
-              style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '50px', width: '300px' }}
-            />
-          </div>
-          <div className="mt-2" style={{ textAlign: 'left' }}>
-            <input
-              placeholder="Address"
-              type="text"
-              value={address}
-              onChange={handleAddressChange} // Update username state on input change
               style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '50px', width: '300px' }}
             />
           </div>
