@@ -8,7 +8,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "categories")
+@Table(name = "product_categories")
 public class Category extends AuditEntity{
 
     @Id

@@ -35,6 +35,6 @@ public class Product extends AuditEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
     @JoinColumn(name = "product_id")
-    private List<ProductImage> imageListId;
+    private List<Image> imageListId;
     
 }
