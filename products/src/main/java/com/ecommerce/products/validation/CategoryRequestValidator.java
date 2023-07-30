@@ -6,9 +6,15 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.ecommerce.products.request.CategoryRequest;
+import com.ecommerce.products.service.CategoryService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Component
 public class CategoryRequestValidator implements Validator {
+
+    private final CategoryService categoryService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -21,14 +27,18 @@ public class CategoryRequestValidator implements Validator {
 
         // Validate name field
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "field.required", "Name is required");
-        if (categoryRequest.getName() != null && categoryRequest.getName().length() > 100) {
-            errors.rejectValue("name", "field.length.max", "Name cannot exceed 100 characters");
+        if (categoryRequest.getName() != null) {
+            if(categoryRequest.getName().length() > 100){
+                errors.rejectValue("name", "field.length.max", "Name cannot exceed 100 characters");
+            }
         }
 
         // Validate description field
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "field.required", "Description is required");
-        if (categoryRequest.getName() != null && categoryRequest.getName().length() < 10) {
-            errors.rejectValue("name", "field.length.min", "Name must have at least 10 characters");
+        if (categoryRequest.getDescription() != null) {
+            if(categoryRequest.getDescription().length() < 10){
+                errors.rejectValue("name", "field.length.min", "Name must have at least 10 characters");
+            }
         }
 
         // Validate data type for name field
@@ -42,5 +52,9 @@ public class CategoryRequestValidator implements Validator {
         }
 
         // Exisiting category validation
+        if (categoryService.getCategoriesByName(categoryRequest.getName()) != null) {
+            errors.rejectValue("name", "field.alreadyExists", "Category already exists");
+        }
+
     }
 }

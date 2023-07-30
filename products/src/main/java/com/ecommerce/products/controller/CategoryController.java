@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.products.dto.CategoryDto;
 import com.ecommerce.products.request.CategoryRequest;
+import com.ecommerce.products.response.ApiResponse;
+import com.ecommerce.products.security.TokenValidate;
+import com.ecommerce.products.service.CategoryService;
 import com.ecommerce.products.validation.CategoryRequestValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -26,11 +31,13 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
 
     private final CategoryRequestValidator categoryRequestValidator;
+    private final CategoryService categoryService;
+    private final TokenValidate tokenValidate;
     
     //ADD NEW CATEGORY
     @PostMapping("/addnewcategory")
     @ResponseBody
-    public String addCategory(
+    public ResponseEntity<ApiResponse<Object>> addCategory(
         @RequestBody CategoryRequest categoryRequest,
         BindingResult bindingResult
     ) throws Exception {
@@ -40,12 +47,22 @@ public class CategoryController {
             List<String> errorMessages = bindingResult.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-            return "Validation Error: " + String.join(", ", errorMessages);
+            return ApiResponse.success("Success", errorMessages);
         }
         // Autherization
+        // boolean isTokenValid = tokenValidate.isTokenValid("eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6IjU0NDRmMjIxLWVkYTYtNGRhZi05MTMwLTAxMThiNWM5ZWRiMyIsInN1YiI6IklzdXJ1bGFrc2hhbkBleGFtcGxlLmNvbSIsImlhdCI6MTY5MDcyOTI5MiwiZXhwIjoxNjkzMzIxMjkyfQ.HOb9Nal8OXm4erYoFHR8bmJgjNrPxq2tW3cwqMK27nA");
+        //  System.out.println(isTokenValid);
+        Long UserId = 884L;
         // Send to the service layer
+        try {
+            categoryService.CreateCategory(categoryRequest, UserId);
+        } catch (Exception e) {
+            String errorMessage = "Error occurred while creating the category.";
+            return ApiResponse.success("Success", errorMessage);
+        }
         // Return the response
-        return categoryRequest.getName();
+        List<CategoryDto> categoryList = categoryService.getAllCategories();
+        return ApiResponse.success("Success", categoryList);
     }
 
     //UPDATE CATEGORY

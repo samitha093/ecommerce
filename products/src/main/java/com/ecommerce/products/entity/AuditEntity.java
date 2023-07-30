@@ -13,6 +13,7 @@ import com.ecommerce.products.util.ProductStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class AuditEntity {
+    
     private ProductStatus status;
 
     @Column(name = "created_at")
@@ -25,11 +26,11 @@ public abstract class AuditEntity {
     private LocalDateTime deletedAt;
 
     @Column(name = "created_by_id")
-    private String createdById;
+    private Long createdById;
 
     @Column(name = "updated_by_id")
-    private String updatedById;
+    private Long updatedById;
 
     @Column(name = "deleted_by_id")
-    private String deletedById;
+    private Long deletedById;
 }

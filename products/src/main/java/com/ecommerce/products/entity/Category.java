@@ -16,7 +16,7 @@ public class Category extends AuditEntity{
     private Long id;
 
     @Column(name = "category_name")
-    private String categoryName;
+    private String name;
 
     private String description;
     
