@@ -51,15 +51,19 @@ function Login() {
     const myHost = sessionStorage.getItem('host');
     
     // Send a POST request to the /loginUser endpoint with the user details
-    axios.post(`${myHost}/api/v1/auth/authenticate`, userDetails)
+    axios.post(`${myHost}/api/v1/auth/login`, userDetails)
     .then((response: AxiosResponse<AuthResponse>) => {
-      // Extract the access_token from the response.data object
-      const accessToken = response.data.access_token;
-      if(accessToken !=="Email already exists"){
-        console.log(accessToken); //
-        // The decodedToken variable now holds the decoded payload information
-        const decodedToken = jwtDecode(accessToken);
-        console.log(decodedToken); // {username: "john", iat: 1598616022, exp: 1598619622}
+
+      var pagination = response.headers["refresh-token"];
+      console.log(pagination);
+      //response header print console
+      console.log(response.headers);
+
+      // const accessTokenFromHeader = response.headers['access-token'];
+      // console.log(accessTokenFromHeader); 
+      // const accessToken = response.data.access_token;
+
+      if(response.status == 200){
         Toast.fire({
           icon: 'success',
           title: 'Succeessfully logged in'

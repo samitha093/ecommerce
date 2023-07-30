@@ -31,8 +31,8 @@ public class AuthenticationController {
 
         // Create HttpHeaders and add custom information to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Access token", response.getAccessToken());
-        headers.add("Refresh token", response.getRefreshToken());
+        headers.add("Access-token", response.getAccessToken());
+        headers.add("Refresh-token", response.getRefreshToken());
 
         // Return the ResponseEntity with the response body and custom headers
         return ResponseEntity.ok()
@@ -48,8 +48,8 @@ public class AuthenticationController {
 
         // Create HttpHeaders and add custom information to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Access token", response.getAccessToken());
-        headers.add("Refresh token", response.getRefreshToken());
+        headers.add("Access-token", response.getAccessToken());
+        headers.add("Refresh-token", response.getRefreshToken());
 
         // Return the ResponseEntity with the response body and custom headers
         return ResponseEntity.ok()
