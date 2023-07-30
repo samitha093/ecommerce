@@ -19,8 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-    @Value("${application.security.jwt.secret-key}")
-    private String secretKey;
+    @Value("${application.security.jwt.access-secret-key}")
+    private String accessSecretKey;
+    @Value("${application.security.jwt.refresh-secret-key}")
+    private String refreshSecretKey;
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
     @Value("${application.security.jwt.refresh-token.expiration}")
@@ -35,9 +37,6 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-//    public String generateToken(UserDetails userDetails) {
-//        return generateToken(new HashMap<>(), userDetails);
-//    }
 
     public String generateAccessToken(  User userDetails) {
         Map<String, Object> adminClaims = new HashMap<>();
@@ -59,7 +58,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .signWith(getAccessSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
     public String generateRefreshToken(  UserDetails userDetails ) {
@@ -80,7 +79,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .signWith(getRefreshSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -99,14 +98,19 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
-                .setSigningKey(getSignInKey())
+                .setSigningKey(getAccessSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+    private Key getAccessSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(accessSecretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private Key getRefreshSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(refreshSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
