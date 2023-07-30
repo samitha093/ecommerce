@@ -7,15 +7,18 @@ import com.ecommerce.users.request.RegisterRequest;
 import com.ecommerce.users.services.JwtService;
 import com.ecommerce.users.token.Token;
 import com.ecommerce.users.token.TokenType;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +28,18 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    @Value("${application.security.jwt.expiration}")
+    private long accessTokenExpiration;
+
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshTokenExpiration;
 
     public AuthenticationResponse register(RegisterRequest request) {
         // Check if the email already exists in the repository
         if (repository.existsByEmail(request.getEmail())) {
             // Return a response indicating that the email already exists
             return AuthenticationResponse.builder()
-                    .accessToken("Email already exists")
-                    .refreshToken("Email already exists")
+                    .status("Email already exists")
                     .build();
         }
         var user = User.builder()
@@ -48,28 +55,42 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .status("User registered successfully")
                 .build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        var user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var jwtToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .status("User login Success")
-                .build();
+        Optional<User> userOptional = repository.findByEmail(request.getEmail());
+
+        if (userOptional.isPresent()) {
+            // User found, continue with the authentication process
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+
+            // User authentication is successful, continue with token generation and other steps
+            User user = userOptional.get();
+            var jwtToken = jwtService.generateAccessToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .status("User login Success")
+                    .build();
+        } else {
+            // User not found, return a response indicating that the user doesn't exist
+            return AuthenticationResponse.builder()
+                    .status("User not found")
+                    .build();
+        }
     }
+
 
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
@@ -112,9 +133,17 @@ public class AuthenticationService {
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
 
-                // Set the new access token and original refresh token in the response headers
-                response.setHeader("Access-Token", accessToken);
-                response.setHeader("Refresh-Token", refreshToken);
+                // Set the new access token as a cookie in the response
+                Cookie accessTokenCookie = new Cookie("Access-token", accessToken);
+                accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
+                accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
+                response.addCookie(accessTokenCookie);
+
+                // Set the original refresh token as a cookie in the response
+                Cookie refreshTokenCookie = new Cookie("Refresh-token", refreshToken);
+                refreshTokenCookie.setHttpOnly(true);
+                refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
+                response.addCookie(refreshTokenCookie);
             }
         }
     }

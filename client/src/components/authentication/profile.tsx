@@ -70,55 +70,30 @@ function Profile() {
         password: password,
         role:"USER"
       };
-      console.log(userDetails);
       const myHost = sessionStorage.getItem('host');
-      console.log(myHost);
       axios
         .post(`${myHost}/api/v1/auth/register`, userDetails)
         .then((response) => {
-
-        //refresh token save in browser cookie
-
-
-          // Get the response headers
-          const headers = response.headers;
-          console.log(headers);
-
-          const customHeader1 = headers['content-length'];
-          const customHeader2 = headers['refresh-token'];
-      
-          console.log('Custom Header 1:', customHeader1);
-          console.log('Custom Header 2:', customHeader2);
-
-          //response code print
-          console.log(response.status);
-          
-
-          // const accessToken = response.data.access_token;
-          // console.log(accessToken); //
-          // const decodedToken = jwtDecode(accessToken);
-          // console.log(decodedToken);
-
-          if(response.status==200){
-       
+          if(response.status == 200){
             Toast.fire({
               icon: 'success',
               title: 'New user added successfully'
             })
           }
           else{
-            console.log(response.data);
             Toast.fire({
               icon: 'error',
               title: 'Email already exists'
             })
           }
-   
-
 
         })
-        .catch((error) => {
-          console.error("Error registering user:", error);
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Email already exists'
+            })
+   
         });
     }
   }

@@ -25,22 +25,36 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
+
     @PostMapping("/register")
     public ResponseEntity<String> register(
-            @RequestBody RegisterRequest request
+            @RequestBody RegisterRequest request,
+            HttpServletResponse httpResponse // Inject HttpServletResponse
     ) {
         AuthenticationResponse response = service.register(request);
 
-        // Create HttpHeaders and add custom information to the headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Access-token", response.getAccessToken());
-        headers.add("Refresh-token", response.getRefreshToken());
+        if(response.getStatus() =="User registered successfully"){
+            // Set the tokens as cookies in the response
+            Cookie accessTokenCookie = new Cookie("Access-token", response.getAccessToken());
+            accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
+            accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
+            httpResponse.addCookie(accessTokenCookie);
 
-        // Return the ResponseEntity with the response body and custom headers
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(response.getAccessToken());
-//                .body("New User Create Successfully");
+            Cookie refreshTokenCookie = new Cookie("Refresh-token", response.getRefreshToken());
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
+            httpResponse.addCookie(refreshTokenCookie);
+
+            // Return the ResponseEntity with the access token in the response body
+            return ResponseEntity.ok()
+                    .body(response.getStatus());
+        }
+        else {
+            return ResponseEntity.badRequest()
+                    .body(response.getStatus());
+        }
+
+
     }
 
     @Value("${application.security.jwt.expiration}")
@@ -56,20 +70,28 @@ public class AuthenticationController {
     ) {
         AuthenticationResponse response = service.authenticate(request);
 
-        // Set the tokens as cookies in the response
-        Cookie accessTokenCookie = new Cookie("Access-token", response.getAccessToken());
-        accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
-        accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
-        httpResponse.addCookie(accessTokenCookie);
+        if(response.getStatus() =="User login Success"){
+            // Set the tokens as cookies in the response
+            Cookie accessTokenCookie = new Cookie("Access-token", response.getAccessToken());
+            accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
+            accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
+            httpResponse.addCookie(accessTokenCookie);
 
-        Cookie refreshTokenCookie = new Cookie("Refresh-token", response.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
-        httpResponse.addCookie(refreshTokenCookie);
+            Cookie refreshTokenCookie = new Cookie("Refresh-token", response.getRefreshToken());
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
+            httpResponse.addCookie(refreshTokenCookie);
 
-        // Return the ResponseEntity with the response body
-        return ResponseEntity.ok()
-                .body(response.getStatus());
+            // Return the ResponseEntity with the response body
+            return ResponseEntity.ok()
+                    .body(response.getStatus());
+        }
+        else {
+            return ResponseEntity.badRequest()
+                    .body(response.getStatus());
+        }
+
+
     }
 
     @PostMapping("/refresh-token")

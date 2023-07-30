@@ -49,26 +49,9 @@ function Login() {
     };
     
     const myHost = sessionStorage.getItem('host');
-    
     // Send a POST request to the /loginUser endpoint with the user details
     axios.post(`${myHost}/api/v1/auth/login`, userDetails)
     .then((response: AxiosResponse<AuthResponse>) => {
-
-      //refresh token save in browser cookie
-
-
-
-
-      var pagination = response.headers["refresh-token"];
-      console.log(pagination);
-      //response header print console
-      console.log(response.headers);
-
-      //token  decode
-      // const accessTokenFromHeader = response.headers['access-token'];
-      // console.log(accessTokenFromHeader); 
-      // const accessToken = response.data.access_token;
-
       if(response.status == 200){
         Toast.fire({
           icon: 'success',
@@ -91,7 +74,6 @@ function Login() {
         })
       });
   }
-  
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
       <div style={containerStyle}>
