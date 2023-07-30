@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/v1/products")
 @RequiredArgsConstructor
+@RequestMapping("/v1/products")
 public class ProductController {
 
     //ADD NEW PRODUCT 
@@ -55,10 +55,10 @@ public class ProductController {
     }
     
     //GET PRODUCTS BY CATEGORY
-    @GetMapping("/getproductsbycategory/{category}")
+    @GetMapping("/getproductsbycategory/{categoryId}")
     @ResponseBody
     public String getProductsByCategory(
-        @PathVariable("category") String category
+        @PathVariable("categoryId") String categoryId
     ) {
         return "Hello, GET request!";
     }
