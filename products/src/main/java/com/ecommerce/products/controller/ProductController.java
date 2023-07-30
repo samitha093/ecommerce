@@ -17,6 +17,6 @@ public class ProductController {
     public String handleGetRequest() {
         return "Hello, GET request!";
     }
-
+    //add new product
     
 }
