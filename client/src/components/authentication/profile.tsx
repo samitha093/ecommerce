@@ -76,6 +76,11 @@ function Profile() {
       axios
         .post(`${myHost}/api/v1/auth/register`, userDetails)
         .then((response) => {
+
+        //refresh token save in browser cookie
+        document.cookie = "refresh-token=" + response.headers["refresh-token"];
+
+
           // Get the response headers
           const headers = response.headers;
           console.log(headers);

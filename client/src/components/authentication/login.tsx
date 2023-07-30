@@ -54,11 +54,18 @@ function Login() {
     axios.post(`${myHost}/api/v1/auth/login`, userDetails)
     .then((response: AxiosResponse<AuthResponse>) => {
 
+      //refresh token save in browser cookie
+      document.cookie = "refresh-token=" + response.headers["refresh-token"];
+
+
+
+
       var pagination = response.headers["refresh-token"];
       console.log(pagination);
       //response header print console
       console.log(response.headers);
 
+      //token  decode
       // const accessTokenFromHeader = response.headers['access-token'];
       // console.log(accessTokenFromHeader); 
       // const accessToken = response.data.access_token;
