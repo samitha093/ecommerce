@@ -54,8 +54,8 @@ public class AuthenticationController {
         // Return the ResponseEntity with the response body and custom headers
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(response.getRefreshToken());
-//                .body("User Login Successful");
+//                .body(response.getRefreshToken());
+                .body("User Login Successful");
     }
 
     @PostMapping("/refresh-token")
