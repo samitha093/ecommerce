@@ -7,6 +7,7 @@ import com.ecommerce.users.response.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,16 +24,37 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<String> register(
             @RequestBody RegisterRequest request
     ) {
-        return ResponseEntity.ok(service.register(request));
+        AuthenticationResponse response = service.register(request);
+
+        // Create HttpHeaders and add custom information to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access token", response.getAccessToken());
+        headers.add("Refresh token", response.getRefreshToken());
+
+        // Return the ResponseEntity with the response body and custom headers
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body("New User Create Successfully");
     }
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+
+    @PostMapping("/login")
+    public ResponseEntity<String> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+        AuthenticationResponse response = service.authenticate(request);
+
+        // Create HttpHeaders and add custom information to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access token", response.getAccessToken());
+        headers.add("Refresh token", response.getRefreshToken());
+
+        // Return the ResponseEntity with the response body and custom headers
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body("User Login Successful");
     }
 
     @PostMapping("/refresh-token")
