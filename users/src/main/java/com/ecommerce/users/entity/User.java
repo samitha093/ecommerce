@@ -9,8 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,8 +30,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
     private String username;
     private String email;
     private String password;
@@ -54,6 +57,16 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
+    //get id
+    public UUID getId() {
+        return id;
+    }
+    //get role
+    public Role getRole() {
+        return role;
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {
