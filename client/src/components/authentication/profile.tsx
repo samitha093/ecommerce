@@ -78,7 +78,6 @@ function Profile() {
         .then((response) => {
 
         //refresh token save in browser cookie
-        document.cookie = "refresh-token=" + response.headers["refresh-token"];
 
 
           // Get the response headers

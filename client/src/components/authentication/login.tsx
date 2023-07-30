@@ -55,7 +55,6 @@ function Login() {
     .then((response: AxiosResponse<AuthResponse>) => {
 
       //refresh token save in browser cookie
-      document.cookie = "refresh-token=" + response.headers["refresh-token"];
 
 
 
