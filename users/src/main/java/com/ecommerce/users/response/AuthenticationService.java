@@ -1,6 +1,4 @@
 package com.ecommerce.users.response;
-
-
 import com.ecommerce.users.entity.User;
 import com.ecommerce.users.repository.TokenRepository;
 import com.ecommerce.users.repository.UserRepository;
@@ -9,7 +7,6 @@ import com.ecommerce.users.request.RegisterRequest;
 import com.ecommerce.users.services.JwtService;
 import com.ecommerce.users.token.Token;
 import com.ecommerce.users.token.TokenType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +91,6 @@ public class AuthenticationService {
         });
         tokenRepository.saveAll(validUserTokens);
     }
-
     public void refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
@@ -102,7 +98,7 @@ public class AuthenticationService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);
@@ -114,11 +110,10 @@ public class AuthenticationService {
                 var accessToken = jwtService.generateAccessToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
-                var authResponse = AuthenticationResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+
+                // Set the new access token and original refresh token in the response headers
+                response.setHeader("Access-Token", accessToken);
+                response.setHeader("Refresh-Token", refreshToken);
             }
         }
     }

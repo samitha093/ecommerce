@@ -63,9 +63,6 @@ public class JwtService {
     }
     public String generateRefreshToken(  UserDetails userDetails ) {
         Map<String, Object> adminClaims = new HashMap<>();
-
-//        adminClaims.put("role", userDetails.getUsername());
-
         return buildRefreshToken(adminClaims, userDetails, refreshExpiration);
     }
     private String buildRefreshToken(
@@ -98,7 +95,7 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
-                .setSigningKey(getAccessSignInKey())
+                .setSigningKey(getRefreshSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
