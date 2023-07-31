@@ -53,7 +53,7 @@ public class AuthenticationService {
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
+        // saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -77,8 +77,8 @@ public class AuthenticationService {
             User user = userOptional.get();
             var jwtToken = jwtService.generateAccessToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
-            revokeAllUserTokens(user);
-            saveUserToken(user, jwtToken);
+            // revokeAllUserTokens(user);
+            // saveUserToken(user, jwtToken);
 
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
@@ -132,8 +132,8 @@ public class AuthenticationService {
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateAccessToken(user);
-                revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
+                // revokeAllUserTokens(user);
+                // saveUserToken(user, accessToken);
 
                 // Set the new access token as a cookie in the response
                 Cookie accessTokenCookie = new Cookie("Access-token", accessToken);
