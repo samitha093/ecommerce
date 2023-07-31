@@ -7,6 +7,7 @@ import com.ecommerce.users.request.RegisterRequest;
 import com.ecommerce.users.services.JwtService;
 import com.ecommerce.users.token.Token;
 import com.ecommerce.users.token.TokenType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -144,6 +146,18 @@ public class AuthenticationService {
                 refreshTokenCookie.setHttpOnly(true);
                 refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
                 response.addCookie(refreshTokenCookie);
+
+                // Create a response JSON object containing the access token and refresh token
+                ObjectMapper objectMapper = new ObjectMapper();
+                String responseBody = objectMapper.writeValueAsString(Map.of(
+                        "access_token", accessToken,
+                        "refresh_token", refreshToken
+                ));
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                // Write the response JSON object to the response body
+                response.getWriter().write(responseBody);
             }
         }
     }

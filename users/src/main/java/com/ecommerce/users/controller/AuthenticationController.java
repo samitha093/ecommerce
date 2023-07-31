@@ -47,7 +47,8 @@ public class AuthenticationController {
 
             // Return the ResponseEntity with the access token in the response body
             return ResponseEntity.ok()
-                    .body(response.getStatus());
+                    .body(response.getAccessToken());
+//            .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
@@ -84,7 +85,8 @@ public class AuthenticationController {
 
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getStatus());
+                    .body(response.getRefreshToken());
+//                    .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
