@@ -3,12 +3,11 @@ package com.ecommerce.users.controller;
 import com.ecommerce.users.request.AuthenticationRequest;
 import com.ecommerce.users.request.RegisterRequest;
 import com.ecommerce.users.response.AuthenticationResponse;
-import com.ecommerce.users.response.AuthenticationService;
+import com.ecommerce.users.services.AuthenticationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,8 +91,6 @@ public class AuthenticationController {
             return ResponseEntity.badRequest()
                     .body(response.getStatus());
         }
-
-
     }
 
     @PostMapping("/refresh-token")

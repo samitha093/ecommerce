@@ -19,24 +19,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Token {
 
-    @Id
-    @GeneratedValue
-    public Integer id;
+    private Integer id;
+    private String token;
+    private TokenType tokenType = TokenType.BEARER;
+    private boolean revoked;
+    private boolean expired;
 
-    @Column(unique = true)
-    public String token;
-
-    @Enumerated(EnumType.STRING)
-    public TokenType tokenType = TokenType.BEARER;
-
-    public boolean revoked;
-
-    public boolean expired;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    public User user;
 }

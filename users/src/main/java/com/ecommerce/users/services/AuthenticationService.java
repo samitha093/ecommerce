@@ -1,12 +1,10 @@
-package com.ecommerce.users.response;
+package com.ecommerce.users.services;
 import com.ecommerce.users.entity.User;
-import com.ecommerce.users.repository.TokenRepository;
 import com.ecommerce.users.repository.UserRepository;
 import com.ecommerce.users.request.AuthenticationRequest;
 import com.ecommerce.users.request.RegisterRequest;
+import com.ecommerce.users.response.AuthenticationResponse;
 import com.ecommerce.users.services.JwtService;
-import com.ecommerce.users.token.Token;
-import com.ecommerce.users.token.TokenType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository repository;
-    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -91,29 +88,6 @@ public class AuthenticationService {
                     .status("User not found")
                     .build();
         }
-    }
-
-
-    private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
-                .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-        tokenRepository.save(token);
-    }
-
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
     }
     public void refreshToken(
             HttpServletRequest request,
