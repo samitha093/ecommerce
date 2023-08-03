@@ -23,6 +23,7 @@ import com.ecommerce.products.security.TokenValidate;
 import com.ecommerce.products.service.CategoryService;
 import com.ecommerce.products.validation.CategoryRequestValidator;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -50,8 +51,12 @@ public class CategoryController {
             return ApiResponse.success("Success", errorMessages);
         }
         // Autherization
-        // boolean isTokenValid = tokenValidate.isTokenValid("eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6IjU0NDRmMjIxLWVkYTYtNGRhZi05MTMwLTAxMThiNWM5ZWRiMyIsInN1YiI6IklzdXJ1bGFrc2hhbkBleGFtcGxlLmNvbSIsImlhdCI6MTY5MDcyOTI5MiwiZXhwIjoxNjkzMzIxMjkyfQ.HOb9Nal8OXm4erYoFHR8bmJgjNrPxq2tW3cwqMK27nA");
-        //  System.out.println(isTokenValid);
+        Claims claims = tokenValidate.parseToken("eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6IjU0NDRmMjIxLWVkYTYtNGRhZi05MTMwLTAxMThiNWM5ZWRiMyIsInN1YiI6IklzdXJ1bGFrc2hhbkBleGFtcGxlLmNvbSIsImlhdCI6MTY5MDcyOTI5MiwiZXhwIjoxNjkzMzIxMjkyfQ.HOb9Nal8OXm4erYoFHR8bmJgjNrPxq2tW3cwqMK27nA");
+        if (claims != null) {
+            System.out.println(claims);
+        }else{
+            System.out.println("Token is not valid");
+        }
         Long UserId = 884L;
         // Send to the service layer
         try {
