@@ -106,7 +106,17 @@ public class CategoryController {
     //GET ALL CATEGORIES
     @GetMapping("/getallategories")
     @ResponseBody
-    public String getCategories() {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> getCategories(
+        @RequestHeader("Authorization") String tokenHeader
+    )throws Exception {
+        // Send to the service layer
+        try {
+            List<CategoryDto> categoryList =  categoryService.getAllCategories();
+            return ApiResponse.success("Success", categoryList);
+
+        } catch (Exception e) {
+            String errorMessage = "Error occurred while creating the category.";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 }
