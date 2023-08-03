@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +35,15 @@ public class CategoryController {
     private final CategoryRequestValidator categoryRequestValidator;
     private final CategoryService categoryService;
     private final TokenValidate tokenValidate;
+
+    String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6IjU0NDRmMjIxLWVkYTYtNGRhZi05MTMwLTAxMThiNWM5ZWRiMyIsInN1YiI6IklzdXJ1bGFrc2hhbkBleGFtcGxlLmNvbSIsImlhdCI6MTY5MDcyOTI5MiwiZXhwIjoxNjkzMzIxMjkyfQ.HOb9Nal8OXm4erYoFHR8bmJgjNrPxq2tW3cwqMK27nA";
     
     //ADD NEW CATEGORY
     @PostMapping("/addnewcategory")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> addCategory(
         @RequestBody CategoryRequest categoryRequest,
+        @RequestHeader("Authorization") String tokenHeader,
         BindingResult bindingResult
     ) throws Exception {
         //Request Validation
@@ -51,11 +55,14 @@ public class CategoryController {
             return ApiResponse.success("Success", errorMessages);
         }
         // Autherization
-        Claims claims = tokenValidate.parseToken("eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6IjU0NDRmMjIxLWVkYTYtNGRhZi05MTMwLTAxMThiNWM5ZWRiMyIsInN1YiI6IklzdXJ1bGFrc2hhbkBleGFtcGxlLmNvbSIsImlhdCI6MTY5MDcyOTI5MiwiZXhwIjoxNjkzMzIxMjkyfQ.HOb9Nal8OXm4erYoFHR8bmJgjNrPxq2tW3cwqMK27nA");
+        String token = tokenHeader.substring(7);
+        System.out.println(token);
+        Claims claims = tokenValidate.parseToken("");
         if (claims != null) {
             System.out.println(claims);
         }else{
-            System.out.println("Token is not valid");
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
         }
         Long UserId = 884L;
         // Send to the service layer
