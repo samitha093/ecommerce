@@ -23,4 +23,11 @@ public class CategoryMapper {
         category.setStatus(ProductStatus.APPROVED);
         return category;
     }
+
+    public void toEntityUpdate(Category category, CategoryRequest categoryRequest, Long userId) {
+        category.setName(categoryRequest.getName());
+        category.setDescription(categoryRequest.getDescription());
+        category.setUpdatedById(userId);
+        category.setUpdatedAt(LocalDateTime.now());
+    }
 }

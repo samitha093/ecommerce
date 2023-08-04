@@ -46,4 +46,37 @@ public class CategoryService {
             return null;
         }
     }
+
+    public CategoryDto getCategoryById(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category != null) {
+            return new CategoryDto(category.getId(), category.getName(), category.getDescription());
+        }else {
+            return null;
+        }
+    }
+
+    public String deleteCategory(Long categoryId) {
+        CategoryDto data = getCategoryById(categoryId);
+        if (data == null) {
+            String ErrorMessage = "Category:"+categoryId+" => not found";
+            return ErrorMessage; // Category not found
+        }
+        try {
+            categoryRepository.deleteById(categoryId);
+            String ErrorMessage = "Category:"+categoryId+" => deleted successfully";
+            return ErrorMessage; // Deletion successful
+        }catch (Exception e) {
+            String ErrorMessage = "Crical exceptions that may occur during deletion";
+            return ErrorMessage; // Deletion failed
+        }
+    }
+
+    public void updateCategory(Long categoryId, CategoryRequest categoryRequest, Long userId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category != null) {
+            categoryMapper.toEntityUpdate(category, categoryRequest, userId);
+            categoryRepository.save(category);
+        }
+    }
 }
