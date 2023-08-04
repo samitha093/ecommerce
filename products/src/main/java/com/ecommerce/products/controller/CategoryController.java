@@ -36,7 +36,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final TokenValidate tokenValidate;
 
-    String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6IjU0NDRmMjIxLWVkYTYtNGRhZi05MTMwLTAxMThiNWM5ZWRiMyIsInN1YiI6IklzdXJ1bGFrc2hhbkBleGFtcGxlLmNvbSIsImlhdCI6MTY5MDcyOTI5MiwiZXhwIjoxNjkzMzIxMjkyfQ.HOb9Nal8OXm4erYoFHR8bmJgjNrPxq2tW3cwqMK27nA";
+    String token = "";
     
     //ADD NEW CATEGORY
     @PostMapping("/addnewcategory")
@@ -46,6 +46,22 @@ public class CategoryController {
         @RequestHeader("Authorization") String tokenHeader,
         BindingResult bindingResult
     ) throws Exception {
+        Long UserId;
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                UserId = Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
         //Request Validation
         categoryRequestValidator.validate(categoryRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -54,17 +70,6 @@ public class CategoryController {
                 .collect(Collectors.toList());
             return ApiResponse.success("Success", errorMessages);
         }
-        // Autherization
-        String token = tokenHeader.substring(7);
-        System.out.println(token);
-        Claims claims = tokenValidate.parseToken("");
-        if (claims != null) {
-            System.out.println(claims);
-        }else{
-            String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
-        }
-        Long UserId = 884L;
         // Send to the service layer
         try {
             categoryService.CreateCategory(categoryRequest, UserId);
@@ -78,29 +83,122 @@ public class CategoryController {
     }
 
     //UPDATE CATEGORY
-    @PutMapping("/updatecategory")
+    @PutMapping("/updatecategory/{categoryId}")
     @ResponseBody
-    public String updateCategory() {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> updateCategory(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestBody CategoryRequest categoryRequest,
+        @RequestHeader("Authorization") String tokenHeader,
+        BindingResult bindingResult
+    )throws Exception {
+        Long UserId;
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                UserId = Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        //Request Validation
+        categoryRequestValidator.validate(categoryRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+            return ApiResponse.success("Success", errorMessages);
+        }
+        // Send to the service layer
+        try {
+            categoryService.updateCategory(categoryId, categoryRequest, UserId);
+        } catch (Exception e) {
+            String errorMessage = "Error occurred while updating the category.";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Return the response
+        List<CategoryDto> categoryList = categoryService.getAllCategories();
+        return ApiResponse.success("Success", categoryList);
     }
     
     //DELETE CATEGORY
     @DeleteMapping("/deletecategory/{categoryId}")
     @ResponseBody
-    public String deleteCategory(
-        @PathVariable("categoryId") String categoryId
-    ) {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> deleteCategory(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestHeader("Authorization") String tokenHeader
+    )throws Exception {
+        String errorMessage;
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Send to the service layer
+        try {
+            categoryService.deleteCategory(categoryId);
+        } catch (Exception e) {
+            errorMessage = "Error occurred while deleting the category."; 
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Return the response
+        List<CategoryDto> categoryList = categoryService.getAllCategories();
+        return ApiResponse.success("Success", categoryList);
     }
     
 
     //GET CATEGORY BY ID
     @GetMapping("/getcategorybyid/{categoryId}")
     @ResponseBody
-    public String getCategoryById(
-        @PathVariable("categoryId") String categoryId
-    ) {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> getCategoryById(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestHeader("Authorization") String tokenHeader
+    )throws Exception {
+        String errorMessage;
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Send to the service layer
+        try {
+            CategoryDto category = categoryService.getCategoryById(categoryId);
+            if (category == null) {
+                errorMessage = "Category not found.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+            return ApiResponse.success("Success", category);
+
+        } catch (Exception e) {
+            errorMessage = "Error occurred while finding the category.";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
     //GET ALL CATEGORIES
@@ -109,13 +207,29 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<Object>> getCategories(
         @RequestHeader("Authorization") String tokenHeader
     )throws Exception {
+        String errorMessage;
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
         // Send to the service layer
         try {
             List<CategoryDto> categoryList =  categoryService.getAllCategories();
             return ApiResponse.success("Success", categoryList);
 
         } catch (Exception e) {
-            String errorMessage = "Error occurred while creating the category.";
+            errorMessage = "Error occurred while creating the category.";
             return ApiResponse.success("Success", errorMessage);
         }
     }
