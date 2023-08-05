@@ -1,53 +1,166 @@
 package com.ecommerce.products.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.products.dto.ImageDTO;
+import com.ecommerce.products.dto.mapper.ImageDTOMapper;
+import com.ecommerce.products.entity.Image;
+import com.ecommerce.products.request.ImageRequest;
+import com.ecommerce.products.response.ApiResponse;
+import com.ecommerce.products.security.TokenValidate;
+import com.ecommerce.products.service.ImageService;
+
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/images")
 public class ImageController {
+
+    private final TokenValidate tokenValidate;
+    private final ImageService imageService;
+    private final ImageDTOMapper imageMapper;
     
     //ADD NEW IMAGE
     @PostMapping("/addnewimage")
     @ResponseBody
-    public String addImage() {
-        return "Hello, GET request!";
-    }
-
-    //DELETE IMAGE
-    @DeleteMapping("/deleteimage")
-    @ResponseBody
-    public String deleteImage() {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> addImage(
+        @RequestBody ImageRequest imageRequest,
+        @RequestHeader("Authorization") String tokenHeader,
+        BindingResult bindingResult
+    ) throws Exception {
+        Long UserId;
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                UserId = Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        //Request Validation
+        // Send to the service layer
+        try {
+            Image image = imageService.addImage(imageRequest, UserId);
+            ImageDTO imageDTO = imageMapper.toDTO(image);
+            return ApiResponse.success("Success", imageDTO);
+        } catch (Exception e) {
+            String errorMessage = "Error in Saving image on databse";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
     //UPDATE IMAGE
-    @PutMapping("/updateimage")
+    @PutMapping("/updateimage/{categoryId}")
     @ResponseBody
-    public String updateImage() {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> updateImage(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestBody ImageRequest imageRequest,
+        @RequestHeader("Authorization") String tokenHeader,
+        BindingResult bindingResult
+    ) throws Exception {
+        // Autherization
+        //Request Validation
+        // Send to the service layer
+        // Return the response
+        return null;
+    }
+
+    //DELETE IMAGE
+    @DeleteMapping("/deleteimage/{categoryId}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<Object>> deleteImage(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestHeader("Authorization") String tokenHeader
+    ) throws Exception {
+        // Autherization
+        // Send to the service layer
+        // Return the response
+        return null;
+    }
+
+    //GET IMAGE BY ID
+    @GetMapping("/getimagebyid/{categoryId}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<Object>> getImageById(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestHeader("Authorization") String tokenHeader
+    ) throws Exception {
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Send to the service layer
+        ImageDTO imageDTO = imageService.getImageById(categoryId);
+        if (imageDTO != null) {
+            return ApiResponse.success("Success", imageDTO);
+        } else {
+            String errorMessage = "Image not found";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
     //GET ALL IMAGES
     @GetMapping("/gealltimages")
     @ResponseBody
-    public String getImages() {
-        return "Hello, GET request!";
-    }
-
-    //GET IMAGE BY ID
-    @GetMapping("/getimagebyid")
-    @ResponseBody
-    public String getImageById() {
-        return "Hello, GET request!";
+    public ResponseEntity<ApiResponse<Object>> getImages(
+        @RequestHeader("Authorization") String tokenHeader
+    ) throws Exception {
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Send to the service layer
+        try{
+            List<ImageDTO> imageList = imageService.getAllImages();
+            return ApiResponse.success("Success", imageList);
+        }catch(Exception e){
+            String errorMessage = "Error in getting images from database";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
 }

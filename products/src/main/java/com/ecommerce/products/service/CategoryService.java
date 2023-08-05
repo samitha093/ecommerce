@@ -64,7 +64,7 @@ public class CategoryService {
         }
         try {
             categoryRepository.deleteById(categoryId);
-            String ErrorMessage = "Category:"+categoryId+" => deleted successfully";
+            String ErrorMessage = null;
             return ErrorMessage; // Deletion successful
         }catch (Exception e) {
             String ErrorMessage = "Crical exceptions that may occur during deletion";
