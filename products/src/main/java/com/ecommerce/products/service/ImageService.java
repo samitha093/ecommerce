@@ -38,13 +38,23 @@ public class ImageService {
         }
     }
 
-    public ImageDTO getImageById(Long categoryId) {
-        Image image = productImageRepository.findById(categoryId).orElse(null);
+    public ImageDTO getImageById(Long ImageId) {
+        Image image = productImageRepository.findById(ImageId).orElse(null);
         if (image != null) {
             return new ImageDTO(image.getId(), image.getImageName(), image.getContentType(), image.getImageData());     
         }else {
             return null;
         }
+    }
+
+    public String deleteImage(Long ImageId) {
+        ImageDTO data = getImageById(ImageId);
+        if (data == null){
+            String ErrorMessage = "Image with id " + ImageId + " not found";
+            return ErrorMessage;
+        }
+        productImageRepository.deleteById(ImageId);
+        return null;
     }   
     
 }

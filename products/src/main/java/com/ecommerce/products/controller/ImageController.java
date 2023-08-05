@@ -72,10 +72,10 @@ public class ImageController {
     }
 
     //UPDATE IMAGE
-    @PutMapping("/updateimage/{categoryId}")
+    @PutMapping("/updateimage/{ImageId}")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> updateImage(
-        @PathVariable("categoryId") Long categoryId,
+        @PathVariable("ImageId") Long ImageId,
         @RequestBody ImageRequest imageRequest,
         @RequestHeader("Authorization") String tokenHeader,
         BindingResult bindingResult
@@ -88,23 +88,10 @@ public class ImageController {
     }
 
     //DELETE IMAGE
-    @DeleteMapping("/deleteimage/{categoryId}")
+    @DeleteMapping("/deleteimage/{ImageId}")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> deleteImage(
-        @PathVariable("categoryId") Long categoryId,
-        @RequestHeader("Authorization") String tokenHeader
-    ) throws Exception {
-        // Autherization
-        // Send to the service layer
-        // Return the response
-        return null;
-    }
-
-    //GET IMAGE BY ID
-    @GetMapping("/getimagebyid/{categoryId}")
-    @ResponseBody
-    public ResponseEntity<ApiResponse<Object>> getImageById(
-        @PathVariable("categoryId") Long categoryId,
+        @PathVariable("ImageId") Long ImageId,
         @RequestHeader("Authorization") String tokenHeader
     ) throws Exception {
         // Autherization
@@ -123,7 +110,43 @@ public class ImageController {
             return ApiResponse.success("Success", errorMessage);
         }
         // Send to the service layer
-        ImageDTO imageDTO = imageService.getImageById(categoryId);
+        try {
+            String dataReturn = imageService.deleteImage(ImageId);
+            if (dataReturn != null) {
+                return ApiResponse.success("Success", dataReturn);
+            }
+            String successMessage = "Image deleted successfully";
+            return ApiResponse.success("Success", successMessage);
+        } catch (Exception e) {
+            String errorMessage = "Error in deleting image from databse";
+            return ApiResponse.success("Success", errorMessage);
+        }
+    }
+
+    //GET IMAGE BY ID
+    @GetMapping("/getimagebyid/{ImageId}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<Object>> getImageById(
+        @PathVariable("ImageId") Long ImageId,
+        @RequestHeader("Authorization") String tokenHeader
+    ) throws Exception {
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Send to the service layer
+        ImageDTO imageDTO = imageService.getImageById(ImageId);
         if (imageDTO != null) {
             return ApiResponse.success("Success", imageDTO);
         } else {
