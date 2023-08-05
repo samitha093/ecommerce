@@ -15,13 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.products.request.ImageRequest;
 import com.ecommerce.products.response.ApiResponse;
+import com.ecommerce.products.security.TokenValidate;
+import com.ecommerce.products.service.ImageService;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/images")
 public class ImageController {
+
+    private final TokenValidate tokenValidate;
+    private final ImageService imageService;
     
     //ADD NEW IMAGE
     @PostMapping("/addnewimage")
@@ -31,9 +37,30 @@ public class ImageController {
         @RequestHeader("Authorization") String tokenHeader,
         BindingResult bindingResult
     ) throws Exception {
+        Long UserId;
         // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                UserId = Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
         //Request Validation
         // Send to the service layer
+        try {
+            imageService.addImage(imageRequest, UserId);
+        } catch (Exception e) {
+            String errorMessage = "Error in Saving image on databse";
+            return ApiResponse.success("Success", errorMessage);
+        }
         // Return the response
         return null;
     }

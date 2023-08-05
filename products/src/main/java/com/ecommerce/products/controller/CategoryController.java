@@ -152,14 +152,19 @@ public class CategoryController {
         }
         // Send to the service layer
         try {
-            categoryService.deleteCategory(categoryId);
+            errorMessage = categoryService.deleteCategory(categoryId);
+            if (errorMessage != null){
+                return ApiResponse.success("Success", errorMessage);
+            }else{
+                // Return the response
+                List<CategoryDto> categoryList = categoryService.getAllCategories();
+                return ApiResponse.success("Success", categoryList);
+            }
         } catch (Exception e) {
             errorMessage = "Error occurred while deleting the category."; 
             return ApiResponse.success("Success", errorMessage);
         }
-        // Return the response
-        List<CategoryDto> categoryList = categoryService.getAllCategories();
-        return ApiResponse.success("Success", categoryList);
+
     }
     
 
