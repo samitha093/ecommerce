@@ -1,5 +1,7 @@
 package com.ecommerce.products.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.products.dto.ImageDTO;
+import com.ecommerce.products.dto.mapper.ImageDTOMapper;
+import com.ecommerce.products.entity.Image;
 import com.ecommerce.products.request.ImageRequest;
 import com.ecommerce.products.response.ApiResponse;
 import com.ecommerce.products.security.TokenValidate;
@@ -28,6 +33,7 @@ public class ImageController {
 
     private final TokenValidate tokenValidate;
     private final ImageService imageService;
+    private final ImageDTOMapper imageMapper;
     
     //ADD NEW IMAGE
     @PostMapping("/addnewimage")
@@ -56,13 +62,13 @@ public class ImageController {
         //Request Validation
         // Send to the service layer
         try {
-            imageService.addImage(imageRequest, UserId);
+            Image image = imageService.addImage(imageRequest, UserId);
+            ImageDTO imageDTO = imageMapper.toDTO(image);
+            return ApiResponse.success("Success", imageDTO);
         } catch (Exception e) {
             String errorMessage = "Error in Saving image on databse";
             return ApiResponse.success("Success", errorMessage);
         }
-        // Return the response
-        return null;
     }
 
     //UPDATE IMAGE
@@ -102,9 +108,28 @@ public class ImageController {
         @RequestHeader("Authorization") String tokenHeader
     ) throws Exception {
         // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
         // Send to the service layer
-        // Return the response
-        return null;
+        ImageDTO imageDTO = imageService.getImageById(categoryId);
+        if (imageDTO != null) {
+            return ApiResponse.success("Success", imageDTO);
+        } else {
+            String errorMessage = "Image not found";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
     //GET ALL IMAGES
@@ -114,9 +139,28 @@ public class ImageController {
         @RequestHeader("Authorization") String tokenHeader
     ) throws Exception {
         // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
         // Send to the service layer
-        // Return the response
-        return null;
+        try{
+            List<ImageDTO> imageList = imageService.getAllImages();
+            return ApiResponse.success("Success", imageList);
+        }catch(Exception e){
+            String errorMessage = "Error in getting images from database";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
 }
