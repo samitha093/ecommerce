@@ -1,6 +1,7 @@
 package com.ecommerce.products.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,7 @@ import com.ecommerce.products.request.ImageRequest;
 import com.ecommerce.products.response.ApiResponse;
 import com.ecommerce.products.security.TokenValidate;
 import com.ecommerce.products.service.ImageService;
+import com.ecommerce.products.validation.ImageRequestValidator;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class ImageController {
     private final TokenValidate tokenValidate;
     private final ImageService imageService;
     private final ImageDTOMapper imageMapper;
+    private final ImageRequestValidator ImageRequestValidator;
     
     //ADD NEW IMAGE
     @PostMapping("/addnewimage")
@@ -60,6 +63,13 @@ public class ImageController {
             return ApiResponse.success("Success", errorMessage);
         }
         //Request Validation
+        ImageRequestValidator.validate(imageRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream()
+                    .map(objectError -> objectError.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ApiResponse.success("Success", errors);
+        }
         // Send to the service layer
         try {
             Image image = imageService.addImage(imageRequest, UserId);
@@ -80,11 +90,39 @@ public class ImageController {
         @RequestHeader("Authorization") String tokenHeader,
         BindingResult bindingResult
     ) throws Exception {
+         Long UserId;
         // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                UserId = Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
         //Request Validation
+        ImageRequestValidator.validate(imageRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream()
+                    .map(objectError -> objectError.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ApiResponse.success("Success", errors);
+        }
         // Send to the service layer
-        // Return the response
-        return null;
+        try {
+            Image image = imageService.updateImage(ImageId, imageRequest, UserId);
+            ImageDTO imageDTO = imageMapper.toDTO(image);
+            return ApiResponse.success("Success", imageDTO);
+        } catch (Exception e) {
+            String errorMessage = "Error in updating image on databse";
+            return ApiResponse.success("Success", errorMessage);
+        }
     }
 
     //DELETE IMAGE
