@@ -2,6 +2,7 @@ import { useState } from "react";
 import Toast from "../modules/toast";
 import axios, { AxiosResponse } from "axios";
 import jwtDecode from 'jwt-decode';
+import Loading from "../modules/loading";
 
 
 interface AuthResponse {
@@ -13,6 +14,7 @@ function Login() {
   const imageUrl = 'https://nest.botble.com/storage/general/login-1.png';
   const [password, setPassword] = useState('');
   const [useremail, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const imageStyle: React.CSSProperties = {
     width: '400px',
@@ -50,6 +52,7 @@ function Login() {
     
     const myHost = sessionStorage.getItem('host');
     // Send a POST request to the /loginUser endpoint with the user details
+    setIsLoading(true);
     axios.post(`${myHost}/api/v1/auth/login`, userDetails)
     .then((response: AxiosResponse<AuthResponse>) => {
       if(response.status == 200){
@@ -57,6 +60,7 @@ function Login() {
           icon: 'success',
           title: 'Succeessfully logged in'
         })
+        setIsLoading(false);
       }
       else{
         console.log(response.data);
@@ -64,18 +68,23 @@ function Login() {
           icon: 'error',
           title: 'Email or password is incorrect'
         })
+        setIsLoading(false);
       }
+     
     })
       .catch((error) => {
         console.error("Error login user:", error);
         Toast.fire({
           icon: 'error',
-          title: 'Email or password is incorrect'
+          title: 'Server Error'
         })
+        setIsLoading(false);
       });
   }
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
+       <Loading isLoading={isLoading} />
+       
       <div style={containerStyle}>
         <img src={imageUrl} style={imageStyle} />
       </div>
