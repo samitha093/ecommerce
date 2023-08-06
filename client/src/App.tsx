@@ -21,8 +21,8 @@ function App() {
   return (
     <BrowserRouter>
       <div>
+  
         <Navbar handleMessageChange={handleMessageChange} />
-
         <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/authentication" element={<Authentication message={message}/>} />
