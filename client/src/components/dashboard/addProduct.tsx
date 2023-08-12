@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from "axios";
 import Toast from "../modules/toast";
 
 interface AddProductProps {
   onAddProduct: (product: Product) => void;
+  updateExisingProduct: (products: Product) => void; // Correct type for the prop
+  isUpdating: boolean;
+  currentProduct: Product;
+  isDelete: boolean;
 }
 
 interface Product {
@@ -18,15 +22,28 @@ interface Product {
 }
 
 
-const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
-    const [productName, setProductName] = useState(''); // Initialize the product name state as an empty string
-    const [id, setId] = useState<number>(0);
-    const [description, setDescription] = useState('');
-    const [categoryId, setCategoryId] = useState<number>(0);
-    const [price, setPrice] = useState<number>(0);
-    const [stockQTY, setStockQTY] = useState<number>(0);
-    const [soldQTY, setSoldQTY] = useState<number>(0);
-    const [imageListId, setImageListId] = useState('');
+const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduct ,isUpdating ,currentProduct,isDelete  }) => {
+  const [productName, setProductName] = useState(currentProduct.name || ''); // Set initial value using currentProduct data
+  const [id, setId] = useState<number>(currentProduct.id || 0);
+  const [description, setDescription] = useState(currentProduct.description || '');
+  const [categoryId, setCategoryId] = useState<number>(currentProduct.categoryId || 0);
+  const [price, setPrice] = useState<number>(currentProduct.price || 0);
+  const [stockQTY, setStockQTY] = useState<number>(currentProduct.stockQTY || 0);
+  const [soldQTY, setSoldQTY] = useState<number>(currentProduct.soldQTY || 0);
+  const [imageListId, setImageListId] = useState(currentProduct.imageListId || '');
+
+  useEffect(() => {
+    console.log("currentProduct add file ", currentProduct);
+    setProductName(currentProduct.name || '');
+    setId(currentProduct.id || 0);
+    setDescription(currentProduct.description || '');
+    setCategoryId(currentProduct.categoryId || 0);
+    setPrice(currentProduct.price || 0);
+    setStockQTY(currentProduct.stockQTY || 0);
+    setSoldQTY(currentProduct.soldQTY || 0);
+    setImageListId(currentProduct.imageListId || '');
+
+}, [currentProduct]);
 
     const containerStyle: React.CSSProperties = {
         display: 'flex',
@@ -52,26 +69,33 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
       const handlesetSoldQTYChange = (event: any) => {
         setSoldQTY(event.target.value);
       };
-      const initialProduct: Product = {
-        
-        id: 0,
-        name: '',
-        description: '',
-        categoryId: 0,
-        price: 0,
-        stockQTY: 0,
-        soldQTY: 0,
-        imageListId: '',
-      };
+      function clearProductDetails() {
+          setId(0);
+          setProductName("");
+          setDescription("");
+          setCategoryId(0);
+          setPrice(0);
+          setStockQTY(0);
+          setSoldQTY(0);
+          setImageListId("")
+          
+      }
       function generateRandomId() {
         const timestamp = Date.now(); // Get current timestamp
         const random = Math.random().toString().substr(2, 5); // Generate random number string
         return parseInt(`${timestamp}${random}`); // Combine timestamp and random number as integer
       }
-      
-      
-      function handleAddNewProduct() {
-        setId(generateRandomId());
+      const handleSubmit = () => {
+        if (isUpdating) {
+          console.log("Updating product....");
+          handleUpdateExistingProduct();             
+        } else {
+          console.log("Adding new product....");
+          handleAddNewProduct(); 
+        }
+      };    
+      function handleUpdateExistingProduct() {
+         setId(generateRandomId());
           const productDetails = {
             id: id,
             name: productName,
@@ -82,37 +106,31 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
             soldQTY: soldQTY,
             imageListId:""
           };
-          console.log("New product");
+          console.log("Updated product");
           console.log(productDetails);
-          onAddProduct(productDetails); // Call the onAddProduct function with the new product details
-
-          const myHost = sessionStorage.getItem('host');
-          axios
-            .post(`${myHost}/api/v1/products/addnewproduct`, productDetails)
-            .then((response) => {
-              if(response.status == 200){
-                Toast.fire({
-                  icon: 'success',
-                  title: 'New product added successfully'
-                })
-                
-              }
-              else{
-                Toast.fire({
-                  icon: 'error',
-                  title: 'Can not add new product'
-                })
-              }
-    
-            })
-            .catch(() => {
-                Toast.fire({
-                  icon: 'error',
-                  title: 'Can not add new product'
-                })
-            });
+          updateExisingProduct(productDetails);
+          clearProductDetails();    
       }
-
+      function handleAddNewProduct() {
+            
+            const genId =generateRandomId();
+            const productDetails = {
+            id: genId,
+            name: productName,
+            description: description,
+            categoryId: categoryId,
+            price: price,
+            stockQTY: stockQTY,
+            soldQTY: soldQTY,
+            imageListId:""
+          };
+          onAddProduct(productDetails); // Call the onAddProduct function with the new product details    
+          clearProductDetails();    
+      }
+      useEffect(() => {
+        clearProductDetails();
+    }, [isDelete]);
+    
     return (
         <div className="grid grid-cols-2 gap-0 content-center ..." >
         <div style={containerStyle}>
@@ -182,11 +200,11 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
     
             <div style={{ textAlign: 'center' }} className="mt-8">
             <button
-            onClick={handleAddNewProduct}
+            onClick={handleSubmit}
               style={{ padding: '15px', width: '130px' }}
               className={`text-white font-bold py-2 px-4 rounded ${true ? 'bg-blue-900 hover:bg-green-700' : 'bg-gray-400'}`}   
             >
-              Add
+              {isUpdating ? 'Update' : 'Add'}
             </button>
           </div>
           </div>
@@ -197,3 +215,4 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
 };
 
 export default AddProduct;
+

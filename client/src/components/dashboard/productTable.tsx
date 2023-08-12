@@ -16,34 +16,16 @@ interface Product {
   interface ProductTableProps {
     products: Product[];
     removeProductById: (id: number) => void; // Correct type for the prop
+    loadDataForUpdate: (product: Product) => void; // Correct type for the prop
+   
   }
 
-const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById }) => {
+const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById,loadDataForUpdate }) => {
 
-    const exampleProducts = [
-        {
-          id: 1,
-          name: 'Apple MacBook Pro 17"',
-          description: 'Silver',
-          categoryId: 1,
-          price: 2999,
-          stockQuantity: 10,
-          soldQuantity: 5,
-        },
-        {
-          id: 2,
-          name: 'Samsung Galaxy S21',
-          description: 'Phantom Gray',
-          categoryId: 2,
-          price: 999,
-          stockQuantity: 20,
-          soldQuantity: 15,
-        },
-      ];    
   return (
     <div className="relative overflow-x-auto">
       <div style={{ textAlign: 'center' }}>
-        <h3 style={{ fontSize: '35px', fontWeight: 'bold', textAlign: 'center', color: '#001C30' }}>All Product</h3>
+        <h4 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', color: '#001C30' }}>All Product</h4>
       </div>
 
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -97,7 +79,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById 
                 {product.soldQTY}
               </td>
               <td className="px-6 py-4">
-              <button className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-lg">
+              <button className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-lg" 
+               onClick={() => loadDataForUpdate(product)}
+              
+              >
                         Edit</button>
               </td>
               <td className="px-6 py-4">

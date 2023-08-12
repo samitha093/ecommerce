@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddProduct from "../components/dashboard/addProduct";
 import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
@@ -30,8 +30,21 @@ function Dashboard() {
     padding: '10px', // Add some padding for better visibility
   };
   const [products, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
-
-
+  const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
+  const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
+  const [currentProduct, setCurrentProduct] = useState<Product>();
+  // Define a default product object
+const defaultProduct: Product = {
+  id: 0,
+  name: '',
+  description: '',
+  categoryId: 0,
+  price: 0,
+  stockQTY: 0,
+  soldQTY: 0,
+  imageListId: ''
+};
+  //remove  item
   const removeProductById = (id: number) =>{
     //for testing
     const updatedProducts = products.filter(product => product.id !== id);
@@ -41,17 +54,78 @@ function Dashboard() {
     //real code
     removeItemFromStore(id);    
     getAllProductsFromStore();
+    setIsDelete(true);
   }
+  //add new item
   const addNewProduct = (product: Product) =>{
     //for testing
-    setProducts([...products, product]); 
-    console.log(products);
+    setProducts((prevProducts) => [...prevProducts, product]);
+    console.log(product);
 
     //real code
     addItemToStore(product);
     getAllProductsFromStore();
 
   }
+    //update existing item
+  const updateExisingProduct = (product: Product) =>{
+      
+      
+    const updatedIndex = products.findIndex(p => p.id === product.id);
+
+      if (updatedIndex !== -1) {
+        // Create a copy of the products array
+        const updatedProducts = [...products];
+
+        // Replace the existing product with the updated product
+        updatedProducts[updatedIndex] = product;
+
+        // Update the state with the updated products array
+        setProducts(updatedProducts);
+      }
+
+      //real code
+      updateStore(product);
+      getAllProductsFromStore(); 
+      setIsUpdating(false);
+    }
+    //update product data load
+    const loadDataForUpdate = (product: Product) =>{
+        setIsUpdating(true);
+        setCurrentProduct(product);
+    }
+    useEffect(() => {
+      console.log("currentProduct", currentProduct);
+  }, [currentProduct]);
+  
+    function updateStore(product: Product) {
+      const myHost = sessionStorage.getItem('host');
+      axios
+        .put(`${myHost}/api/v1/products/updateproduct`, product)
+        .then((response) => {
+          if (response.status === 200) {
+            Toast.fire({
+              icon: 'success',
+              title: 'Product updated successfully'
+            });
+            
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Failed to update product'
+            });
+          }
+        })
+        .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to update product'
+          });
+        });
+      
+  
+    }
+
   function addItemToStore(product: Product) {
     const myHost = sessionStorage.getItem('host');
     axios
@@ -138,13 +212,16 @@ function Dashboard() {
         Product Service  </h1>
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
-              <AddProduct  onAddProduct={addNewProduct}/>
+              <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct} isUpdating={isUpdating}
+                currentProduct={currentProduct || defaultProduct} // Provide a defaultProduct if currentProduct is undefined
+                isDelete={isDelete}
+
+               />
           </div>
           <div className="col-span-6" style={divStyle2}>
-           <ProductTable products={products} removeProductById={removeProductById}/>
+           <ProductTable products={products} removeProductById={removeProductById} loadDataForUpdate={loadDataForUpdate} />
           </div>
           </div>
-    
     </div>
   )
 }
