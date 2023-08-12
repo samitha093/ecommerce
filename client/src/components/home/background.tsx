@@ -5,7 +5,7 @@ function Background() {
     <div className="h-screen flex mx-0">
       <img
         className="object-cover h-full w-full"
-        src="https://cdn.pixabay.com/photo/2018/07/25/18/36/ecommerce-3562005_1280.jpg"
+        src="https://img.freepik.com/free-vector/online-shopping-concept_52683-63898.jpg?size=626&ext=jpg&ga=GA1.2.2066813288.1687849039&semt=ais"
         alt="Background Image"
       />
     </div>
