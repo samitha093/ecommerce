@@ -3,20 +3,22 @@ import React from 'react';
 
 
 interface Product {
-    id:number;
-    name: string;
-    description: string;
-    categoryId: number;
-    price: number;
-    stockQuantity: number;
-    soldQuantity: number;
-  }
+  id: number;
+  name: string;
+  description: string;
+  categoryId: number;
+  price: number;
+  stockQTY: number;
+  soldQTY: number;
+  imageListId:string
+}
   
   interface ProductTableProps {
     products: Product[];
+    removeProductById: (id: number) => void; // Correct type for the prop
   }
 
-const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
+const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById }) => {
 
     const exampleProducts = [
         {
@@ -89,17 +91,20 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                 ${product.price}
               </td>
               <td className="px-6 py-4">
-                {product.stockQuantity}
+                {product.stockQTY}
               </td>
               <td className="px-6 py-4">
-                {product.soldQuantity}
+                {product.soldQTY}
               </td>
               <td className="px-6 py-4">
               <button className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-lg">
                         Edit</button>
               </td>
               <td className="px-6 py-4">
-              <button className="bg-red-500 text-white px-4 py-2 mt-4 rounded-lg">
+              <button className="bg-red-500 text-white px-4 py-2 mt-4 rounded-lg" 
+                  onClick={() => removeProductById(product.id)}
+
+              >
 
                 Delete</button>
               </td>

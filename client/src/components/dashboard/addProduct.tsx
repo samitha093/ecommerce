@@ -7,23 +7,25 @@ interface AddProductProps {
 }
 
 interface Product {
-
+  id: number;
   name: string;
   description: string;
   categoryId: number;
   price: number;
-  stockQuantity: number;
-  soldQuantity: number;
+  stockQTY: number;
+  soldQTY: number;
+  imageListId:string
 }
 
 
 const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
-    const [productName, setProductName] = useState('');
+    const [productName, setProductName] = useState(''); // Initialize the product name state as an empty string
+    const [id, setId] = useState<number>(0);
     const [description, setDescription] = useState('');
-    const [categoryId, setCategoryId] = useState('');
-    const [price, setPrice] = useState('');
-    const [stockQTY, setStockQTY] = useState('');
-    const [soldQTY, setSoldQTY] = useState('');
+    const [categoryId, setCategoryId] = useState<number>(0);
+    const [price, setPrice] = useState<number>(0);
+    const [stockQTY, setStockQTY] = useState<number>(0);
+    const [soldQTY, setSoldQTY] = useState<number>(0);
     const [imageListId, setImageListId] = useState('');
 
     const containerStyle: React.CSSProperties = {
@@ -50,17 +52,37 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct   }) => {
       const handlesetSoldQTYChange = (event: any) => {
         setSoldQTY(event.target.value);
       };
+      const initialProduct: Product = {
+        
+        id: 0,
+        name: '',
+        description: '',
+        categoryId: 0,
+        price: 0,
+        stockQTY: 0,
+        soldQTY: 0,
+        imageListId: '',
+      };
+      function generateRandomId() {
+        const timestamp = Date.now(); // Get current timestamp
+        const random = Math.random().toString().substr(2, 5); // Generate random number string
+        return parseInt(`${timestamp}${random}`); // Combine timestamp and random number as integer
+      }
+      
+      
       function handleAddNewProduct() {
-  
-  
+        setId(generateRandomId());
           const productDetails = {
+            id: id,
             name: productName,
             description: description,
             categoryId: categoryId,
             price: price,
-            stockQuantity: stockQTY,
-            soldQuantity: soldQTY,
+            stockQTY: stockQTY,
+            soldQTY: soldQTY,
+            imageListId:""
           };
+          console.log("New product");
           console.log(productDetails);
           onAddProduct(productDetails); // Call the onAddProduct function with the new product details
 
