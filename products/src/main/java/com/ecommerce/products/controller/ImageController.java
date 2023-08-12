@@ -116,11 +116,17 @@ public class ImageController {
         }
         // Send to the service layer
         try {
-            Image image = imageService.updateImage(ImageId, imageRequest, UserId);
-            ImageDTO imageDTO = imageMapper.toDTO(image);
-            return ApiResponse.success("Success", imageDTO);
+            imageService.updateImage(ImageId, imageRequest, UserId);
         } catch (Exception e) {
             String errorMessage = "Error in updating image on databse";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        //send all data to api ;ayer
+        try{
+            List<ImageDTO> imageList = imageService.getAllImages();
+            return ApiResponse.success("Success", imageList);
+        }catch(Exception e){
+            String errorMessage = "Error in getting images from database";
             return ApiResponse.success("Success", errorMessage);
         }
     }
@@ -153,8 +159,14 @@ public class ImageController {
             if (dataReturn != null) {
                 return ApiResponse.success("Success", dataReturn);
             }
-            String successMessage = "Image deleted successfully";
-            return ApiResponse.success("Success", successMessage);
+                    //send all data to api ;ayer
+            try{
+                List<ImageDTO> imageList = imageService.getAllImages();
+                return ApiResponse.success("Success", imageList);
+            }catch(Exception e){
+                String errorMessage = "Error in getting images from database";
+                return ApiResponse.success("Success", errorMessage);
+            }
         } catch (Exception e) {
             String errorMessage = "Error in deleting image from databse";
             return ApiResponse.success("Success", errorMessage);

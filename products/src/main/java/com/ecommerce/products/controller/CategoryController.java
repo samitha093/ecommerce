@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.products.dto.CategoryDto;
+import com.ecommerce.products.dto.mapper.CategoryDTOMapper;
+import com.ecommerce.products.entity.Category;
 import com.ecommerce.products.request.CategoryRequest;
 import com.ecommerce.products.response.ApiResponse;
 import com.ecommerce.products.security.TokenValidate;
@@ -35,6 +37,7 @@ public class CategoryController {
     private final CategoryRequestValidator categoryRequestValidator;
     private final CategoryService categoryService;
     private final TokenValidate tokenValidate;
+    private final CategoryDTOMapper categoryDTOMapper;
 
     String token = "";
     
@@ -72,14 +75,13 @@ public class CategoryController {
         }
         // Send to the service layer
         try {
-            categoryService.CreateCategory(categoryRequest, UserId);
+            Category category = categoryService.CreateCategory(categoryRequest, UserId);
+            CategoryDto categoryDto = categoryDTOMapper.toDTO(category);
+            return ApiResponse.success("Success", categoryDto);
         } catch (Exception e) {
             String errorMessage = "Error occurred while creating the category.";
             return ApiResponse.success("Success", errorMessage);
         }
-        // Return the response
-        List<CategoryDto> categoryList = categoryService.getAllCategories();
-        return ApiResponse.success("Success", categoryList);
     }
 
     //UPDATE CATEGORY
