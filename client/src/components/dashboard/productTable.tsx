@@ -1,18 +1,6 @@
 import React from 'react';
 
 
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  categoryId: number;
-  price: number;
-  stockQTY: number;
-  soldQTY: number;
-  imageListId:string
-}
-  
   interface ProductTableProps {
     products: Product[];
     removeProductById: (id: number) => void; // Correct type for the prop
@@ -20,6 +8,24 @@ interface Product {
    
   }
 
+  interface Image {
+    id: number;
+    imageName: string;
+    contentType: string;
+    imageData: string; 
+  }
+  
+  interface Product {
+    id: number;
+    name: string;
+    description: string;
+    categoryId: number;
+    price: number;
+    stockQTY: number;
+    soldQTY: number;
+    imageListId: Image[]; 
+  }
+  
 const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById,loadDataForUpdate }) => {
 
   return (
@@ -48,6 +54,9 @@ const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById,
             </th>
             <th scope="col" className="px-6 py-3">
               Sold Quantity
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Item
             </th>
             <th scope="col" className="px-6 py-3">
              Edit
@@ -79,11 +88,15 @@ const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById,
                 {product.soldQTY}
               </td>
               <td className="px-6 py-4">
+              {product.imageListId.map((image) => (
+                <img key={image.id} src={image.imageData} alt={image.imageName} className="w-100 h-10" />
+              ))}
+            </td>
+              <td className="px-6 py-4">
               <button className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-lg" 
-               onClick={() => loadDataForUpdate(product)}
-              
+               onClick={() => loadDataForUpdate(product)}              
               >
-                        Edit</button>
+               Edit</button>
               </td>
               <td className="px-6 py-4">
               <button className="bg-red-500 text-white px-4 py-2 mt-4 rounded-lg" 

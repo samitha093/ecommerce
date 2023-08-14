@@ -9,6 +9,14 @@ interface DivStyle {
   padding: string;
 }
 
+
+interface Image {
+  id: number;
+  imageName: string;
+  contentType: string;
+  imageData: string; 
+}
+
 interface Product {
   id: number;
   name: string;
@@ -17,7 +25,7 @@ interface Product {
   price: number;
   stockQTY: number;
   soldQTY: number;
-  imageListId:string
+  imageListId: Image[]; 
 }
 
 function Dashboard() {
@@ -34,16 +42,17 @@ function Dashboard() {
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Product>();
   // Define a default product object
-const defaultProduct: Product = {
-  id: 0,
-  name: '',
-  description: '',
-  categoryId: 0,
-  price: 0,
-  stockQTY: 0,
-  soldQTY: 0,
-  imageListId: ''
-};
+  const defaultProduct: Product = {
+    id: 0,
+    name: '',
+    description: '',
+    categoryId: 0,
+    price: 0,
+    stockQTY: 0,
+    soldQTY: 0,
+    imageListId: [] // Set it as an empty array
+  };
+  
   //remove  item
   const removeProductById = (id: number) =>{
     //for testing
@@ -213,9 +222,8 @@ const defaultProduct: Product = {
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
               <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct} isUpdating={isUpdating}
-                currentProduct={currentProduct || defaultProduct} // Provide a defaultProduct if currentProduct is undefined
+                currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
-
                />
           </div>
           <div className="col-span-6" style={divStyle2}>
