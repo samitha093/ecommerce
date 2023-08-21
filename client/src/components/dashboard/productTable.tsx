@@ -31,7 +31,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById,
   return (
     <div className="relative overflow-x-auto">
       <div style={{ textAlign: 'center' }}>
-        <h4 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', color: '#001C30' }}>Product Store</h4>
+        <h4 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', color: '#001C30' }}>Store</h4>
       </div>
       <table className="w-full text-sm text-left text-black-900 dark:text-gray-900">
         <thead className="text-xs text-gray-100 uppercase bg-gray-100 dark:bg-gray-200 dark:text-gray-400">
@@ -100,7 +100,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ products,removeProductById,
               <td className="px-6 py-4">
               <button className="bg-red-500 text-white px-4 py-2 mt-4 rounded-lg" 
                   onClick={() => removeProductById(product.id)}
-
               >
 
                 Delete</button>

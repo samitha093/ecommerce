@@ -3,6 +3,7 @@ import AddProduct from "../components/dashboard/addProduct";
 import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
+import SearchBar from "../components/dashboard/searchBar";
 
 interface DivStyle {
   backgroundColor: string;
@@ -30,12 +31,12 @@ interface Product {
 
 function Dashboard() {
   const divStyle1: DivStyle = {
-    backgroundColor: 'white', // Replace with your desired color
-    padding: '10px', // Add some padding for better visibility
+    backgroundColor: 'white', 
+    padding: '10px', 
   };
   const divStyle2: DivStyle = {
-    backgroundColor: 'white', // Replace with your desired color
-    padding: '10px', // Add some padding for better visibility
+    backgroundColor: 'white',
+    padding: '10px', 
   };
   const [products, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
@@ -52,7 +53,84 @@ function Dashboard() {
     soldQTY: 0,
     imageListId: [] // Set it as an empty array
   };
-  
+  const searchProductByKey = (itemKey: String) =>{
+    console.log(  "searchProductByKey : ",itemKey);
+    getProductByUsingItemName(itemKey);
+    getProductByUsingItemCategory(itemKey);
+    getProductByUsingItemID(itemKey);
+  }
+  //get product By item name
+  const getProductByUsingItemName = (itemName: String) => {
+    const myHost = sessionStorage.getItem('host');
+    axios
+      .get(`${myHost}/api/v1/products/getproductsbyname/${itemName}`) 
+      .then((response) => {
+        if (response.status === 200) {
+          const products = response.data;
+          setProducts(products);
+          console.log('Retrieved products:', products);
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve products'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve products'
+        });
+      });
+  };
+  //get product By item category
+  const getProductByUsingItemCategory = (itemName: String) => {
+    const myHost = sessionStorage.getItem('host');
+    axios
+      .get(`${myHost}/api/v1/products/getproductsbycategory/${itemName}`)
+      .then((response) => {
+        if (response.status === 200) {
+          const products = response.data;
+          setProducts(products);
+          console.log('Retrieved products:', products);
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve products'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve products'
+        });
+      });
+  };
+  //get product By item ID
+  const getProductByUsingItemID = (itemName: String) => {
+    const myHost = sessionStorage.getItem('host');
+    axios
+      .get(`${myHost}/api/v1/products/getproductbyid/${itemName}`) 
+      .then((response) => {
+        if (response.status === 200) {
+          const products = response.data;
+          setProducts(products);
+          console.log('Retrieved products:', products);
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve products'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve products'
+        });
+      });
+  };
   //remove  item
   const removeProductById = (id: number) =>{
     //for testing
@@ -67,13 +145,24 @@ function Dashboard() {
   }
   //add new item
   const addNewProduct = (product: Product) =>{
-    //for testing
-    setProducts((prevProducts) => [...prevProducts, product]);
+
     console.log(product);
 
-    //real code
-    addItemToStore(product);
-    getAllProductsFromStore();
+    //get response of add item to store
+    if(product.name == '' || product.description == '' || product.categoryId == 0 || product.price == 0 || product.stockQTY == 0 || product.soldQTY == 0 || product.imageListId.length == 0 ){
+      Toast.fire({
+        icon: 'error',
+        title: 'Please fill all the fields'
+      })
+
+    } 
+    else{
+      addItemToStore(product);
+      getAllProductsFromStore();
+          //for testing
+    setProducts((prevProducts) => [...prevProducts, product]);
+    }
+
 
   }
     //update existing item
@@ -136,33 +225,40 @@ function Dashboard() {
     }
 
   function addItemToStore(product: Product) {
-    const myHost = sessionStorage.getItem('host');
-    axios
-      .post(`${myHost}/api/v1/products/addnewproduct`, product)
-      .then((response) => {
-        if(response.status == 200){
-          Toast.fire({
-            icon: 'success',
-            title: 'New product added successfully'
-          })
-          
-        }
-        else{
-          Toast.fire({
-            icon: 'error',
-            title: 'Can not add new product'
-          })
-        }
+    console.log("New received item : ", product.name);
+    console.log("New received item : ", product);
+   
+      const myHost = sessionStorage.getItem('host');
+      axios
+        .post(`${myHost}/api/v1/products/addnewproduct`, product)
+        .then((response) => {
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'New product added successfully'
+            })
+            return true;
+          }
+          else{
+            Toast.fire({
+              icon: 'error',
+              title: 'Can not add new product'
+            })
+            return false;
+          }
+  
+        })
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Can not add new product'
+            })
+            return false;
+        });
+    
 
-      })
-      .catch(() => {
-          Toast.fire({
-            icon: 'error',
-            title: 'Can not add new product'
-          })
-      });
+ }
 
-    }
   function getAllProductsFromStore() {
   const myHost = sessionStorage.getItem('host');
   axios
@@ -217,8 +313,15 @@ function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-blue-500 text-center">
+      <div className="grid grid-cols-2 gap-4">
+        <div>    
+          <h1 className="text-4xl font-bold text-blue-500 text-center">
         Product Service  </h1>
+        </div>
+        <div style={{ marginRight: '100px' }}>
+          <SearchBar searchProductByKey={searchProductByKey}/></div>
+      </div>
+  
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
               <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct} isUpdating={isUpdating}

@@ -1,6 +1,4 @@
 import React, { useEffect, useState ,ChangeEvent} from 'react';
-import axios, { AxiosResponse } from "axios";
-import Toast from "../modules/toast";
 
 interface AddProductProps {
   onAddProduct: (product: Product) => void;
@@ -111,7 +109,6 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         setPreviewUrl(undefined);
       }
       
-
       function generateRandomId() {
         const timestamp = Date.now(); // Get current timestamp
         const random = Math.random().toString().substr(2, 5); // Generate random number string
@@ -172,7 +169,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         <div style={containerStyle}>
           <div className="h-56 grid grid-cols-1 gap-0 mt-0">
             <div style={{ textAlign: 'center' }}>
-              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>Add Product</h3>
+              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>New Product</h3>
             </div>
   
             <div className="mt-1 ">
