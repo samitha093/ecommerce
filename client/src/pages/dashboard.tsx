@@ -54,7 +54,7 @@ function Dashboard() {
     imageListId: [] // Set it as an empty array
   };
   const searchProductByKey = (itemKey: String) =>{
-    console.log(  "searchProductByKey : ",itemKey);
+    console.log("searchProductByKey : ",itemKey);
     getProductByUsingItemName(itemKey);
     getProductByUsingItemCategory(itemKey);
     getProductByUsingItemID(itemKey);
@@ -146,19 +146,18 @@ function Dashboard() {
   //add new item
   const addNewProduct = (product: Product) =>{
     console.log(product);
-
     //get response of add item to store
     if(product.name == '' || product.description == '' || product.categoryId == 0 || product.price == 0 || product.stockQTY == 0 || product.soldQTY == 0 || product.imageListId.length == 0 ){
       Toast.fire({
         icon: 'error',
         title: 'Please fill all the fields'
       })
-
     } 
     else{
       addItemToStore(product);
       getAllProductsFromStore();
-          //for testing
+    
+      //for testing
     setProducts((prevProducts) => [...prevProducts, product]);
     }
   }
@@ -315,7 +314,8 @@ function Dashboard() {
   
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
-              <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct}
+              <AddProduct  onAddProduct={addNewProduct} 
+               updateExisingProduct={updateExisingProduct}
                isUpdating={isUpdating}
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}

@@ -2,7 +2,7 @@ import React, { useEffect, useState ,ChangeEvent} from 'react';
 
 interface AddProductProps {
   onAddProduct: (product: Product) => void;
-  updateExisingProduct: (products: Product) => void; // Correct type for the prop
+  updateExisingProduct: (products: Product) => void; 
   isUpdating: boolean;
   currentProduct: Product;
   isDelete: boolean;
