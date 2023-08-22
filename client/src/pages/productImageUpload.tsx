@@ -108,7 +108,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   //update existing image item
   const updateExisingProductImage = (image: Image) =>{
         //testing
-        const updatedIndex = images.findIndex(p => p.id === image.id);
+         const updatedIndex = images.findIndex(p => p.id === image.id);
           if (updatedIndex !== -1) {
             // Create a copy of the products array
             const updatedProducts = [...images];
@@ -203,8 +203,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
 //get all products images from the store
 function getAllProductsImagesFromStore() {
   const myHost = sessionStorage.getItem('host');
+  const accessToken = sessionStorage.getItem('access-token');  
+  // Define the headers with the access token
+  const headers = {
+    'Authorization': `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+  };
   axios
-    .get(`${myHost}/api/v1/images/getallimages`)
+    .get(`${myHost}/api/v1/images/getallimages`,{headers})
     .then((response) => {
       if (response.status === 200) {
         const products = response.data;
@@ -234,8 +240,14 @@ const searchProductImageByKey = (itemKey: string) =>{
   //get product image By image id
 const getProductImageByUsingImageId = (imageId: number) => {
     const myHost = sessionStorage.getItem('host');
+    const accessToken = sessionStorage.getItem('access-token');  
+    // Define the headers with the access token
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    };
     axios
-      .get(`${myHost}/api/v1/images/getimagebyid/${imageId}`) 
+      .get(`${myHost}/api/v1/images/getimagebyid/${imageId}`,{headers}) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
