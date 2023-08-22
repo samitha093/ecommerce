@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import AddCategory from '../components/categoryUpload/addCategory';
 import Toast from "../components/modules/toast";
 import axios from "axios";
+import CategoryTable from '../components/categoryUpload/categoryTable';
+import CategorySearchBar from '../components/categoryUpload/categorySearch';
 
 interface CategoryUploadProps {
    
@@ -169,6 +171,91 @@ function updateCategoryItem(category: Category) {
         });
       });
   }
+    //update category data load
+const loadDataForUpdate = (category: Category) =>{
+    setIsUpdating(true);
+    setCurrentCategory(category);
+}
+  //remove  category by id
+  const removeCategoryById = (id: number) =>{
+    //for testing
+    const updatedProducts = categorys.filter(category => category.id !== id);
+    setCategorys(updatedProducts); 
+    console.log(categorys);
+    
+    //real code
+    removeCategoryFromStore(id);    
+    getAllCategorysFromStore();
+    setIsDelete(true);
+  }
+  //delete category from store
+  function removeCategoryFromStore(id: number) {
+    const myHost = sessionStorage.getItem('host');
+    const accessToken = sessionStorage.getItem('access-token');
+    // Define the headers with the access token
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    };
+      axios
+        .delete(`${myHost}/api/v1/categories/deletecategory/${id}` , { headers: headers })
+        .then((response) => {
+          if (response.status === 200) {
+            Toast.fire({
+              icon: 'success',
+              title: 'Category deleted successfully'
+            });
+
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Can not delete Category'
+            });
+          }
+        })
+        .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Can not delete Category'
+          });
+        });
+   }
+//search category by id
+const searchCategoryByKey = (itemKey: string) =>{
+    console.log("searçh category by id : ",itemKey);
+    const categoryId = parseInt(itemKey, 10);
+    getCategoryByUsingImageId(categoryId);
+  }
+//get category By id
+  const getCategoryByUsingImageId = (categoryId: number) => {
+      const myHost = sessionStorage.getItem('host');
+      const accessToken = sessionStorage.getItem('access-token');  
+      // Define the headers with the access token
+      const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      };
+      axios
+        .get(`${myHost}/api/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
+        .then((response) => {
+          if (response.status === 200) {
+            const categorys = response.data;
+            setCategorys(categorys);
+            console.log('Retrieved category:', categorys);
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Failed to retrieve category'
+            });
+          }
+        })
+        .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve category'
+          });
+        });
+    };
     return (
         <div >
         <div className="grid grid-cols-8">
@@ -177,7 +264,7 @@ function updateCategoryItem(category: Category) {
            Category upload Service  </h1>
           </div>
           <div className="col-span-4" style={{ marginRight: '100px' }}>
-          {/* <ImageSearchBar searchProductImageByKey={searchProductImageByKey}/> */}
+             <CategorySearchBar searchCategoryByKey={searchCategoryByKey}/>
           </div>
       </div>
          <div className="grid grid-cols-8">
@@ -187,15 +274,14 @@ function updateCategoryItem(category: Category) {
                updateExisingCategory={updateExisingCategory}
                currentCategory={currentCategory || defaultCategory}
                isUpdating={isUpdating}
-              
                /> 
           </div>
           <div className="col-span-4" style={divStyle2}>
-         {/* <ImageTable 
-         images={images} 
+         <CategoryTable 
+         categorys={categorys} 
          loadDataForUpdate={loadDataForUpdate}  
-         removeProductImageById={removeProductImageById}
-         /> */}
+         removeCategoryById={removeCategoryById}
+         /> 
           </div>
       </div>
     </div>

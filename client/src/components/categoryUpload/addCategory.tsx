@@ -82,7 +82,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ currentCategory,isUpdating ,o
         <div style={containerStyle}>
           <div className="h-56 grid grid-cols-1 gap-0 mt-0">
             <div style={{ textAlign: 'center' }}>
-              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>New Product</h3>
+              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>New Categoy</h3>
             </div>
             <div className="mt-1 ">
               <input

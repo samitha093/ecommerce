@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
 
-interface AppProps {
-    searchProductImageByKey: (searchKey: string) => void; // Correct type for the prop
+interface searchCategoryByKeyProps {
+    searchCategoryByKey: (searchKey: string) => void; // Correct type for the prop
 }
 
-const ImageSearchBar: React.FC<AppProps> = ({ searchProductImageByKey}) => {
-  const [searchValue, setSearchValue] = useState<string>('');
+const CategorySearchBar: React.FC<searchCategoryByKeyProps> = ({ searchCategoryByKey}) => {
+    const [searchValue, setSearchValue] = useState<string>('');
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-   //convert event to key
-    
     setSearchValue(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    searchProductImageByKey(searchValue);
+    searchCategoryByKey(searchValue);
   };
   
     return (
@@ -46,7 +45,7 @@ const ImageSearchBar: React.FC<AppProps> = ({ searchProductImageByKey}) => {
           type="search"
           id="default-search"
           className="block w-full p-4 pl-10 text-sm text-gray-400 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-00 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Search Image by ID"
+          placeholder="Search category by ID"
           required
           value={searchValue}
           onChange={handleSearchChange}
@@ -63,4 +62,4 @@ const ImageSearchBar: React.FC<AppProps> = ({ searchProductImageByKey}) => {
     );
 };
 
-export default ImageSearchBar;
+export default CategorySearchBar;

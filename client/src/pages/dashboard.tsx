@@ -323,7 +323,7 @@ function Dashboard() {
           </div>
           <div className="col-span-6" style={divStyle2}>
            <ProductTable 
-           products={products}
+            products={products}
             removeProductById={removeProductById} 
             loadDataForUpdate={loadDataForUpdate} />
           </div>
