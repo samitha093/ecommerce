@@ -38,8 +38,19 @@ public class ImageService {
         }
     }
 
-    public ImageDTO getImageById(Long ImageId) {
+    @Transactional
+    public Image getImageentityById(Long ImageId) {
         Image image = productImageRepository.findById(ImageId).orElse(null);
+        if (image != null) {
+            return image;     
+        }else {
+            return null;
+        }
+    }
+
+    @Transactional
+    public ImageDTO getImageById(Long ImageId) {
+        Image image =  getImageentityById(ImageId);
         if (image != null) {
             return new ImageDTO(image.getId(), image.getImageName(), image.getContentType(), image.getImageData());     
         }else {
@@ -47,6 +58,7 @@ public class ImageService {
         }
     }
 
+    @Transactional
     public String deleteImage(Long ImageId) {
         ImageDTO data = getImageById(ImageId);
         if (data == null){
@@ -57,6 +69,7 @@ public class ImageService {
         return null;
     }
 
+    @Transactional
     public Image updateImage(Long imageId, ImageRequest imageRequest, Long userId) {
         Image image = productImageRepository.findById(imageId).orElse(null);
         if (image != null) {
