@@ -168,7 +168,7 @@ public class ImageController {
                 return ApiResponse.success("Success", errorMessage);
             }
         } catch (Exception e) {
-            String errorMessage = "Error in deleting image from databse";
+            String errorMessage = "Error in deleting image from database";
             return ApiResponse.success("Success", errorMessage);
         }
     }

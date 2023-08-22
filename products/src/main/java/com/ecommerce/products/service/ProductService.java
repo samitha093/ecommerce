@@ -36,4 +36,15 @@ public class ProductService {
         Product product = productRepository.findById(productId).orElse(null);
         return product;
     }
+
+    public String deleteProduct(Long productId) {
+        Product product = getbyProductId(productId);
+        if(product == null){
+            String ErrorMessage = "Image with id " + productId + " not found";
+            return ErrorMessage;
+        }
+
+        productRepository.deleteById(productId);
+        return null;
+    }
 }

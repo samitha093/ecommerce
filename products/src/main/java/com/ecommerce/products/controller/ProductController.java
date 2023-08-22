@@ -59,6 +59,47 @@ public class ProductController {
             return ApiResponse.success("Success", errorMessage);
         }
     }
+    //DELETE product
+    @DeleteMapping("/deleteproduct/{ProductId}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<Object>> deleteImage(
+            @PathVariable("ProductId") Long ProductId,
+            @RequestHeader("Authorization") String tokenHeader
+    ) throws Exception {
+        // Autherization
+        String token = tokenHeader.substring(7);
+        Claims claims = tokenValidate.parseToken(token);
+        if (claims != null) {
+            String idString = claims.get("id", String.class);
+            try {
+                Long.valueOf(idString);
+            } catch (NumberFormatException e) {
+                String errorMessage = "Invalid user ID in the token.";
+                return ApiResponse.success("Success", errorMessage);
+            }
+        }else{
+            String errorMessage = "Token is not valid";
+            return ApiResponse.success("Success", errorMessage);
+        }
+        // Send to the service layer
+        try{
+            String dataReturn = productService.deleteProduct(ProductId);
+            if(dataReturn != null) {
+                return ApiResponse.success("Success", dataReturn);
+            }
+            try{
+                List<Product> ProductList = productService.getAllProduct();
+                return ApiResponse.success("Success", ProductList);
+            }catch(Exception e) {
+                String errorMessage = "Error in getting product from database";
+                return ApiResponse.success("Success", errorMessage);
+            }
+
+        }catch(Exception e){
+            String errorMessage = "Error in deleting product from database";
+            return ApiResponse.success("Success", errorMessage);
+        }
+    }
 
     //GET IMAGE BY ID
     @GetMapping("/getproductbyid/{ProductId}")
