@@ -2,7 +2,7 @@ import React, { useEffect, useState ,ChangeEvent} from 'react';
 
 interface AddProductProps {
   onAddProduct: (product: Product) => void;
-  updateExisingProduct: (products: Product) => void; // Correct type for the prop
+  updateExisingProduct: (products: Product) => void; 
   isUpdating: boolean;
   currentProduct: Product;
   isDelete: boolean;
@@ -36,7 +36,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
   const [soldQTY, setSoldQTY] = useState<number>(currentProduct.soldQTY || 0);
   const [imageListId, setImageListId] = useState<Image[]>(currentProduct.imageListId || []);
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {

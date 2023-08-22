@@ -3,7 +3,7 @@ import AddProduct from "../components/dashboard/addProduct";
 import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
-import SearchBar from "../components/dashboard/searchBar";
+import SearchBars from "../components/modules/searchBars";
 
 interface DivStyle {
   backgroundColor: string;
@@ -54,7 +54,7 @@ function Dashboard() {
     imageListId: [] // Set it as an empty array
   };
   const searchProductByKey = (itemKey: String) =>{
-    console.log(  "searchProductByKey : ",itemKey);
+    console.log("searchProductByKey : ",itemKey);
     getProductByUsingItemName(itemKey);
     getProductByUsingItemCategory(itemKey);
     getProductByUsingItemID(itemKey);
@@ -145,40 +145,30 @@ function Dashboard() {
   }
   //add new item
   const addNewProduct = (product: Product) =>{
-
     console.log(product);
-
     //get response of add item to store
     if(product.name == '' || product.description == '' || product.categoryId == 0 || product.price == 0 || product.stockQTY == 0 || product.soldQTY == 0 || product.imageListId.length == 0 ){
       Toast.fire({
         icon: 'error',
         title: 'Please fill all the fields'
       })
-
     } 
     else{
       addItemToStore(product);
       getAllProductsFromStore();
-          //for testing
+    
+      //for testing
     setProducts((prevProducts) => [...prevProducts, product]);
     }
-
-
   }
     //update existing item
   const updateExisingProduct = (product: Product) =>{
-      
-      
+    //testing
     const updatedIndex = products.findIndex(p => p.id === product.id);
-
       if (updatedIndex !== -1) {
         // Create a copy of the products array
         const updatedProducts = [...products];
-
-        // Replace the existing product with the updated product
         updatedProducts[updatedIndex] = product;
-
-        // Update the state with the updated products array
         setProducts(updatedProducts);
       }
 
@@ -258,7 +248,7 @@ function Dashboard() {
     
 
  }
-
+//get all products from the store
   function getAllProductsFromStore() {
   const myHost = sessionStorage.getItem('host');
   axios
@@ -283,6 +273,7 @@ function Dashboard() {
     });
   
 }
+//delete product item from store
   function removeItemFromStore(id: number) {
     const myHost = sessionStorage.getItem('host');
       axios
@@ -308,29 +299,36 @@ function Dashboard() {
             title: 'Can not delete product'
           });
         });
-    
    }
-
   return (
     <div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>    
+      <div className="grid grid-cols-8 gap-4">
+      <div className="col-span-4" style={divStyle1}>
           <h1 className="text-4xl font-bold text-blue-500 text-center">
         Product Service  </h1>
         </div>
-        <div style={{ marginRight: '100px' }}>
-          <SearchBar searchProductByKey={searchProductByKey}/></div>
+        <div  className="col-span-4"  style={{ marginRight: '100px' }}>
+          <SearchBars
+           placeholder="Search Product Name , Category , ID"
+          searchProductByKey={searchProductByKey}/>
+          </div>
       </div>
   
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
-              <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct} isUpdating={isUpdating}
+              <AddProduct  onAddProduct={addNewProduct} 
+               updateExisingProduct={updateExisingProduct}
+               isUpdating={isUpdating}
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
                />
           </div>
           <div className="col-span-6" style={divStyle2}>
-           <ProductTable products={products} removeProductById={removeProductById} loadDataForUpdate={loadDataForUpdate} />
+           <ProductTable 
+           
+            products={products}
+            removeProductById={removeProductById} 
+            loadDataForUpdate={loadDataForUpdate} />
           </div>
           </div>
     </div>

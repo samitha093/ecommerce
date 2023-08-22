@@ -4,7 +4,9 @@ import Home from './pages/home';
 import Authentication from './pages/authentication';
 import Navbar from './components/navbar/navbar';
 import Dashboard from './pages/dashboard';
+import ProductImageUpload from './pages/productImageUpload';
 import { useEffect, useState } from 'react';
+import CategoryUpload from './pages/categoryUpload';
 
 function App() {
   useEffect(() => {
@@ -27,6 +29,8 @@ function App() {
         <Route path="/" element={<Home/>} />
         <Route path="/authentication" element={<Authentication message={message}/>} />
         <Route path="/dashboard"  element={<Dashboard/>} />
+        <Route path="/productImageUpload"  element={<ProductImageUpload/>} />
+        <Route path="/categoryUpload"  element={<CategoryUpload/>} />
       </Routes>
       </div>
     </BrowserRouter>

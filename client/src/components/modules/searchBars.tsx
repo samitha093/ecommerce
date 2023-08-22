@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
 interface AppProps {
-    searchProductByKey: (searchKey: String) => void; // Correct type for the prop
+    searchProductByKey: (searchKey: string) => void; // Correct type for the prop
+    placeholder: string;
 }
 
-const SearchBar: React.FC<AppProps> = ({ searchProductByKey}) => {
+const SearchBars: React.FC<AppProps> = ({ searchProductByKey, placeholder }) => {
     const [searchValue, setSearchValue] = useState<string>('');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +45,8 @@ const SearchBar: React.FC<AppProps> = ({ searchProductByKey}) => {
         <input
           type="search"
           id="default-search"
-          className="block w-full p-4 pl-10 text-sm text-gray-400 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-00 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Search Product Name , Category , ID"
+          className="block w-full p-4 pl-10 text-sm text-gray-400 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-00 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder={placeholder}
           required
           value={searchValue}
           onChange={handleSearchChange}
@@ -62,4 +63,4 @@ const SearchBar: React.FC<AppProps> = ({ searchProductByKey}) => {
     );
 };
 
-export default SearchBar;
+export default SearchBars;
