@@ -4,6 +4,7 @@ import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
 import SearchBar from "../components/dashboard/searchBar";
+import SearchBars from "../components/modules/searchBars";
 
 interface DivStyle {
   backgroundColor: string;
@@ -299,7 +300,6 @@ function Dashboard() {
             title: 'Can not delete product'
           });
         });
-    
    }
   return (
     <div>
@@ -309,7 +309,10 @@ function Dashboard() {
         Product Service  </h1>
         </div>
         <div style={{ marginRight: '100px' }}>
-          <SearchBar searchProductByKey={searchProductByKey}/></div>
+          <SearchBars
+           placeholder="Search Product Name , Category , ID"
+          searchProductByKey={searchProductByKey}/>
+          </div>
       </div>
   
         <div className="grid grid-cols-8">
@@ -323,6 +326,7 @@ function Dashboard() {
           </div>
           <div className="col-span-6" style={divStyle2}>
            <ProductTable 
+           
             products={products}
             removeProductById={removeProductById} 
             loadDataForUpdate={loadDataForUpdate} />

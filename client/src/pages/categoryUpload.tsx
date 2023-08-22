@@ -4,6 +4,7 @@ import Toast from "../components/modules/toast";
 import axios from "axios";
 import CategoryTable from '../components/categoryUpload/categoryTable';
 import CategorySearchBar from '../components/categoryUpload/categorySearch';
+import SearchBars from '../components/modules/searchBars';
 
 interface CategoryUploadProps {
    
@@ -264,7 +265,9 @@ const searchCategoryByKey = (itemKey: string) =>{
            Category upload Service  </h1>
           </div>
           <div className="col-span-4" style={{ marginRight: '100px' }}>
-             <CategorySearchBar searchCategoryByKey={searchCategoryByKey}/>
+          <SearchBars
+           placeholder="Search category by ID"
+          searchProductByKey={searchCategoryByKey}/>
           </div>
       </div>
          <div className="grid grid-cols-8">

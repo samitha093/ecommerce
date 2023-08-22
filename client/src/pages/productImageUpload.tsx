@@ -4,6 +4,7 @@ import Toast from "../components/modules/toast";
 import axios from "axios";
 import ImageTable from '../components/productImageUpload/imageTable';
 import ImageSearchBar from '../components/productImageUpload/imageSearchBar';
+import SearchBars from '../components/modules/searchBars';
 
 interface ProductImageUploadProps {
    
@@ -275,8 +276,10 @@ const getProductImageByUsingImageId = (imageId: number) => {
            Image upload Service  </h1>
           </div>
           <div className="col-span-4" style={{ marginRight: '100px' }}>
-          <ImageSearchBar searchProductImageByKey={searchProductImageByKey}/>
-
+         
+          <SearchBars
+           placeholder="Search Image by ID"
+          searchProductByKey={searchProductImageByKey}/>
           </div>
       </div>
          <div className="grid grid-cols-8">
