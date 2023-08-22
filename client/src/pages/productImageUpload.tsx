@@ -3,7 +3,6 @@ import AddProductImageUpload from '../components/productImageUpload/addProductIm
 import Toast from "../components/modules/toast";
 import axios from "axios";
 import ImageTable from '../components/productImageUpload/imageTable';
-import ImageSearchBar from '../components/productImageUpload/imageSearchBar';
 import SearchBars from '../components/modules/searchBars';
 
 interface ProductImageUploadProps {

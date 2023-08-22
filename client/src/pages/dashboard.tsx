@@ -3,7 +3,6 @@ import AddProduct from "../components/dashboard/addProduct";
 import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
-import SearchBar from "../components/dashboard/searchBar";
 import SearchBars from "../components/modules/searchBars";
 
 interface DivStyle {
@@ -303,12 +302,12 @@ function Dashboard() {
    }
   return (
     <div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>    
+      <div className="grid grid-cols-8 gap-4">
+      <div className="col-span-4" style={divStyle1}>
           <h1 className="text-4xl font-bold text-blue-500 text-center">
         Product Service  </h1>
         </div>
-        <div style={{ marginRight: '100px' }}>
+        <div  className="col-span-4"  style={{ marginRight: '100px' }}>
           <SearchBars
            placeholder="Search Product Name , Category , ID"
           searchProductByKey={searchProductByKey}/>

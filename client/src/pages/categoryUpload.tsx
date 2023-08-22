@@ -3,7 +3,6 @@ import AddCategory from '../components/categoryUpload/addCategory';
 import Toast from "../components/modules/toast";
 import axios from "axios";
 import CategoryTable from '../components/categoryUpload/categoryTable';
-import CategorySearchBar from '../components/categoryUpload/categorySearch';
 import SearchBars from '../components/modules/searchBars';
 
 interface CategoryUploadProps {
