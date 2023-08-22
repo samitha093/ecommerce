@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios, { AxiosResponse } from "axios";
-import Toast from "../modules/toast";
+import React, { useEffect, useState ,ChangeEvent} from 'react';
 
 interface AddProductProps {
   onAddProduct: (product: Product) => void;
@@ -8,6 +6,13 @@ interface AddProductProps {
   isUpdating: boolean;
   currentProduct: Product;
   isDelete: boolean;
+}
+
+interface Image {
+  id: number;
+  imageName: string;
+  contentType: string;
+  imageData: string; 
 }
 
 interface Product {
@@ -18,9 +23,8 @@ interface Product {
   price: number;
   stockQTY: number;
   soldQTY: number;
-  imageListId:string
+  imageListId: Image[];
 }
-
 
 const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduct ,isUpdating ,currentProduct,isDelete  }) => {
   const [productName, setProductName] = useState(currentProduct.name || ''); // Set initial value using currentProduct data
@@ -30,8 +34,27 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
   const [price, setPrice] = useState<number>(currentProduct.price || 0);
   const [stockQTY, setStockQTY] = useState<number>(currentProduct.stockQTY || 0);
   const [soldQTY, setSoldQTY] = useState<number>(currentProduct.soldQTY || 0);
-  const [imageListId, setImageListId] = useState(currentProduct.imageListId || '');
+  const [imageListId, setImageListId] = useState<Image[]>(currentProduct.imageListId || []);
 
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+  
+    if (file) {
+      const newImage: Image = {
+        id: Date.now(),
+        imageName: file.name,
+        contentType: file.type,
+        imageData: URL.createObjectURL(file)
+      };
+  
+      setImageListId(() => [newImage]);
+      setSelectedImage(file);
+      setPreviewUrl(newImage.imageData);
+    }
+  };
   useEffect(() => {
     console.log("currentProduct add file ", currentProduct);
     setProductName(currentProduct.name || '');
@@ -41,10 +64,15 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     setPrice(currentProduct.price || 0);
     setStockQTY(currentProduct.stockQTY || 0);
     setSoldQTY(currentProduct.soldQTY || 0);
-    setImageListId(currentProduct.imageListId || '');
-
-}, [currentProduct]);
-
+    setImageListId(currentProduct.imageListId || []);
+  
+    if (currentProduct.imageListId && currentProduct.imageListId.length > 0) {
+      setPreviewUrl(currentProduct.imageListId[0].imageData);
+    } else {
+      setPreviewUrl(undefined);
+    }
+  }, [currentProduct]);
+  
     const containerStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'center',
@@ -70,16 +98,17 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         setSoldQTY(event.target.value);
       };
       function clearProductDetails() {
-          setId(0);
-          setProductName("");
-          setDescription("");
-          setCategoryId(0);
-          setPrice(0);
-          setStockQTY(0);
-          setSoldQTY(0);
-          setImageListId("")
-          
+        setId(0);
+        setProductName("");
+        setDescription("");
+        setCategoryId(0);
+        setPrice(0);
+        setStockQTY(0);
+        setSoldQTY(0);
+        setImageListId([]); 
+        setPreviewUrl(undefined);
       }
+      
       function generateRandomId() {
         const timestamp = Date.now(); // Get current timestamp
         const random = Math.random().toString().substr(2, 5); // Generate random number string
@@ -96,6 +125,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
       };    
       function handleUpdateExistingProduct() {
          setId(generateRandomId());
+         console.log("image id ",imageListId);
           const productDetails = {
             id: id,
             name: productName,
@@ -104,8 +134,9 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
             price: price,
             stockQTY: stockQTY,
             soldQTY: soldQTY,
-            imageListId:""
+            imageListId:imageListId
           };
+
           console.log("Updated product");
           console.log(productDetails);
           updateExisingProduct(productDetails);
@@ -122,8 +153,10 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
             price: price,
             stockQTY: stockQTY,
             soldQTY: soldQTY,
-            imageListId:""
+            imageListId:imageListId
           };
+          console.log("New product");
+          console.log(productDetails);
           onAddProduct(productDetails); // Call the onAddProduct function with the new product details    
           clearProductDetails();    
       }
@@ -136,7 +169,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         <div style={containerStyle}>
           <div className="h-56 grid grid-cols-1 gap-0 mt-0">
             <div style={{ textAlign: 'center' }}>
-              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>Add Product</h3>
+              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>New Product</h3>
             </div>
   
             <div className="mt-1 ">
@@ -197,7 +230,25 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
               />
             </div>
-    
+          <div className="mt-1">
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png"
+                  onChange={handleImageChange}
+                />
+                {selectedImage && (
+                  <div>
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      style={{ maxWidth: '100%', maxHeight: '100px' }}
+                    />
+                    <p>Selected Image: {selectedImage.name}</p>
+                  </div>
+                )}
+              </div>
+
+
             <div style={{ textAlign: 'center' }} className="mt-8">
             <button
             onClick={handleSubmit}
