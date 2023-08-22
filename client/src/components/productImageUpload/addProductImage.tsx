@@ -2,6 +2,10 @@ import React, { useEffect, useState ,ChangeEvent} from 'react';
 
 interface AddProductImageUploadProps {
     onAddProductImage: (image: Image) => void;
+    updateExisingProductImage: (image: Image) => void; // Correct type for the prop
+
+    isUpdating: boolean;
+    currentProduct: Image;
 }
 interface Image {
     id: number;
@@ -9,7 +13,7 @@ interface Image {
     contentType: string;
     imageData: string; 
   }
-const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProductImage}) => {
+const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProductImage,isUpdating,currentProduct,updateExisingProductImage}) => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
@@ -41,12 +45,33 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
 
       const handleSubmit = () => {
         if (productImage) {
-          onAddProductImage(productImage);
+            if (isUpdating) {
+                console.log("Updating product....");
+                productImage.id =currentProduct.id;
+                updateExisingProductImage(productImage);  
+                clearProductDetails();   
+              } else {
+                console.log("Adding new product....");
+                
+                onAddProductImage(productImage);
+                clearProductDetails();
+              }
         } else {
           console.error("No image selected");
         }
       };
-      
+      useEffect(() => {
+        console.log("current Product image add file ", currentProduct);
+        if (currentProduct && currentProduct.imageData.length > 0) {
+          setPreviewUrl(currentProduct.imageData);
+        } else {
+          setPreviewUrl(undefined);
+        }
+      }, [currentProduct]);
+
+      function clearProductDetails() {
+        setPreviewUrl(undefined);
+      }
     return (
         <div className="grid grid-cols-2 gap-0 content-center ..." >
         <div style={containerStyle}>
@@ -54,8 +79,6 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
             <div style={{ textAlign: 'center' }}>
               <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>New Image Product</h3>
             </div>
-  
-
             <div className="mt-1">
                 <input
                   type="file"
@@ -80,7 +103,7 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
               style={{ padding: '15px', width: '130px' }}
               className={`text-white font-bold py-2 px-4 rounded ${true ? 'bg-blue-900 hover:bg-green-700' : 'bg-gray-400'}`}   
             >
-                Upload
+                {isUpdating ? 'Update' : 'Add'}
             </button>
           </div>
           </div>

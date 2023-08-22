@@ -164,18 +164,12 @@ function Dashboard() {
   }
     //update existing item
   const updateExisingProduct = (product: Product) =>{
-      
-      
+    //testing
     const updatedIndex = products.findIndex(p => p.id === product.id);
-
       if (updatedIndex !== -1) {
         // Create a copy of the products array
         const updatedProducts = [...products];
-
-        // Replace the existing product with the updated product
         updatedProducts[updatedIndex] = product;
-
-        // Update the state with the updated products array
         setProducts(updatedProducts);
       }
 
@@ -255,7 +249,7 @@ function Dashboard() {
     
 
  }
-
+//get all products from the store
   function getAllProductsFromStore() {
   const myHost = sessionStorage.getItem('host');
   axios
@@ -280,6 +274,7 @@ function Dashboard() {
     });
   
 }
+//delete product item from store
   function removeItemFromStore(id: number) {
     const myHost = sessionStorage.getItem('host');
       axios
@@ -321,13 +316,17 @@ function Dashboard() {
   
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
-              <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct} isUpdating={isUpdating}
+              <AddProduct  onAddProduct={addNewProduct} updateExisingProduct={updateExisingProduct}
+               isUpdating={isUpdating}
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
                />
           </div>
           <div className="col-span-6" style={divStyle2}>
-           <ProductTable products={products} removeProductById={removeProductById} loadDataForUpdate={loadDataForUpdate} />
+           <ProductTable 
+           products={products}
+            removeProductById={removeProductById} 
+            loadDataForUpdate={loadDataForUpdate} />
           </div>
           </div>
     </div>
