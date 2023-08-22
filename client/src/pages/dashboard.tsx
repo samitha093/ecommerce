@@ -302,7 +302,6 @@ function Dashboard() {
         });
     
    }
-
   return (
     <div>
       <div className="grid grid-cols-2 gap-4">

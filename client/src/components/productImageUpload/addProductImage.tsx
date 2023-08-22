@@ -3,7 +3,7 @@ import React, { useEffect, useState ,ChangeEvent} from 'react';
 interface AddProductImageUploadProps {
     onAddProductImage: (image: Image) => void;
     updateExisingProductImage: (image: Image) => void; // Correct type for the prop
-
+    isDelete: boolean;
     isUpdating: boolean;
     currentProduct: Image;
 }
@@ -13,7 +13,7 @@ interface Image {
     contentType: string;
     imageData: string; 
   }
-const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProductImage,isUpdating,currentProduct,updateExisingProductImage}) => {
+const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProductImage,isUpdating,currentProduct,updateExisingProductImage,isDelete}) => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
@@ -72,6 +72,10 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
       function clearProductDetails() {
         setPreviewUrl(undefined);
       }
+
+      useEffect(() => {
+        clearProductDetails();
+    }, [isDelete]);
     return (
         <div className="grid grid-cols-2 gap-0 content-center ..." >
         <div style={containerStyle}>

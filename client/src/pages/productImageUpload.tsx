@@ -3,6 +3,7 @@ import AddProductImageUpload from '../components/productImageUpload/addProductIm
 import Toast from "../components/modules/toast";
 import axios from "axios";
 import ImageTable from '../components/productImageUpload/imageTable';
+import ImageSearchBar from '../components/productImageUpload/imageSearchBar';
 
 interface ProductImageUploadProps {
    
@@ -27,11 +28,13 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
     const divStyle1: DivStyle = {
         backgroundColor: 'white', 
         padding: '10px', 
+
       };
       const divStyle2: DivStyle = {
         backgroundColor: 'white',
-        padding: '10px', 
+        padding: '10px'
       };
+      
   // Define a default product object
   const defaultProduct: Image = {
     id: 0,
@@ -53,7 +56,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
         else{
           addProductImageToStore(image);
           getAllProductsImagesFromStore();
-          
+
           //testing
           setImages((prevProducts) => [...prevProducts, image]);
         }
@@ -124,7 +127,6 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       const myHost = sessionStorage.getItem('host');
       const accessToken = sessionStorage.getItem('access-token');
       const imageId = image.id; // Assuming that 'id' is the image ID property
-    
       // Define the headers with the access token
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
@@ -223,22 +225,56 @@ function getAllProductsImagesFromStore() {
     });
   
 }
+//search image by id
+const searchProductImageByKey = (itemKey: string) =>{
+  console.log("searchProductImageByKey : ",itemKey);
+  const imageID = parseInt(itemKey, 10);
+  getProductImageByUsingImageId(imageID);
+}
+  //get product image By image id
+const getProductImageByUsingImageId = (imageId: number) => {
+    const myHost = sessionStorage.getItem('host');
+    axios
+      .get(`${myHost}/api/v1/images/getimagebyid/${imageId}`) 
+      .then((response) => {
+        if (response.status === 200) {
+          const products = response.data;
+          setImages(products);
+          console.log('Retrieved products:', products);
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve images'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve images'
+        });
+      });
+  };
     return (
       <div >
-        <div className="grid grid-cols-2 gap-4">    
+        <div className="grid grid-cols-8">
+          <div className="col-span-4" style={divStyle1}>
           <h1 className="text-4xl font-bold text-blue-500 text-center">
            Image upload Service  </h1>
-        </div>
-        <div style={{ marginRight: '100px' }}>
-         
-        </div>
-  
-        <div className="grid grid-cols-8">
+          </div>
+          <div className="col-span-4" style={{ marginRight: '100px' }}>
+          <ImageSearchBar searchProductImageByKey={searchProductImageByKey}/>
+
+          </div>
+      </div>
+         <div className="grid grid-cols-8">
           <div className="col-span-4" style={divStyle1}>
             <AddProductImageUpload 
             updateExisingProductImage={updateExisingProductImage}
               currentProduct={currentProduct || defaultProduct}
-              onAddProductImage={onAddProductImage} isUpdating={isUpdating}/>
+              onAddProductImage={onAddProductImage}
+               isUpdating={isUpdating}
+               isDelete={isDelete}/>
           </div>
           <div className="col-span-4" style={divStyle2}>
          <ImageTable 
@@ -247,7 +283,7 @@ function getAllProductsImagesFromStore() {
          removeProductImageById={removeProductImageById}
          />
           </div>
-          </div>
+      </div>
     </div>
     );
 };
