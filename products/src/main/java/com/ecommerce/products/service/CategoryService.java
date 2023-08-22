@@ -27,6 +27,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    @Transactional
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         if (categories != null) {
@@ -38,6 +39,7 @@ public class CategoryService {
         }
     }
     
+    @Transactional
     public CategoryDto getCategoriesByName(String name){
         Category category = categoryRepository.findByName(name);
         if (category != null) {
@@ -47,8 +49,19 @@ public class CategoryService {
         }
     }
 
-    public CategoryDto getCategoryById(Long categoryId) {
+    @Transactional
+    public Category getCategoryentityById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category != null) {
+            return category;
+        }else {
+            return null;
+        }
+    }
+
+    @Transactional
+    public CategoryDto getCategoryById(Long categoryId) {
+        Category category = getCategoryentityById(categoryId);
         if (category != null) {
             return new CategoryDto(category.getId(), category.getName(), category.getDescription());
         }else {
@@ -56,6 +69,7 @@ public class CategoryService {
         }
     }
 
+    @Transactional
     public String deleteCategory(Long categoryId) {
         CategoryDto data = getCategoryById(categoryId);
         if (data == null) {
@@ -72,6 +86,7 @@ public class CategoryService {
         }
     }
 
+    @Transactional
     public void updateCategory(Long categoryId, CategoryRequest categoryRequest, Long userId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         if (category != null) {

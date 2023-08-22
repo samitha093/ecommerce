@@ -23,7 +23,7 @@ public class Product extends AuditEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category categoryId;
+    private Category category;
 
     private int price;
 
@@ -33,8 +33,22 @@ public class Product extends AuditEntity {
     @Column(name = "sold_qty")
     private int soldQTY;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
-    @JoinColumn(name = "product_id")
-    private List<Image> imageListId;
+    @ManyToMany
+    @JoinTable(
+        name = "product_image_relations",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> imageList = new ArrayList<>();
+
+    public void addImage(Image image) {
+        imageList.add(image);
+        image.getProducts().add(this); 
+    }
+
+    public void removeImage(Image image) {
+        imageList.remove(image);
+        image.getProducts().remove(this);
+    }
     
 }

@@ -1,5 +1,8 @@
 package com.ecommerce.products.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +23,12 @@ public class Image  extends AuditEntity{
     @Column(name = "content_type")
     private String contentType;
 
-    @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column(name = "image_data")
     private String imageData;
+
+    @ManyToMany(mappedBy = "imageList")
+    @JsonIgnore
+    private List<Product> products;
 
 }
