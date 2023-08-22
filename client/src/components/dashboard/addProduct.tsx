@@ -36,7 +36,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
   const [soldQTY, setSoldQTY] = useState<number>(currentProduct.soldQTY || 0);
   const [imageListId, setImageListId] = useState<Image[]>(currentProduct.imageListId || []);
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {

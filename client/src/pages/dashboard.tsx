@@ -145,7 +145,6 @@ function Dashboard() {
   }
   //add new item
   const addNewProduct = (product: Product) =>{
-
     console.log(product);
 
     //get response of add item to store
@@ -162,8 +161,6 @@ function Dashboard() {
           //for testing
     setProducts((prevProducts) => [...prevProducts, product]);
     }
-
-
   }
     //update existing item
   const updateExisingProduct = (product: Product) =>{
