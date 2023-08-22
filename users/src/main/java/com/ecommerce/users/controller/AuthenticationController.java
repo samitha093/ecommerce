@@ -46,15 +46,13 @@ public class AuthenticationController {
 
             // Return the ResponseEntity with the access token in the response body
             return ResponseEntity.ok()
-                    .body(response.getAccessToken());
-//            .body(response.getStatus());
+//                    .body(response.getAccessToken());
+            .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
                     .body(response.getStatus());
         }
-
-
     }
 
     @Value("${application.security.jwt.expiration}")
@@ -84,8 +82,8 @@ public class AuthenticationController {
 
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getRefreshToken());
-//                    .body(response.getStatus());
+//                    .body(response.getAccessToken());
+                    .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()

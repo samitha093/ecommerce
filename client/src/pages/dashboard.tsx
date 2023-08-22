@@ -307,7 +307,7 @@ function Dashboard() {
           <h1 className="text-4xl font-bold text-blue-500 text-center">
         Product Service  </h1>
         </div>
-        <div  className="col-span-4"  style={{ marginRight: '100px' }}>
+        <div  className="col-span-4"  style={{ marginRight: '200px' }}>
           <SearchBars
            placeholder="Search Product Name , Category , ID"
           searchProductByKey={searchProductByKey}/>

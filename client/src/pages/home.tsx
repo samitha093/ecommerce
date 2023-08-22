@@ -3,6 +3,7 @@ import Card from "../components/home/card";
 import { useEffect, useState } from "react";
 import Toast from "../components/modules/toast";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 interface Image {
   id: number;
@@ -23,6 +24,14 @@ interface Product {
 }
  function Home() {
   const [products1, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
+  //get  access-token from cookie
+
+
+  useEffect(() => {
+    // Retrieve the access token from cookies
+    const token = Cookies.get('Access-token');
+    console.log(token);
+  }, []);
 
   //this is for testing
   const products: Product[] = [

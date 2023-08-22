@@ -3,6 +3,7 @@ import Toast from "../modules/toast";
 import axios, { AxiosResponse } from "axios";
 import jwtDecode from 'jwt-decode';
 import Loading from "../modules/loading";
+import { Link, useNavigate } from 'react-router-dom';
 
 
 interface AuthResponse {
@@ -15,7 +16,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [useremail, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -61,6 +62,11 @@ function Login() {
           title: 'Succeessfully logged in'
         })
         setIsLoading(false);
+        //local storage save
+        localStorage.setItem('isLogin', true.toString());
+        if(localStorage.getItem('isLogin') == 'true'){
+        navigate('/dashboard')
+        }
       }
       else{
         console.log(response.data);

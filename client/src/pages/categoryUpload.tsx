@@ -263,7 +263,7 @@ const searchCategoryByKey = (itemKey: string) =>{
           <h1 className="text-4xl font-bold text-blue-500 text-center">
            Category upload Service  </h1>
           </div>
-          <div className="col-span-4" style={{ marginRight: '100px' }}>
+          <div className="col-span-4" style={{ marginRight: '200px' }}>
           <SearchBars
            placeholder="Search category by ID"
           searchProductByKey={searchCategoryByKey}/>
