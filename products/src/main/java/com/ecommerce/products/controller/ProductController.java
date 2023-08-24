@@ -43,11 +43,11 @@ public class ProductController {
                 UserId = Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         //Request Validation
         // Send to the service layer
@@ -56,7 +56,7 @@ public class ProductController {
             return ApiResponse.success("Success", product);
         } catch (Exception e) {
             String errorMessage = "Error in Saving product on database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
     //UPDATE product
@@ -78,18 +78,18 @@ public class ProductController {
                 UserId = Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         } else {
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try{
             productService.updateProduct(ProductId,productRequest,UserId);
         }catch(Exception e){
             String errorMessage = "Error in deleting product from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // update data
         try{
@@ -97,7 +97,7 @@ public class ProductController {
             return ApiResponse.success("Success", ProductList);
         }catch(Exception e) {
             String errorMessage = "Error in getting product from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -117,29 +117,29 @@ public class ProductController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try{
             String dataReturn = productService.deleteProduct(ProductId);
             if(dataReturn != null) {
-                return ApiResponse.success("Success", dataReturn);
+                return ApiResponse.error(dataReturn);
             }
             try{
                 List<Product> ProductList = productService.getAllProduct();
                 return ApiResponse.success("Success", ProductList);
             }catch(Exception e) {
                 String errorMessage = "Error in getting product from database";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
 
         }catch(Exception e){
             String errorMessage = "Error in deleting product from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -147,31 +147,31 @@ public class ProductController {
     @GetMapping("/getproductbyid/{ProductId}")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> getImageById(
-            @PathVariable("ProductId") Long ProductId,
-            @RequestHeader("Authorization") String tokenHeader
+            @PathVariable("ProductId") Long ProductId
+//            @RequestHeader("Authorization") String tokenHeader
     ) throws Exception {
-        // Autherization
-        String token = tokenHeader.substring(7);
-        Claims claims = tokenValidate.parseToken(token);
-        if (claims != null) {
-            String idString = claims.get("id", String.class);
-            try {
-                Long.valueOf(idString);
-            } catch (NumberFormatException e) {
-                String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
-            }
-        } else {
-            String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
-        }
+//        // Autherization
+//        String token = tokenHeader.substring(7);
+//        Claims claims = tokenValidate.parseToken(token);
+//        if (claims != null) {
+//            String idString = claims.get("id", String.class);
+//            try {
+//                Long.valueOf(idString);
+//            } catch (NumberFormatException e) {
+//                String errorMessage = "Invalid user ID in the token.";
+//                return ApiResponse.error(errorMessage);
+//            }
+//        } else {
+//            String errorMessage = "Token is not valid";
+//            return ApiResponse.error( errorMessage);
+//        }
         // Send to the service layer
         try{
             Product product = productService.getbyProductId(ProductId);
             return ApiResponse.success("Success", product);
         }catch(Exception e){
             String errorMessage = "Error in getting images from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -179,30 +179,30 @@ public class ProductController {
     @GetMapping("/getallProducts")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> getAllProducts(
-            @RequestHeader("Authorization") String tokenHeader
+//            @RequestHeader("Authorization") String tokenHeader
     )throws Exception{
-        // Autherization
-        String token = tokenHeader.substring(7);
-        Claims claims = tokenValidate.parseToken(token);
-        if (claims != null) {
-            String idString = claims.get("id", String.class);
-            try {
-                Long.valueOf(idString);
-            } catch (NumberFormatException e) {
-                String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
-            }
-        }else{
-            String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
-        }
+//        // Autherization
+//        String token = tokenHeader.substring(7);
+//        Claims claims = tokenValidate.parseToken(token);
+//        if (claims != null) {
+//            String idString = claims.get("id", String.class);
+//            try {
+//                Long.valueOf(idString);
+//            } catch (NumberFormatException e) {
+//                String errorMessage = "Invalid user ID in the token.";
+//                return ApiResponse.error(errorMessage);
+//            }
+//        }else{
+//            String errorMessage = "Token is not valid";
+//            return ApiResponse.error( errorMessage);
+//        }
         // Send to the service layer
         try{
             List<Product> ProductList = productService.getAllProduct();
             return ApiResponse.success("Success", ProductList);
         }catch(Exception e) {
             String errorMessage = "Error in getting product from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 }

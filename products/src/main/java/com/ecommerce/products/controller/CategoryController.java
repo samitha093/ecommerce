@@ -59,11 +59,11 @@ public class CategoryController {
                 UserId = Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         //Request Validation
         categoryRequestValidator.validate(categoryRequest, bindingResult);
@@ -71,7 +71,7 @@ public class CategoryController {
             List<String> errorMessages = bindingResult.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-            return ApiResponse.success("Success", errorMessages);
+            return ApiResponse.error(errorMessages.toString());
         }
         // Send to the service layer
         try {
@@ -80,7 +80,7 @@ public class CategoryController {
             return ApiResponse.success("Success", categoryDto);
         } catch (Exception e) {
             String errorMessage = "Error occurred while creating the category.";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -103,11 +103,11 @@ public class CategoryController {
                 UserId = Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         //Request Validation
         categoryRequestValidator.validate(categoryRequest, bindingResult);
@@ -115,14 +115,14 @@ public class CategoryController {
             List<String> errorMessages = bindingResult.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-            return ApiResponse.success("Success", errorMessages);
+            return ApiResponse.error(errorMessages.toString());
         }
         // Send to the service layer
         try {
             categoryService.updateCategory(categoryId, categoryRequest, UserId);
         } catch (Exception e) {
             String errorMessage = "Error occurred while updating the category.";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Return the response
         List<CategoryDto> categoryList = categoryService.getAllCategories();
@@ -146,17 +146,17 @@ public class CategoryController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try {
             errorMessage = categoryService.deleteCategory(categoryId);
             if (errorMessage != null){
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }else{
                 // Return the response
                 List<CategoryDto> categoryList = categoryService.getAllCategories();
@@ -164,7 +164,7 @@ public class CategoryController {
             }
         } catch (Exception e) {
             errorMessage = "Error occurred while deleting the category."; 
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
 
     }
@@ -187,24 +187,24 @@ public class CategoryController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try {
             CategoryDto category = categoryService.getCategoryById(categoryId);
             if (category == null) {
                 errorMessage = "Category not found.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
             return ApiResponse.success("Success", category);
 
         } catch (Exception e) {
             errorMessage = "Error occurred while finding the category.";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -224,11 +224,11 @@ public class CategoryController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error( errorMessage);
             }
         }else{
             errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try {
@@ -237,7 +237,7 @@ public class CategoryController {
 
         } catch (Exception e) {
             errorMessage = "Error occurred while creating the category.";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error( errorMessage);
         }
     }
 }

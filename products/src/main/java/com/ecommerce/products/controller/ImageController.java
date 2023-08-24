@@ -56,11 +56,11 @@ public class ImageController {
                 UserId = Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         //Request Validation
         ImageRequestValidator.validate(imageRequest, bindingResult);
@@ -68,7 +68,7 @@ public class ImageController {
             List<String> errors = bindingResult.getAllErrors().stream()
                     .map(objectError -> objectError.getDefaultMessage())
                     .collect(Collectors.toList());
-            return ApiResponse.success("Success", errors);
+            return ApiResponse.error(errors.toString());
         }
         // Send to the service layer
         try {
@@ -77,7 +77,7 @@ public class ImageController {
             return ApiResponse.success("Success", imageDTO);
         } catch (Exception e) {
             String errorMessage = "Error in Saving image on databse";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -100,11 +100,11 @@ public class ImageController {
                 UserId = Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error( errorMessage);
         }
         //Request Validation
         ImageRequestValidator.validate(imageRequest, bindingResult);
@@ -112,14 +112,14 @@ public class ImageController {
             List<String> errors = bindingResult.getAllErrors().stream()
                     .map(objectError -> objectError.getDefaultMessage())
                     .collect(Collectors.toList());
-            return ApiResponse.success("Success", errors);
+            return ApiResponse.error(errors.toString());
         }
         // Send to the service layer
         try {
             imageService.updateImage(ImageId, imageRequest, UserId);
         } catch (Exception e) {
             String errorMessage = "Error in updating image on databse";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         //send all data to api ;ayer
         try{
@@ -127,7 +127,7 @@ public class ImageController {
             return ApiResponse.success("Success", imageList);
         }catch(Exception e){
             String errorMessage = "Error in getting images from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -147,17 +147,17 @@ public class ImageController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try {
             String dataReturn = imageService.deleteImage(ImageId);
             if (dataReturn != null) {
-                return ApiResponse.success("Success", dataReturn);
+                return ApiResponse.error(dataReturn);
             }
                     //send all data to api ;ayer
             try{
@@ -165,11 +165,11 @@ public class ImageController {
                 return ApiResponse.success("Success", imageList);
             }catch(Exception e){
                 String errorMessage = "Error in getting images from database";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         } catch (Exception e) {
             String errorMessage = "Error in deleting image from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -189,11 +189,11 @@ public class ImageController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         ImageDTO imageDTO = imageService.getImageById(ImageId);
@@ -201,7 +201,7 @@ public class ImageController {
             return ApiResponse.success("Success", imageDTO);
         } else {
             String errorMessage = "Image not found";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
@@ -220,11 +220,11 @@ public class ImageController {
                 Long.valueOf(idString);
             } catch (NumberFormatException e) {
                 String errorMessage = "Invalid user ID in the token.";
-                return ApiResponse.success("Success", errorMessage);
+                return ApiResponse.error(errorMessage);
             }
         }else{
             String errorMessage = "Token is not valid";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
         // Send to the service layer
         try{
@@ -232,7 +232,7 @@ public class ImageController {
             return ApiResponse.success("Success", imageList);
         }catch(Exception e){
             String errorMessage = "Error in getting images from database";
-            return ApiResponse.success("Success", errorMessage);
+            return ApiResponse.error(errorMessage);
         }
     }
 
