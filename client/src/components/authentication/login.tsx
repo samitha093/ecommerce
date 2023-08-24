@@ -54,7 +54,9 @@ function Login() {
     const myHost = sessionStorage.getItem('host');
     // Send a POST request to the /loginUser endpoint with the user details
     setIsLoading(true);
-    axios.post(`${myHost}/api/v1/auth/login`, userDetails)
+    axios.post(`${myHost}/api/v1/auth/login`, userDetails, {
+      withCredentials: true,
+    })
     .then((response: AxiosResponse<AuthResponse>) => {
       if(response.status == 200){
         Toast.fire({
@@ -62,11 +64,18 @@ function Login() {
           title: 'Succeessfully logged in'
         })
         setIsLoading(false);
-        //local storage save
-        localStorage.setItem('isLogin', true.toString());
-        if(localStorage.getItem('isLogin') == 'true'){
-        navigate('/dashboard')
-        }
+      console.log(response);
+      // Check if the header exists before accessing it
+      const refresh_token = response.headers['refresh-token'];
+      if (refresh_token) {
+        console.log(refresh_token);
+              // Store the refresh_token in sessionStorage
+      sessionStorage.setItem('refresh_token', refresh_token);
+      } else {
+        console.log('Refresh-Token header not found in the response.');
+      }
+
+   
       }
       else{
         console.log(response.data);

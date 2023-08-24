@@ -15,15 +15,12 @@ function App() {
   }, []);
 
   const [message, setMessage] = useState('');
-
   const handleMessageChange = (newMessage: any) => {
     setMessage(newMessage);
   };
-
   return (
     <BrowserRouter>
       <div>
-  
         <Navbar handleMessageChange={handleMessageChange} />
         <Routes>
         <Route path="/" element={<Home/>} />

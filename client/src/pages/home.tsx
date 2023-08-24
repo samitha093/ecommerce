@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Toast from "../components/modules/toast";
 import axios from "axios";
 import Cookies from 'js-cookie';
+import GetAccessToken from "../components/modules/getAccessToken";
 
 interface Image {
   id: number;
@@ -24,14 +25,13 @@ interface Product {
 }
  function Home() {
   const [products1, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
-  //get  access-token from cookie
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  // Callback function to receive the access token from GetAccessToken component
+  const handleAccessTokenReceived = (token: string) => {
+    setAccessToken(token);
+    console.log('Access token received in Home component', token);
+  };
 
-
-  useEffect(() => {
-    // Retrieve the access token from cookies
-    const token = Cookies.get('Access-token');
-    console.log(token);
-  }, []);
 
   //this is for testing
   const products: Product[] = [
@@ -119,6 +119,7 @@ interface Product {
 
   return (
     <div>
+      <GetAccessToken onAccessTokenReceived={handleAccessTokenReceived} />
       <Background/>
        <div className="grid grid-cols-4 gap-4 mt-5">
         {products.map((product) => (

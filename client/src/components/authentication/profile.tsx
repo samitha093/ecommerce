@@ -75,6 +75,15 @@ function Profile() {
         .post(`${myHost}/api/v1/auth/register`, userDetails)
         .then((response) => {
           if(response.status == 200){
+              // Check if the header exists before accessing it
+              const refresh_token = response.headers['refresh-token'];
+              if (refresh_token) {
+                console.log(refresh_token);
+                      // Store the refresh_token in sessionStorage
+              sessionStorage.setItem('refresh_token', refresh_token);
+              } else {
+                console.log('Refresh-Token header not found in the response.');
+              }
             Toast.fire({
               icon: 'success',
               title: 'New user added successfully'
