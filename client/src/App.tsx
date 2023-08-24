@@ -11,7 +11,7 @@ import CategoryUpload from './pages/categoryUpload';
 function App() {
   useEffect(() => {
     var hostname = window.location.hostname;
-    sessionStorage.setItem('host', 'http://' + hostname + ':8083');
+    sessionStorage.setItem('host', 'http://' + hostname + ':8082');
   }, []);
 
   const [message, setMessage] = useState('');

@@ -4,6 +4,7 @@ import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
 import SearchBars from "../components/modules/searchBars";
+import GetAccessToken from "../components/modules/getAccessToken";
 
 interface DivStyle {
   backgroundColor: string;
@@ -42,6 +43,11 @@ function Dashboard() {
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const handleAccessTokenReceived = (token: string) => {
+    setAccessToken(token);
+    console.log('Access token received in Home component', token);
+  };
   // Define a default product object
   const defaultProduct: Product = {
     id: 0,
@@ -62,8 +68,12 @@ function Dashboard() {
   //get product By item name
   const getProductByUsingItemName = (itemName: String) => {
     const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
     axios
-      .get(`${myHost}/api/v1/products/getproductsbyname/${itemName}`) 
+      .get(`${myHost}/api/v1/products/getproductsbyname/${itemName}`, { headers: headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -86,8 +96,12 @@ function Dashboard() {
   //get product By item category
   const getProductByUsingItemCategory = (itemName: String) => {
     const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
     axios
-      .get(`${myHost}/api/v1/products/getproductsbycategory/${itemName}`)
+      .get(`${myHost}/api/v1/products/getproductsbycategory/${itemName}`, { headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -110,8 +124,12 @@ function Dashboard() {
   //get product By item ID
   const getProductByUsingItemID = (itemName: String) => {
     const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
     axios
-      .get(`${myHost}/api/v1/products/getproductbyid/${itemName}`) 
+      .get(`${myHost}/api/v1/products/getproductbyid/${itemName}`, { headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -188,8 +206,12 @@ function Dashboard() {
   
     function updateStore(product: Product) {
       const myHost = sessionStorage.getItem('host');
+      const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json', 
+      };
       axios
-        .put(`${myHost}/api/v1/products/updateproduct`, product)
+        .put(`${myHost}/api/v1/products/updateproduct`, product, { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -217,10 +239,13 @@ function Dashboard() {
   function addItemToStore(product: Product) {
     console.log("New received item : ", product.name);
     console.log("New received item : ", product);
-   
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
       const myHost = sessionStorage.getItem('host');
       axios
-        .post(`${myHost}/api/v1/products/addnewproduct`, product)
+        .post(`${myHost}/api/v1/products/addnewproduct`, product, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
@@ -251,13 +276,17 @@ function Dashboard() {
 //get all products from the store
   function getAllProductsFromStore() {
   const myHost = sessionStorage.getItem('host');
+  const headers = {
+    'Authorization': `Bearer ${accessToken}`,
+    'Content-Type': 'application/json', 
+  };
   axios
     .get(`${myHost}/api/v1/getallproducts`)
     .then((response) => {
       if (response.status === 200) {
         const products = response.data;
         setProducts(products);
-        console.log('Retrieved products:', products);
+        console.log('Retrieved products:', products,{ headers: headers });
       } else {
         Toast.fire({
           icon: 'error',
@@ -276,8 +305,12 @@ function Dashboard() {
 //delete product item from store
   function removeItemFromStore(id: number) {
     const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
       axios
-        .delete(`${myHost}/api/v1/products/${id}`)
+        .delete(`${myHost}/api/v1/products/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -302,6 +335,7 @@ function Dashboard() {
    }
   return (
     <div>
+      <GetAccessToken onAccessTokenReceived={handleAccessTokenReceived} />
       <div className="grid grid-cols-8 gap-4">
       <div className="col-span-4" style={divStyle1}>
           <h1 className="text-4xl font-bold text-blue-500 text-center">
