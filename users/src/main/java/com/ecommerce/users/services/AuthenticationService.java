@@ -57,7 +57,7 @@ public class AuthenticationService {
                 .status("User registered successfully")
                 .build();
     }
-
+//login
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Optional<User> userOptional = repository.findByEmail(request.getEmail());
 
@@ -106,32 +106,16 @@ public class AuthenticationService {
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateAccessToken(user);
-                // revokeAllUserTokens(user);
-                // saveUserToken(user, accessToken);
 
-                // Set the new access token as a cookie in the response
-                Cookie accessTokenCookie = new Cookie("Access-token", accessToken);
-                accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
-                accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
-                response.addCookie(accessTokenCookie);
+                response.setHeader("Access-Token", accessToken);
+                response.setHeader("Refresh-Token", refreshToken);
 
-                // Set the original refresh token as a cookie in the response
-                Cookie refreshTokenCookie = new Cookie("Refresh-token", refreshToken);
-                refreshTokenCookie.setHttpOnly(true);
-                refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
-                response.addCookie(refreshTokenCookie);
-
-                // Create a response JSON object containing the access token and refresh token
                 ObjectMapper objectMapper = new ObjectMapper();
-                String responseBody = objectMapper.writeValueAsString(Map.of(
-                        "access_token", accessToken,
-                        "refresh_token", refreshToken
-                ));
+
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
 
-                // Write the response JSON object to the response body
-                response.getWriter().write(responseBody);
+                response.getWriter().write("refresh token success");
             }
         }
     }

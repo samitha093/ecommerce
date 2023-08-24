@@ -32,29 +32,19 @@ public class AuthenticationController {
     ) {
         AuthenticationResponse response = service.register(request);
 
-        if(response.getStatus() =="User registered successfully"){
-            // Set the tokens as cookies in the response
-            Cookie accessTokenCookie = new Cookie("Access-token", response.getAccessToken());
-            accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
-            accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
-            httpResponse.addCookie(accessTokenCookie);
+        if (response.getStatus().equals("User login Success")) {
+            // Set the tokens as HTTP headers in the response
+//            httpResponse.setHeader("Access-Token", response.getAccessToken());
+            httpResponse.setHeader("Refresh-Token", response.getRefreshToken());
 
-            Cookie refreshTokenCookie = new Cookie("Refresh-token", response.getRefreshToken());
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
-            httpResponse.addCookie(refreshTokenCookie);
-
-            // Return the ResponseEntity with the access token in the response body
+            // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getAccessToken());
-//            .body(response.getStatus());
+                    .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
                     .body(response.getStatus());
         }
-
-
     }
 
     @Value("${application.security.jwt.expiration}")
@@ -70,22 +60,14 @@ public class AuthenticationController {
     ) {
         AuthenticationResponse response = service.authenticate(request);
 
-        if(response.getStatus() =="User login Success"){
-            // Set the tokens as cookies in the response
-            Cookie accessTokenCookie = new Cookie("Access-token", response.getAccessToken());
-            accessTokenCookie.setHttpOnly(true); // This prevents JavaScript access to the cookie
-            accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert to seconds
-            httpResponse.addCookie(accessTokenCookie);
-
-            Cookie refreshTokenCookie = new Cookie("Refresh-token", response.getRefreshToken());
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // Convert to seconds
-            httpResponse.addCookie(refreshTokenCookie);
+        if (response.getStatus().equals("User login Success")) {
+            // Set the tokens as HTTP headers in the response
+//            httpResponse.setHeader("Access-Token", response.getAccessToken());
+            httpResponse.setHeader("Refresh-Token", response.getRefreshToken());
 
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getRefreshToken());
-//                    .body(response.getStatus());
+                    .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()

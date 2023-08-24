@@ -3,6 +3,8 @@ import Card from "../components/home/card";
 import { useEffect, useState } from "react";
 import Toast from "../components/modules/toast";
 import axios from "axios";
+import Cookies from 'js-cookie';
+import GetAccessToken from "../components/modules/getAccessToken";
 
 interface Image {
   id: number;
@@ -23,6 +25,12 @@ interface Product {
 }
  function Home() {
   const [products1, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const handleAccessTokenReceived = (token: string) => {
+    setAccessToken(token);
+    console.log('Access token received in Home component', token);
+  };
+ 
 
   //this is for testing
   const products: Product[] = [
@@ -81,13 +89,17 @@ interface Product {
 
   function getAllProductsFromStore() {
     const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
     axios
       .get(`${myHost}/api/v1/getallproducts`)
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
-          console.log('Retrieved products:', products);
+          console.log('Retrieved products:', products,{ headers: headers });
         } else {
           Toast.fire({
             icon: 'error',
@@ -110,6 +122,7 @@ interface Product {
 
   return (
     <div>
+      <GetAccessToken onAccessTokenReceived={handleAccessTokenReceived} />
       <Background/>
        <div className="grid grid-cols-4 gap-4 mt-5">
         {products.map((product) => (

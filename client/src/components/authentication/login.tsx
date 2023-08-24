@@ -3,6 +3,7 @@ import Toast from "../modules/toast";
 import axios, { AxiosResponse } from "axios";
 import jwtDecode from 'jwt-decode';
 import Loading from "../modules/loading";
+import { Link, useNavigate } from 'react-router-dom';
 
 
 interface AuthResponse {
@@ -15,7 +16,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [useremail, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -53,7 +54,9 @@ function Login() {
     const myHost = sessionStorage.getItem('host');
     // Send a POST request to the /loginUser endpoint with the user details
     setIsLoading(true);
-    axios.post(`${myHost}/api/v1/auth/login`, userDetails)
+    axios.post(`${myHost}/api/v1/auth/login`, userDetails, {
+      withCredentials: true,
+    })
     .then((response: AxiosResponse<AuthResponse>) => {
       if(response.status == 200){
         Toast.fire({
@@ -61,6 +64,18 @@ function Login() {
           title: 'Succeessfully logged in'
         })
         setIsLoading(false);
+      console.log(response);
+      // Check if the header exists before accessing it
+      const refresh_token = response.headers['refresh-token'];
+      if (refresh_token) {
+        console.log(refresh_token);
+              // Store the refresh_token in sessionStorage
+      sessionStorage.setItem('refresh_token', refresh_token);
+      } else {
+        console.log('Refresh-Token header not found in the response.');
+      }
+
+   
       }
       else{
         console.log(response.data);

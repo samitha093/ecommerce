@@ -11,19 +11,16 @@ import CategoryUpload from './pages/categoryUpload';
 function App() {
   useEffect(() => {
     var hostname = window.location.hostname;
-    sessionStorage.setItem('host', 'http://' + hostname + ':8080');
+    sessionStorage.setItem('host', 'http://' + hostname + ':8082');
   }, []);
 
   const [message, setMessage] = useState('');
-
   const handleMessageChange = (newMessage: any) => {
     setMessage(newMessage);
   };
-
   return (
     <BrowserRouter>
       <div>
-  
         <Navbar handleMessageChange={handleMessageChange} />
         <Routes>
         <Route path="/" element={<Home/>} />

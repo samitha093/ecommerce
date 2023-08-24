@@ -4,6 +4,7 @@ import Toast from "../components/modules/toast";
 import axios from "axios";
 import CategoryTable from '../components/categoryUpload/categoryTable';
 import SearchBars from '../components/modules/searchBars';
+import GetAccessToken from '../components/modules/getAccessToken';
 
 interface CategoryUploadProps {
    
@@ -22,7 +23,12 @@ const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
     const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
     const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
     const [currentCategory, setCurrentCategory] = useState<Category>();
-
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const handleAccessTokenReceived = (token: string) => {
+      setAccessToken(token);
+      console.log('Access token received in Home component', token);
+    };
+  
     const defaultCategory: Category = {
         id: 0,
         name: '',
@@ -61,7 +67,6 @@ const addNewCategory = (category: Category) =>{
     console.log("New received item : ", category);
    
       const myHost = sessionStorage.getItem('host');
-      const accessToken = sessionStorage.getItem('access-token');           
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json', 
@@ -96,7 +101,6 @@ const addNewCategory = (category: Category) =>{
  //get all categories from the store
 function getAllCategorysFromStore() {
     const myHost = sessionStorage.getItem('host');
-    const accessToken = sessionStorage.getItem('access-token');  
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
@@ -142,7 +146,6 @@ const updateExisingCategory = (category: Category) =>{
 //update category in the store
 function updateCategoryItem(category: Category) {
     const myHost = sessionStorage.getItem('host');
-    const accessToken = sessionStorage.getItem('access-token');
     const categoryId = category.id; // Assuming that 'id' is the image ID property
     // Define the headers with the access token
     const headers = {
@@ -191,7 +194,6 @@ const loadDataForUpdate = (category: Category) =>{
   //delete category from store
   function removeCategoryFromStore(id: number) {
     const myHost = sessionStorage.getItem('host');
-    const accessToken = sessionStorage.getItem('access-token');
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
@@ -229,7 +231,6 @@ const searchCategoryByKey = (itemKey: string) =>{
 //get category By id
   const getCategoryByUsingImageId = (categoryId: number) => {
       const myHost = sessionStorage.getItem('host');
-      const accessToken = sessionStorage.getItem('access-token');  
       // Define the headers with the access token
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
@@ -258,12 +259,13 @@ const searchCategoryByKey = (itemKey: string) =>{
     };
     return (
         <div >
+          <GetAccessToken onAccessTokenReceived={handleAccessTokenReceived} />
         <div className="grid grid-cols-8">
           <div className="col-span-4" style={divStyle1}>
           <h1 className="text-4xl font-bold text-blue-500 text-center">
            Category upload Service  </h1>
           </div>
-          <div className="col-span-4" style={{ marginRight: '100px' }}>
+          <div className="col-span-4" style={{ marginRight: '200px' }}>
           <SearchBars
            placeholder="Search category by ID"
           searchProductByKey={searchCategoryByKey}/>
