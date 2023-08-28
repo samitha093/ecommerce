@@ -50,6 +50,7 @@ function Dashboard() {
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [categoryList, setCateogryList] = useState<Category[]>([]);
+  const [imageList, setImageList] = useState<Image[]>([]);
 
   const handleAccessTokenReceived = (token: string) => {
     setAccessToken(token);
@@ -74,6 +75,28 @@ const testCategory=[
   }
 ]
 
+const imageListData= [{
+      id: 1693196011602,
+      imageName: "Screenshot (22).png",
+      contentType: "image/png",
+      imageData: "blob:http://localhost:5173/a3343de4-cdd6-4651-b99e-482c468c0868"
+    },
+    {id: 1693196249071,
+    imageName: "Screenshot (28).png",
+    contentType: "image/png",
+    imageData: "blob:http://localhost:5173/33b515fa-1f1b-4233-b143-d002826e5dae"
+    },
+]
+//set image list and category list
+useEffect(() => {
+  //test
+  setCateogryList(testCategory);
+  setImageList(imageListData);
+
+  //original
+  getAllCategory();
+  getAllImageList();
+}, []);
   // Define a default product object
   const defaultProduct: Product = {
     id: 0,
@@ -226,12 +249,7 @@ const testCategory=[
         setIsUpdating(true);
         setCurrentProduct(product);
     }
-    useEffect(() => {
-      //test
-      setCateogryList(testCategory);
-      //original
-      getAllCategory();
-  }, []);
+
   //get all categories from the store
   function getAllCategory() {
     const myHost = sessionStorage.getItem('host');
@@ -257,6 +275,35 @@ const testCategory=[
         Toast.fire({
           icon: 'error',
           title: 'Failed to retrieve categoryList'
+        });
+      });
+    
+  }
+  //get all images from the store
+  function getAllImageList() {
+    const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
+    axios
+      .get(`${myHost}/api/v1/getallimgeslist`)
+      .then((response) => {
+        if (response.status === 200) {
+          const imageList = response.data;
+          setImageList(imageList);
+          console.log('Retrieved imageList:', imageList,{ headers: headers });
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve imageList'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve imageList'
         });
       });
     
@@ -414,6 +461,7 @@ const testCategory=[
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
                 categoryList={categoryList}
+                imageList={imageList}
                />
           </div>
           <div className="col-span-6" style={divStyle2}>

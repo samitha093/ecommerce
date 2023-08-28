@@ -7,6 +7,7 @@ interface AddProductProps {
   currentProduct: Product;
   isDelete: boolean;
   categoryList: Category[];
+  imageList: Image[];
 }
 
 interface Image {
@@ -32,7 +33,7 @@ interface Category {
   description: string | null;
 }
 
-const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduct ,isUpdating ,categoryList,currentProduct,isDelete  }) => {
+const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduct,imageList ,isUpdating ,categoryList,currentProduct,isDelete  }) => {
   const [productName, setProductName] = useState(currentProduct.name || ''); // Set initial value using currentProduct data
   const [id, setId] = useState<number>(currentProduct.id || 0);
   const [description, setDescription] = useState(currentProduct.description || '');
@@ -46,7 +47,17 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
   // Initialize state for the selected option
   const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
-    
+  //selected image
+  const [selectedImageId, setSelectedImageId] = useState<number>(0);
+  const [selectedImage1, setSelectedImage1] = useState<Image | null>(null);
+
+  const handleSelectChangeImage1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedImageId = parseInt(event.target.value);
+    const selectedImage = imageList.find((image) => image.id === selectedImageId);
+  
+    setSelectedImage1(selectedImage || null);
+  };
+  //test image set
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
   
@@ -187,8 +198,24 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     setSelectedOption(event.target.value);
     setCategoryId(parseInt(event.target.value));
     console.log("selected option ",event.target.value);
+    
   };
 
+  const handleSelectChangeImage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedImageId = parseInt(event.target.value);
+    const selectedImage = imageList.find((image) => image.id === selectedImageId);
+    console.log("selected image ",selectedImage);
+    const newImage: Image = {
+      id:selectedImage?.id || 0,
+      imageName: selectedImage?.imageName || '',
+      contentType:selectedImage?.contentType || '',
+      imageData:selectedImage?.imageData || ''
+    };
+    setImageListId(() => [newImage]);
+    setPreviewUrl(newImage.imageData);
+    setSelectedImage1(selectedImage || null);
+  };
+  
 
 
     return (
@@ -224,7 +251,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
               <select
                 id="dropdown"
                 name="dropdown"
-                value={selectedOption}
+                value={selectedImageId}
                 onChange={handleSelectChangeCategoryName}
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
               >
@@ -236,6 +263,12 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                 ))}
               </select>
             </div>
+
+
+
+
+    
+
 
 
 
@@ -267,6 +300,25 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
               />
             </div>
+
+
+                   
+            <div className="mt-1">
+                <select
+                  id="imageDropdown"
+                  name="imageDropdown"
+                  value={selectedImageId}
+                  onChange={handleSelectChangeImage}
+                  style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
+                >
+                  <option value="">Select Image</option>
+                  {imageList.map((image) => (
+                    <option key={image.id} value={image.id}>
+                      {image.imageName}
+                    </option>
+                  ))}
+                </select>             
+              </div>
             
           <div className="mt-1">
                 <input
