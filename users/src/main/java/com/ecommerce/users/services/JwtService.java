@@ -31,12 +31,18 @@ public class JwtService {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+    public String extractUsername1(String token) {
+        return extractClaim1(token, Claims::getSubject);
+    }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
+    public <T> T extractClaim1(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims1(token);
+        return claimsResolver.apply(claims);
+    }
 
     public String generateAccessToken(  User userDetails) {
         Map<String, Object> adminClaims = new HashMap<>();
@@ -82,7 +88,7 @@ public class JwtService {
                 .compact();
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+        final String username = extractUsername1(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
@@ -91,7 +97,7 @@ public class JwtService {
     }
 
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return extractClaim1(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
@@ -102,7 +108,14 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
+    private Claims extractAllClaims1(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getAccessSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
     private Key getAccessSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(accessSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);

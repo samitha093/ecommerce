@@ -115,7 +115,10 @@ public class AuthenticationService {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
 
-                response.getWriter().write("refresh token success");
+
+
+//                response.getWriter().write("refresh token success");
+                response.getWriter().write(accessToken);
             }
         }
     }

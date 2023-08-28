@@ -32,14 +32,15 @@ public class AuthenticationController {
     ) {
         AuthenticationResponse response = service.register(request);
 
-        if (response.getStatus().equals("User login Success")) {
+        if (response.getStatus().equals("User registered successfully")) {
             // Set the tokens as HTTP headers in the response
 //            httpResponse.setHeader("Access-Token", response.getAccessToken());
             httpResponse.setHeader("Refresh-Token", response.getRefreshToken());
 
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getStatus());
+                    .body(response.getRefreshToken());
+                    // .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
@@ -67,7 +68,8 @@ public class AuthenticationController {
 
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getStatus());
+                    .body(response.getRefreshToken()+","+response.getAccessToken());
+            // .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
