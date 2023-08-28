@@ -258,7 +258,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/getallcategory`)
+      .get(`${myHost}/api/v1/categories/getallategories`)
       .then((response) => {
         if (response.status === 200) {
           const categoryList = response.data;
@@ -287,7 +287,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/getallimgeslist`)
+      .get(`${myHost}/api/v1/images/gealltimages`)
       .then((response) => {
         if (response.status === 200) {
           const imageList = response.data;
