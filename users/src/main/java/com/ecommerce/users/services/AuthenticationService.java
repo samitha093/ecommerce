@@ -101,12 +101,14 @@ public class AuthenticationService {
         }
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
+        System.out.println("userEmail access token: " + userEmail);
         if (userEmail != null) {
             var user = this.repository.findByEmail(userEmail)
                     .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
+            System.out.println("user access token: " + user);
+            if (jwtService.isTokenValid1(refreshToken, user)) {
                 var accessToken = jwtService.generateAccessToken(user);
-
+                System.out.println("is valid token True");
                 response.setHeader("Access-Token", accessToken);
                 response.setHeader("Refresh-Token", refreshToken);
 
@@ -119,6 +121,10 @@ public class AuthenticationService {
 
 //                response.getWriter().write("refresh token success");
                 response.getWriter().write(accessToken);
+            }
+            else {
+                System.out.println("is valid token False");
+                response.getWriter().write("refresh token failed");
             }
         }
     }

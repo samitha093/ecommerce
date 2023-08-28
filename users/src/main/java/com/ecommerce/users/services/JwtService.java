@@ -89,15 +89,25 @@ public class JwtService {
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername1(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired2(token);
+    }
+    public boolean isTokenValid1(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
-
+    private boolean isTokenExpired2(String token) {
+        return extractExpiration2(token).before(new Date());
+    }
+    private Date extractExpiration2(String token) {
+        return extractClaim1(token, Claims::getExpiration);
+    }
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
+
     private Date extractExpiration(String token) {
-        return extractClaim1(token, Claims::getExpiration);
+        return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
