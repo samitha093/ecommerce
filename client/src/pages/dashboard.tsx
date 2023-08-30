@@ -18,6 +18,11 @@ interface Image {
   contentType: string;
   imageData: string; 
 }
+interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+}
 
 interface Product {
   id: number;
@@ -44,10 +49,54 @@ function Dashboard() {
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [categoryList, setCateogryList] = useState<Category[]>([]);
+  const [imageList, setImageList] = useState<Image[]>([]);
+
   const handleAccessTokenReceived = (token: string) => {
     setAccessToken(token);
     console.log('Access token received in Home component', token);
   };
+
+const testCategory=[
+  {
+    "id": 1,
+    "name": "Electronics",
+    "description": "Category for electronic products"
+  },
+  {
+    "id": 2,
+    "name": "Clothing",
+    "description": "Category for clothing items"
+  },
+  {
+    "id": 3,
+    "name": "Books",
+    "description": "Category for books and reading materials"
+  }
+]
+
+const imageListData= [{
+      id: 1693196011602,
+      imageName: "Screenshot (22).png",
+      contentType: "image/png",
+      imageData: "blob:http://localhost:5173/a3343de4-cdd6-4651-b99e-482c468c0868"
+    },
+    {id: 1693196249071,
+    imageName: "Screenshot (28).png",
+    contentType: "image/png",
+    imageData: "blob:http://localhost:5173/33b515fa-1f1b-4233-b143-d002826e5dae"
+    },
+]
+//set image list and category list
+useEffect(() => {
+  //test
+  setCateogryList(testCategory);
+  setImageList(imageListData);
+
+  //original
+  getAllCategory();
+  getAllImageList();
+}, []);
   // Define a default product object
   const defaultProduct: Product = {
     id: 0,
@@ -200,10 +249,66 @@ function Dashboard() {
         setIsUpdating(true);
         setCurrentProduct(product);
     }
-    useEffect(() => {
-      console.log("currentProduct", currentProduct);
-  }, [currentProduct]);
-  
+
+  //get all categories from the store
+  function getAllCategory() {
+    const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
+    axios
+      .get(`${myHost}/api/v1/categories/getallategories`)
+      .then((response) => {
+        if (response.status === 200) {
+          const categoryList = response.data;
+          setCateogryList(categoryList);
+          console.log('Retrieved categoryList:', categoryList,{ headers: headers });
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve categoryList'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve categoryList'
+        });
+      });
+    
+  }
+  //get all images from the store
+  function getAllImageList() {
+    const myHost = sessionStorage.getItem('host');
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json', 
+    };
+    axios
+      .get(`${myHost}/api/v1/images/gealltimages`)
+      .then((response) => {
+        if (response.status === 200) {
+          const imageList = response.data;
+          setImageList(imageList);
+          console.log('Retrieved imageList:', imageList,{ headers: headers });
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to retrieve imageList'
+          });
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Failed to retrieve imageList'
+        });
+      });
+    
+  }
+
     function updateStore(product: Product) {
       const myHost = sessionStorage.getItem('host');
       const headers = {
@@ -355,6 +460,8 @@ function Dashboard() {
                isUpdating={isUpdating}
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
+                categoryList={categoryList}
+                imageList={imageList}
                />
           </div>
           <div className="col-span-6" style={divStyle2}>

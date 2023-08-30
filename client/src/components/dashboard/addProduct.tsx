@@ -6,6 +6,8 @@ interface AddProductProps {
   isUpdating: boolean;
   currentProduct: Product;
   isDelete: boolean;
+  categoryList: Category[];
+  imageList: Image[];
 }
 
 interface Image {
@@ -25,20 +27,37 @@ interface Product {
   soldQTY: number;
   imageListId: Image[];
 }
+interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+}
 
-const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduct ,isUpdating ,currentProduct,isDelete  }) => {
+const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduct,imageList ,isUpdating ,categoryList,currentProduct,isDelete  }) => {
   const [productName, setProductName] = useState(currentProduct.name || ''); // Set initial value using currentProduct data
   const [id, setId] = useState<number>(currentProduct.id || 0);
   const [description, setDescription] = useState(currentProduct.description || '');
   const [categoryId, setCategoryId] = useState<number>(currentProduct.categoryId || 0);
+  const [categoryName, setCategoryName] = useState('');
   const [price, setPrice] = useState<number>(currentProduct.price || 0);
   const [stockQTY, setStockQTY] = useState<number>(currentProduct.stockQTY || 0);
   const [soldQTY, setSoldQTY] = useState<number>(currentProduct.soldQTY || 0);
   const [imageListId, setImageListId] = useState<Image[]>(currentProduct.imageListId || []);
-
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+  // Initialize state for the selected option
+  const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
+  //selected image
+  const [selectedImageId, setSelectedImageId] = useState<number>(0);
+  const [selectedImage1, setSelectedImage1] = useState<Image | null>(null);
 
+  const handleSelectChangeImage1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedImageId = parseInt(event.target.value);
+    const selectedImage = imageList.find((image) => image.id === selectedImageId);
+  
+    setSelectedImage1(selectedImage || null);
+  };
+  //test image set
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
   
@@ -71,6 +90,12 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     } else {
       setPreviewUrl(undefined);
     }
+    //get category id and map to category name
+    const category = categoryList.find((options) => options.id === currentProduct.categoryId);
+    setSelectedOption(category?.name || '');
+    //category name print
+    console.log("category name ",selectedOption);
+    console.log("currentProduct add file ", currentProduct);
   }, [currentProduct]);
   
     const containerStyle: React.CSSProperties = {
@@ -89,6 +114,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         setPrice(event.target.value);
       };
       const handleCategoryIdChange = (event: any) => {
+
         setCategoryId(event.target.value);
       };
       const handlesetStockQTYChange = (event: any) => {
@@ -107,6 +133,8 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         setSoldQTY(0);
         setImageListId([]); 
         setPreviewUrl(undefined);
+        selectedImage && URL.revokeObjectURL(selectedImage?.name);
+        // setSelectedImage(null);
       }
       
       function generateRandomId() {
@@ -157,13 +185,39 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
           };
           console.log("New product");
           console.log(productDetails);
-          onAddProduct(productDetails); // Call the onAddProduct function with the new product details    
+          onAddProduct(productDetails); 
           clearProductDetails();    
       }
       useEffect(() => {
         clearProductDetails();
     }, [isDelete]);
+
+
+  // Function to handle changing the selected option
+  const handleSelectChangeCategoryName = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption(event.target.value);
+    setCategoryId(parseInt(event.target.value));
+    console.log("selected option ",event.target.value);
     
+  };
+
+  const handleSelectChangeImage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedImageId = parseInt(event.target.value);
+    const selectedImage = imageList.find((image) => image.id === selectedImageId);
+    console.log("selected image ",selectedImage);
+    const newImage: Image = {
+      id:selectedImage?.id || 0,
+      imageName: selectedImage?.imageName || '',
+      contentType:selectedImage?.contentType || '',
+      imageData:selectedImage?.imageData || ''
+    };
+    setImageListId(() => [newImage]);
+    setPreviewUrl(newImage.imageData);
+    setSelectedImage1(selectedImage || null);
+  };
+  
+
+
     return (
         <div className="grid grid-cols-2 gap-0 content-center ..." >
         <div style={containerStyle}>
@@ -192,15 +246,31 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
               />
             </div>
 
+
             <div className="mt-1">
-              <input
-                placeholder="Category Id"
-                type="text"
-                value={categoryId}
-                onChange={handleCategoryIdChange} 
+              <select
+                id="dropdown"
+                name="dropdown"
+                value={selectedImageId}
+                onChange={handleSelectChangeCategoryName}
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
-              />
+              >
+                <option value="">Select Category</option>
+                {categoryList.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
+
+
+
+    
+
+
+
 
             <div className="mt-1">
               <input
@@ -230,6 +300,26 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
               />
             </div>
+
+
+                   
+            <div className="mt-1">
+                <select
+                  id="imageDropdown"
+                  name="imageDropdown"
+                  value={selectedImageId}
+                  onChange={handleSelectChangeImage}
+                  style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
+                >
+                  <option value="">Select Image</option>
+                  {imageList.map((image) => (
+                    <option key={image.id} value={image.id}>
+                      {image.imageName}
+                    </option>
+                  ))}
+                </select>             
+              </div>
+            
           <div className="mt-1">
                 <input
                   type="file"
@@ -243,7 +333,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                       alt="Preview"
                       style={{ maxWidth: '100%', maxHeight: '100px' }}
                     />
-                    <p>Selected Image: {selectedImage.name}</p>
+                  
                   </div>
                 )}
               </div>

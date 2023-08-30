@@ -6,6 +6,7 @@ interface AddProductImageUploadProps {
     isDelete: boolean;
     isUpdating: boolean;
     currentProduct: Image;
+    
 }
 interface Image {
     id: number;
