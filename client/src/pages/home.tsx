@@ -28,10 +28,6 @@ interface Product {
   const [products1, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
-
-
- 
-
   //this is for testing
   const products: Product[] = [
     {
