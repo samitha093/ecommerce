@@ -96,6 +96,7 @@ useEffect(() => {
   //original
   getAllCategory();
   getAllImageList();
+
 }, []);
   // Define a default product object
   const defaultProduct: Product = {
