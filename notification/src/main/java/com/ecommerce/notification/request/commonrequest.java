@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class commonrequest {
+public class Commonrequest {
 
     @NotNull
     private String body;

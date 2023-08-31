@@ -6,13 +6,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Emailrequest {
-    @NotNull
-    private String body;
-
-    @NotNull
-    private String subject;
-
+public class OTPRequest {
     @NotNull
     private String email;
 }
