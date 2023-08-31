@@ -60,7 +60,7 @@ function Profile() {
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
   };
-
+//register
   function handleRegisterClick() {
     if (password !== confirmPassword) {
       setPasswordMatch(false);
@@ -93,6 +93,13 @@ function Profile() {
 
             const decodedToken: any = jwtDecode(refresh_token);
             console.log(decodedToken);  
+            //send otp
+            sendVerificationEmail(useremail)
+            //send email
+            sendEmailNotification(
+              "Welcome to the Nest. Please verify your email address by entering the OTP code below. OTP code is valid for 5 minutes.", 
+              "Nest Email Verification",
+               useremail)
             localStorage.setItem('isLogin', 'true');
             navigate('/');
           }
@@ -112,6 +119,75 @@ function Profile() {
    
         });
     }
+  }
+//send email verification
+  function sendVerificationEmail(userEmail: string) {
+      const otpEmai = {
+        email: userEmail,
+      };
+      axios
+        .post(`http://localhost:8083/api/v1/notification/otpsend`, otpEmai)
+        .then((response) => {
+          if(response.status == 200){
+
+            Toast.fire({
+              icon: 'success',
+              title: 'User Otp send successfully'
+            })         
+          }
+          else{
+            Toast.fire({
+              icon: 'error',
+              title: 'User Otp send failed'
+            })
+          }
+
+        })
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Server Error'
+            })
+   
+        });
+    
+  }
+
+  //send email
+  function sendEmailNotification(emailBody: string, emailSubject: string, useremail: string) {
+      const emailDetails = {
+        body: emailBody,
+        email: useremail,
+        subject: emailSubject,
+      };
+
+      axios
+        .post(`http://localhost:8083/api/v1/notification/sendemail`, emailDetails)
+        .then((response) => {
+          if(response.status == 200){
+
+            Toast.fire({
+              icon: 'success',
+              title: 'Email send successfully'
+            })
+       
+          }
+          else{
+            Toast.fire({
+              icon: 'error',
+              title: 'Email send failed'
+            })
+          }
+
+        })
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Server Error'
+            })
+   
+        });
+    
   }
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
