@@ -7,23 +7,23 @@ interface NavbarProps {
 
 function Navbar({ handleMessageChange }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState("true");
+  const [isLogin, setIsLogin] = useState("false");
   const navigate = useNavigate();
 
   const handleMouseEnter = () => {
+    const loginState = localStorage.getItem('isLogin');
+    if(loginState == null){
+      setIsLogin("false");
+    }
+    else if(loginState == 'true'){
+      setIsLogin(loginState);
+    }
     setIsOpen(true);
   };
 
   const handleMouseLeave = () => {
     setIsOpen(false);
   };
-//use effect for login
-  useEffect(() => {
-    if(localStorage.getItem('isLogin') == 'true'){
-    setIsLogin("true");
-    }
-  }, [isLogin]);
-
 
   const handleItemClick = (item: string) => {
     handleMessageChange(item);
@@ -35,9 +35,10 @@ function Navbar({ handleMessageChange }: NavbarProps) {
     navigate('/authentication');
   };
   const handleLogOutClick = () => {
-    handleItemClick('LOGOUT');
+    handleItemClick('LOGIN');
     localStorage.setItem('isLogin', 'false');
-    navigate('/');
+    setIsLogin("false");
+    navigate('/authentication');
   };
   const handleRegisterClick = () => {
     handleItemClick('REGISTER');
@@ -54,9 +55,14 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   };
   //use effect for logout
   useEffect(() => {
-    if(localStorage.getItem('auth') == 'LOGOUT'){
-    setIsLogin("false");
+    const loginState = localStorage.getItem('isLogin');
+    if(loginState == null){
+      setIsLogin("false");
     }
+    else if(loginState == 'true'){
+      setIsLogin(loginState);
+    }
+   
   }, [isLogin]);
   
 
@@ -73,8 +79,6 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   };
   return (
     <ul className="flex bg-lightblue-300 w-screen h-12 items-center px-4">
-
-
       <li className="mr-6">
         <span style={{ display: 'inline-flex', alignItems: 'center' }}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

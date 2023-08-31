@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Toast from "../modules/toast";
 import jwtDecode from 'jwt-decode';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -18,6 +19,7 @@ function Profile() {
   const [useremail, setEmail] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
+  const navigate = useNavigate();
 
   const imageStyle: React.CSSProperties = {
     width: '400px',
@@ -75,19 +77,24 @@ function Profile() {
         .post(`${myHost}/api/v1/auth/register`, userDetails)
         .then((response) => {
           if(response.status == 200){
-              // Check if the header exists before accessing it
-              const refresh_token = response.headers['refresh-token'];
-              if (refresh_token) {
-                console.log(refresh_token);
-                      // Store the refresh_token in sessionStorage
-              sessionStorage.setItem('refresh_token', refresh_token);
-              } else {
-                console.log('Refresh-Token header not found in the response.');
-              }
+
             Toast.fire({
               icon: 'success',
               title: 'New user added successfully'
             })
+            
+            const refresh_token = response.headers['refresh-token'];
+            if (refresh_token) {
+              console.log(refresh_token);
+            sessionStorage.setItem('refresh_token', refresh_token);
+            } else {
+              console.log('Refresh-Token header not found in the response.');
+            }
+
+            const decodedToken: any = jwtDecode(refresh_token);
+            console.log(decodedToken);  
+            localStorage.setItem('isLogin', 'true');
+            navigate('/dashboard');
           }
           else{
             Toast.fire({
