@@ -214,6 +214,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<Object>> getCategories(
         @RequestHeader("Authorization") String tokenHeader
     )throws Exception {
+         System.out.println("tokenHeader: " + tokenHeader);
         String errorMessage;
         // Autherization
         String token = tokenHeader.substring(7);
