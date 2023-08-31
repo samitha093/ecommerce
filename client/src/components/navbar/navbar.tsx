@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface NavbarProps {
@@ -7,7 +7,9 @@ interface NavbarProps {
 
 function Navbar({ handleMessageChange }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState("true");
   const navigate = useNavigate();
+
   const handleMouseEnter = () => {
     setIsOpen(true);
   };
@@ -15,6 +17,13 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   const handleMouseLeave = () => {
     setIsOpen(false);
   };
+//use effect for login
+  useEffect(() => {
+    if(localStorage.getItem('isLogin') == 'true'){
+    setIsLogin("true");
+    }
+  }, [isLogin]);
+
 
   const handleItemClick = (item: string) => {
     handleMessageChange(item);
@@ -25,7 +34,11 @@ function Navbar({ handleMessageChange }: NavbarProps) {
     handleItemClick('LOGIN');
     navigate('/authentication');
   };
-
+  const handleLogOutClick = () => {
+    handleItemClick('LOGOUT');
+    localStorage.setItem('isLogin', 'false');
+    navigate('/');
+  };
   const handleRegisterClick = () => {
     handleItemClick('REGISTER');
     navigate('/authentication');
@@ -39,6 +52,12 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   const handleNavigateHome = () => {
     navigate('/');
   };
+  //use effect for logout
+  useEffect(() => {
+    if(localStorage.getItem('auth') == 'LOGOUT'){
+    setIsLogin("false");
+    }
+  }, [isLogin]);
   
 
   const handleNavigateImageUpload = () => {
@@ -110,29 +129,43 @@ function Navbar({ handleMessageChange }: NavbarProps) {
         </svg>
         <div className="relative inline-block ml-2">
           <button className="text-blue-500 hover:text-blue-400 bg-transparent hover:bg-blue-200 text-sm px-4 py-2 border rounded-full" >Account</button>
-          {isOpen && (
-            <div
-              className="absolute mt-1 py-2 px-4 bg-white shadow-lg rounded"
-              onMouseLeave={handleMouseLeave}
-            >
-              <p className="text-black">
-                <button
-                  className="text-blue-500 hover:text-blue-800"
-                  onClick={handleLoginClick}
-                >
-                  Login
-                </button>
-              </p>
-              <p className="text-black">
-                <button
-                  className="text-blue-500 hover:text-blue-800"
-                  onClick={handleRegisterClick}
-                >
-                  Register
-                </button>
-              </p>
-            </div>
-          )}
+          {isOpen ? (
+  <div
+    className="absolute mt-1 py-2 px-4 bg-white shadow-lg rounded"
+    onMouseLeave={handleMouseLeave}
+  >
+    {isLogin === 'false' ? (
+      <>
+        <p className="text-black">
+          <button
+            className="text-blue-500 hover:text-blue-800"
+            onClick={handleLoginClick}
+          >
+            Login
+          </button>
+        </p>
+        <p className="text-black">
+          <button
+            className="text-blue-500 hover:text-blue-800"
+            onClick={handleRegisterClick}
+          >
+            Register
+          </button>
+        </p>
+      </>
+    ) : (
+      <p className="text-black">
+         <button
+            className="text-blue-500 hover:text-blue-800"
+            onClick={handleLogOutClick}
+          >
+            Logout
+          </button>
+      </p>
+    )}
+  </div>
+) : null}
+
         </div>
       </li>
     </ul>
