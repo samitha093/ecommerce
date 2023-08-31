@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddCategory from '../components/categoryUpload/addCategory';
 import Toast from "../components/modules/toast";
 import axios from "axios";
 import CategoryTable from '../components/categoryUpload/categoryTable';
 import SearchBars from '../components/modules/searchBars';
 import GetAccessToken from '../components/modules/getAccessToken';
+import getAccessToken from '../components/modules/getAccessToken';
 
 interface CategoryUploadProps {
    
@@ -24,10 +25,6 @@ const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
     const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
     const [currentCategory, setCurrentCategory] = useState<Category>();
     const [accessToken, setAccessToken] = useState<string | null>(null);
-    const handleAccessTokenReceived = (token: string) => {
-      setAccessToken(token);
-      console.log('Access token received in Home component', token);
-    };
   
     const defaultCategory: Category = {
         id: 0,
@@ -257,9 +254,56 @@ const searchCategoryByKey = (itemKey: string) =>{
           });
         });
     };
+    function getAccessToken() { 
+      let refreshToken = sessionStorage.getItem('refresh_token');
+      const myHost = sessionStorage.getItem('host');
+      axios
+        .post(
+          `${myHost}/api/v1/auth/refresh-token`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            // Check if the header exists before accessing it
+            const refresh_token = response.headers['refresh-token'];
+            const access_token = response.headers['access-token'];
+            setAccessToken(access_token);
+            Toast.fire({
+              icon: 'success',
+              title: 'Refresh token function run successfully',
+            });
+  
+            sessionStorage.setItem('refresh_token', refresh_token);
+           
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Refresh token function failed',
+            });
+            console.log('Refresh-Token header not found ');
+            
+          }
+        })
+        .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Refresh token function error',
+          });
+        });
+    }
+
+useEffect(() => {
+    getAccessToken();
+  }
+  , []);
+
     return (
         <div >
-          <GetAccessToken onAccessTokenReceived={handleAccessTokenReceived} />
         <div className="grid grid-cols-8">
           <div className="col-span-4" style={divStyle1}>
           <h1 className="text-4xl font-bold text-blue-500 text-center">

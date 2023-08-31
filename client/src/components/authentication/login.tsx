@@ -63,18 +63,23 @@ function Login() {
           icon: 'success',
           title: 'Succeessfully logged in'
         })
+        
         setIsLoading(false);
       console.log(response);
-      // Check if the header exists before accessing it
+     
       const refresh_token = response.headers['refresh-token'];
       if (refresh_token) {
         console.log(refresh_token);
-              // Store the refresh_token in sessionStorage
       sessionStorage.setItem('refresh_token', refresh_token);
       } else {
         console.log('Refresh-Token header not found in the response.');
       }
 
+
+      const decodedToken: any = jwtDecode(refresh_token);
+      console.log(decodedToken);  
+      localStorage.setItem('isLogin', 'true');
+      navigate('/dashboard');
    
       }
       else{
