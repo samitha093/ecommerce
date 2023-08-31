@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Toast from "../components/modules/toast";
 import axios from "axios";
 import Cookies from 'js-cookie';
-import GetAccessToken from "../components/modules/getAccessToken";
+import getAccessToken from "../components/modules/getAccessToken";
+import { get } from "http";
 
 interface Image {
   id: number;
@@ -26,10 +27,9 @@ interface Product {
  function Home() {
   const [products1, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const handleAccessTokenReceived = (token: string) => {
-    setAccessToken(token);
-    console.log('Access token received in Home component', token);
-  };
+
+
+
  
 
   //this is for testing
@@ -117,12 +117,56 @@ interface Product {
   }
 
   useEffect(() => {
+    getAccessToken();
     getAllProductsFromStore();
   }, []);
 
+  function getAccessToken() { 
+    let refreshToken = sessionStorage.getItem('refresh_token');
+    const myHost = sessionStorage.getItem('host');
+    axios
+      .post(
+        `${myHost}/api/v1/auth/refresh-token`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          // Check if the header exists before accessing it
+          const refresh_token = response.headers['refresh-token'];
+          const access_token = response.headers['access-token'];
+          setAccessToken(access_token);
+          Toast.fire({
+            icon: 'success',
+            title: 'Refresh token function run successfully',
+          });
+
+          sessionStorage.setItem('refresh_token', refresh_token);
+         
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Refresh token function failed',
+          });
+          console.log('Refresh-Token header not found ');
+          
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Refresh token function error',
+        });
+      });
+  }
+
+
   return (
     <div>
-      <GetAccessToken onAccessTokenReceived={handleAccessTokenReceived} />
       <Background/>
        <div className="grid grid-cols-4 gap-4 mt-5">
         {products.map((product) => (
