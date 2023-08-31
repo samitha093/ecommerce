@@ -11,7 +11,7 @@ import CategoryUpload from './pages/categoryUpload';
 function App() {
   useEffect(() => {
     var hostname = window.location.hostname;
-    sessionStorage.setItem('host', 'http://' + hostname + ':8082');
+    sessionStorage.setItem('host', 'http://' + hostname + ':8084');
   }, []);
 
   const [message, setMessage] = useState('');
@@ -31,22 +31,6 @@ function App() {
         <Route path="/productImageUpload"  element={<ProductImageUpload/>} />
         <Route path="/categoryUpload"  element={<CategoryUpload/>} />
       </Routes>
-      {isAuthenticated ? (
-            <>
-              <Route 
-                path="/dashboard" 
-                element={<Dashboard/>}/>
-              <Route
-                path="/productImageUpload"
-                element={<ProductImageUpload/>}
-              />
-              <Route 
-                path="/categoryUpload" 
-                element={<CategoryUpload/>}/>
-            </>
-          ) : (
-            <Navigate to="/authentication" replace={true} />
-          )}
       </div>
     </BrowserRouter>
   )

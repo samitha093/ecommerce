@@ -2,6 +2,7 @@ package com.ecommerce.users.controller;
 
 import com.ecommerce.users.request.AuthenticationRequest;
 import com.ecommerce.users.request.RegisterRequest;
+import com.ecommerce.users.request.VerifyUserRequest;
 import com.ecommerce.users.response.AuthenticationResponse;
 import com.ecommerce.users.services.AuthenticationService;
 import jakarta.servlet.http.Cookie;
@@ -30,6 +31,7 @@ public class AuthenticationController {
             @RequestBody RegisterRequest request,
             HttpServletResponse httpResponse // Inject HttpServletResponse
     ) {
+        System.out.println("register request: " + request);
         AuthenticationResponse response = service.register(request);
 
         if (response.getStatus().equals("User registered successfully")) {
@@ -55,10 +57,11 @@ public class AuthenticationController {
     private long refreshTokenExpiration;
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticate(
+    public ResponseEntity<String> login(
             @RequestBody AuthenticationRequest request,
             HttpServletResponse httpResponse // Inject HttpServletResponse
     ) {
+        System.out.println("login request: " + request);
         AuthenticationResponse response = service.authenticate(request);
 
         if (response.getStatus().equals("User login Success")) {
@@ -80,6 +83,21 @@ public class AuthenticationController {
     @PostMapping("/refresh-token")
     public void refreshToken(HttpServletRequest request,HttpServletResponse response ) throws IOException {
         service.refreshToken(request, response);
+    }
+    @PostMapping("/verify-user")
+    public ResponseEntity<String> verifyUser(
+            @RequestBody VerifyUserRequest request,
+            HttpServletResponse httpResponse // Inject HttpServletResponse
+    ) {
+        AuthenticationResponse response = service.verifyUser(request);
+        if (response.getStatus().equals("User verified successfully")) {
+            return ResponseEntity.ok()
+             .body(response.getStatus());
+        }
+        else {
+            return ResponseEntity.badRequest()
+                    .body(response.getStatus());
+        }
     }
 
 }

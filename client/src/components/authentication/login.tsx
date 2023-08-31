@@ -74,12 +74,10 @@ function Login() {
       } else {
         console.log('Refresh-Token header not found in the response.');
       }
-
-
       const decodedToken: any = jwtDecode(refresh_token);
       console.log(decodedToken);  
       localStorage.setItem('isLogin', 'true');
-      navigate('/dashboard');
+      navigate('/');
    
       }
       else{

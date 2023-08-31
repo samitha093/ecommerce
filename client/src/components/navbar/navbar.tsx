@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import Toast from '../modules/toast';
+import axios from "axios";
+import jwtDecode from 'jwt-decode';
 interface NavbarProps {
   handleMessageChange: (message: string) => void;
 }
@@ -9,6 +11,8 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLogin, setIsLogin] = useState("false");
   const navigate = useNavigate();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isVerified, setIsVerified] = useState("false");
 
   const handleMouseEnter = () => {
     const loginState = localStorage.getItem('isLogin');
@@ -45,11 +49,7 @@ function Navbar({ handleMessageChange }: NavbarProps) {
     navigate('/authentication');
   };
   
-  const handleNavigateDashboard = () => {
-    if(localStorage.getItem('isLogin') == 'true'){
-      navigate('/dashboard')
-      }
-  };
+
   const handleNavigateHome = () => {
     navigate('/');
   };
@@ -65,18 +65,71 @@ function Navbar({ handleMessageChange }: NavbarProps) {
    
   }, [isLogin]);
   
+  
+
+  const handleNavigateDashboard = () => {
+    getAccessToken("dashboard");
+      
+  };
 
   const handleNavigateImageUpload = () => {
-    if(localStorage.getItem('isLogin') == 'true'){
-      navigate('/productImageUpload')
-      }
-   
+    getAccessToken("productImageUpload");
   };
   const handleNavigateCategory = () => {
-    if(localStorage.getItem('isLogin') == 'true'){
-      navigate('/categoryUpload')
-      }
+    getAccessToken("categoryUpload");
   };
+
+  //pass parameter to this function
+  function getAccessToken(routeName: string) {
+    let refreshToken = sessionStorage.getItem('refresh_token');
+    const myHost = sessionStorage.getItem('host');
+    axios
+      .post(
+        `${myHost}/api/v1/auth/refresh-token`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          // Check if the header exists before accessing it
+          const refresh_token = response.headers['refresh-token'];
+          const access_token = response.headers['access-token'];
+          sessionStorage.setItem('refresh_token', refresh_token);
+          setAccessToken(access_token);
+          const decodedToken: any = jwtDecode(access_token);
+          let isVerified = decodedToken.isVerified;
+          if(isVerified == "true"){
+            setIsVerified("true");
+            navigate('/'+routeName);
+          }
+          else{
+            setIsVerified("false");
+            Toast.fire({
+              icon: 'error',
+              title: 'Please verify your email',
+            });
+          }
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: 'Refresh token function failed',
+          });
+          console.log('Refresh-Token header not found ');
+          
+        }
+      })
+      .catch(() => {
+        Toast.fire({
+          icon: 'error',
+          title: 'Refresh token function error',
+        });
+      });
+  }
+
   return (
     <ul className="flex bg-lightblue-300 w-screen h-12 items-center px-4">
       <li className="mr-6">

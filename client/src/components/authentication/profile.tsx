@@ -94,7 +94,7 @@ function Profile() {
             const decodedToken: any = jwtDecode(refresh_token);
             console.log(decodedToken);  
             localStorage.setItem('isLogin', 'true');
-            navigate('/dashboard');
+            navigate('/');
           }
           else{
             Toast.fire({

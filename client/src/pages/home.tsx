@@ -136,10 +136,10 @@ interface Product {
           const refresh_token = response.headers['refresh-token'];
           const access_token = response.headers['access-token'];
           setAccessToken(access_token);
-          Toast.fire({
-            icon: 'success',
-            title: 'Refresh token function run successfully',
-          });
+          // Toast.fire({
+          //   icon: 'success',
+          //   title: 'Refresh token function run successfully',
+          // });
 
           sessionStorage.setItem('refresh_token', refresh_token);
          

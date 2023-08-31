@@ -49,6 +49,7 @@ public class JwtService {
 
         adminClaims.put("role", userDetails.getRole());
         adminClaims.put("id", String.valueOf(userDetails.getId()));
+        adminClaims.put("isVerified", String.valueOf(userDetails.getIsVerified()));
 
         return buildAccessToken(adminClaims, userDetails, jwtExpiration);
     }

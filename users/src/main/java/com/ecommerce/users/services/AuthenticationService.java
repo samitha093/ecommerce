@@ -3,6 +3,7 @@ import com.ecommerce.users.entity.User;
 import com.ecommerce.users.repository.UserRepository;
 import com.ecommerce.users.request.AuthenticationRequest;
 import com.ecommerce.users.request.RegisterRequest;
+import com.ecommerce.users.request.VerifyUserRequest;
 import com.ecommerce.users.response.AuthenticationResponse;
 import com.ecommerce.users.services.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +43,7 @@ public class AuthenticationService {
                     .build();
         }
         var user = User.builder()
+                .isVerified(false)
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -60,7 +62,7 @@ public class AuthenticationService {
 //login
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Optional<User> userOptional = repository.findByEmail(request.getEmail());
-
+        System.out.println("userOptional: " + userOptional);
         if (userOptional.isPresent()) {
             // User found, continue with the authentication process
             authenticationManager.authenticate(
@@ -69,6 +71,7 @@ public class AuthenticationService {
                             request.getPassword()
                     )
             );
+            System.out.println("user is present");
 
             // User authentication is successful, continue with token generation and other steps
             User user = userOptional.get();
@@ -128,4 +131,47 @@ public class AuthenticationService {
             }
         }
     }
+
+    public AuthenticationResponse verifyUser(VerifyUserRequest request) {
+        Optional<User> userOptional = repository.findByEmail(request.getEmail());
+
+        if (userOptional.isPresent()) {
+
+            User user = userOptional.get();
+            if(user.getIsVerified() == true){
+                return AuthenticationResponse.builder()
+                        .status("User already verified")
+                        .build();
+            }
+            user.setIsVerified(true);
+            //update current user
+            repository.save(user);
+            return AuthenticationResponse.builder()
+                    .status("User verified successfully")
+                    .build();
+
+        } else {
+            // User not found, return a response indicating that the user doesn't exist
+            return AuthenticationResponse.builder()
+                    .status("User not verified")
+                    .build();
+        }
+    }
+
+//    public AuthenticationResponse verifyUser(VerifyUserRequest request) {
+//        Optional<User> userOptional = repository.findByEmail(request.getEmail());
+//
+//        if (userOptional.isPresent()) {
+//            User user = userOptional.get();
+//            user.setIsVerified(true);
+//            repository.save(user); // Save the updated user
+//            return AuthenticationResponse.builder()
+//                    .status("User login Success")
+//                    .build();
+//        } else {
+//            return AuthenticationResponse.builder()
+//                    .status("User not found")
+//                    .build();
+//        }
+//    }
 }

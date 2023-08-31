@@ -31,19 +31,19 @@ function getAccessToken() {
             sessionStorage.setItem('refresh_token', refresh_token);
            
           } else {
-            Toast.fire({
-              icon: 'error',
-              title: 'Refresh token function failed',
-            });
-            console.log('Refresh-Token header not found ');
+            // Toast.fire({
+            //   icon: 'error',
+            //   title: 'Refresh token function failed',
+            // });
+            // console.log('Refresh-Token header not found ');
             
           }
         })
         .catch(() => {
-          Toast.fire({
-            icon: 'error',
-            title: 'Refresh token function error',
-          });
+          // Toast.fire({
+          //   icon: 'error',
+          //   title: 'Refresh token function error',
+          // });
         });
         return accessToken;
     }
