@@ -1,14 +1,12 @@
 package com.ecommerce.products.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.ecommerce.products.entity.Product;
-import com.ecommerce.products.entity.mapper.ProductMapper;
 import com.ecommerce.products.request.ProductCreateRequest;
 import com.ecommerce.products.response.ApiResponse;
 import com.ecommerce.products.security.TokenValidate;
