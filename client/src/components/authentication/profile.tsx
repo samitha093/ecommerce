@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Toast from "../modules/toast";
 import jwtDecode from 'jwt-decode';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -18,6 +19,7 @@ function Profile() {
   const [useremail, setEmail] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
+  const navigate = useNavigate();
 
   const imageStyle: React.CSSProperties = {
     width: '400px',
@@ -70,37 +72,44 @@ function Profile() {
         password: password,
         role:"USER"
       };
-      console.log(userDetails);
       const myHost = sessionStorage.getItem('host');
-      console.log(myHost);
       axios
         .post(`${myHost}/api/v1/auth/register`, userDetails)
-        .then((response: AxiosResponse<AuthResponse>) => {
-          // Extract the access_token from the response.data object
-          const accessToken = response.data.access_token;
-          if(accessToken !=="Email already exists"){
-            console.log(accessToken); //
-            // The decodedToken variable now holds the decoded payload information
-            const decodedToken = jwtDecode(accessToken);
-            console.log(decodedToken); // {username: "john", iat: 1598616022, exp: 1598619622}
+        .then((response) => {
+          if(response.status == 200){
+
             Toast.fire({
               icon: 'success',
               title: 'New user added successfully'
             })
+            
+            const refresh_token = response.headers['refresh-token'];
+            if (refresh_token) {
+              console.log(refresh_token);
+            sessionStorage.setItem('refresh_token', refresh_token);
+            } else {
+              console.log('Refresh-Token header not found in the response.');
+            }
+
+            const decodedToken: any = jwtDecode(refresh_token);
+            console.log(decodedToken);  
+            localStorage.setItem('isLogin', 'true');
+            navigate('/dashboard');
           }
           else{
-            console.log(response.data);
             Toast.fire({
               icon: 'error',
               title: 'Email already exists'
             })
           }
-   
-
 
         })
-        .catch((error) => {
-          console.error("Error registering user:", error);
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Email already exists'
+            })
+   
         });
     }
   }

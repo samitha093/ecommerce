@@ -1,11 +1,11 @@
 server:
-  port: 8081
+  port: 8082
   
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ecommerce-user
     username: postgres
-    password: 1997
+    password: 123456
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,11 +17,11 @@ spring:
   database: postgresql
   database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-
 application:
   security:
     jwt:
-      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      expiration: 86400000 # a day
+      access-secret-key:  404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      refresh-secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5971
+      expiration: 2592000000 # 30 seconds
       refresh-token:
-        expiration: 604800000 # 7 days
+        expiration: 2592000000 # 30 days

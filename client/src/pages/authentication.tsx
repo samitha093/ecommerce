@@ -6,7 +6,6 @@ interface authProps {
   message: string;
 }
 
-
 function Authentication({ message }: authProps) {
   useEffect(() => {
    const auth =  localStorage.getItem('auth');

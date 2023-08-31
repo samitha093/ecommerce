@@ -1,6 +1,6 @@
 package com.ecommerce.users.services;
 
-import com.ecommerce.users.repository.TokenRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
 
-    private final TokenRepository tokenRepository;
 
     @Override
     public void logout(
@@ -27,13 +26,19 @@ public class LogoutService implements LogoutHandler {
             return;
         }
         jwt = authHeader.substring(7);
-        var storedToken = tokenRepository.findByToken(jwt)
-                .orElse(null);
-        if (storedToken != null) {
-            storedToken.setExpired(true);
-            storedToken.setRevoked(true);
-            tokenRepository.save(storedToken);
-            SecurityContextHolder.clearContext();
-        }
+
+         // Clear the SecurityContextHolder, assuming you don't want to keep the authentication details after logout
+        SecurityContextHolder.clearContext();
+
+        // Set empty strings for access token and refresh token as cookies in the response
+        Cookie accessTokenCookie = new Cookie("Access-token", "");
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setMaxAge(0); // Set maxAge to 0 to make the cookie expire immediately
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("Refresh-token", "");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(0); // Set maxAge to 0 to make the cookie expire immediately
+        response.addCookie(refreshTokenCookie);
     }
 }

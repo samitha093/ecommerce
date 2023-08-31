@@ -2,6 +2,8 @@ import { useState } from "react";
 import Toast from "../modules/toast";
 import axios, { AxiosResponse } from "axios";
 import jwtDecode from 'jwt-decode';
+import Loading from "../modules/loading";
+import { Link, useNavigate } from 'react-router-dom';
 
 
 interface AuthResponse {
@@ -13,7 +15,8 @@ function Login() {
   const imageUrl = 'https://nest.botble.com/storage/general/login-1.png';
   const [password, setPassword] = useState('');
   const [useremail, setEmail] = useState('');
-
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -49,21 +52,35 @@ function Login() {
     };
     
     const myHost = sessionStorage.getItem('host');
-    
     // Send a POST request to the /loginUser endpoint with the user details
-    axios.post(`${myHost}/api/v1/auth/authenticate`, userDetails)
+    setIsLoading(true);
+    axios.post(`${myHost}/api/v1/auth/login`, userDetails, {
+      withCredentials: true,
+    })
     .then((response: AxiosResponse<AuthResponse>) => {
-      // Extract the access_token from the response.data object
-      const accessToken = response.data.access_token;
-      if(accessToken !=="Email already exists"){
-        console.log(accessToken); //
-        // The decodedToken variable now holds the decoded payload information
-        const decodedToken = jwtDecode(accessToken);
-        console.log(decodedToken); // {username: "john", iat: 1598616022, exp: 1598619622}
+      if(response.status == 200){
         Toast.fire({
           icon: 'success',
           title: 'Succeessfully logged in'
         })
+        
+        setIsLoading(false);
+      console.log(response);
+     
+      const refresh_token = response.headers['refresh-token'];
+      if (refresh_token) {
+        console.log(refresh_token);
+      sessionStorage.setItem('refresh_token', refresh_token);
+      } else {
+        console.log('Refresh-Token header not found in the response.');
+      }
+
+
+      const decodedToken: any = jwtDecode(refresh_token);
+      console.log(decodedToken);  
+      localStorage.setItem('isLogin', 'true');
+      navigate('/dashboard');
+   
       }
       else{
         console.log(response.data);
@@ -71,19 +88,23 @@ function Login() {
           icon: 'error',
           title: 'Email or password is incorrect'
         })
+        setIsLoading(false);
       }
+     
     })
       .catch((error) => {
         console.error("Error login user:", error);
         Toast.fire({
           icon: 'error',
-          title: 'Email or password is incorrect'
+          title: 'Server Error'
         })
+        setIsLoading(false);
       });
   }
-  
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
+       <Loading isLoading={isLoading} />
+       
       <div style={containerStyle}>
         <img src={imageUrl} style={imageStyle} />
       </div>
