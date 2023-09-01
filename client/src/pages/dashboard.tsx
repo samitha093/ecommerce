@@ -49,7 +49,7 @@ function Dashboard() {
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string>('');
   const [categoryList, setCateogryList] = useState<Category[]>([]);
   const [imageList, setImageList] = useState<Image[]>([]);
 
@@ -87,14 +87,13 @@ const imageListData= [{
 ]
 //set image list and category list
 useEffect(() => {
-  //test
-  setCateogryList(testCategory);
-  setImageList(imageListData);
+  // //test
+  // setCateogryList(testCategory);
+  // setImageList(imageListData);
 
   //original
   getAccessToken();
-  getAllCategory();
-  getAllImageList();
+
 
 }, []);
   // Define a default product object
@@ -122,7 +121,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/products/getproductsbyname/${itemName}`, { headers: headers }) 
+      .get(`${myHost}/v1/products/getproductsbyname/${itemName}`, { headers: headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -150,7 +149,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/products/getproductsbycategory/${itemName}`, { headers: headers })
+      .get(`${myHost}/v1/products/getproductsbycategory/${itemName}`, { headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -178,7 +177,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/products/getproductbyid/${itemName}`, { headers }) 
+      .get(`${myHost}/v1/products/getproductbyid/${itemName}`, { headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -251,19 +250,19 @@ useEffect(() => {
     }
 
   //get all categories from the store
-  function getAllCategory() {
+  function getAllCategory(accessTokens:string) {
     const myHost = sessionStorage.getItem('host');
     const headers = {
-      'Authorization': `Bearer ${accessToken}`,
+      'Authorization': `Bearer ${accessTokens}`,
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/categories/getallategories`)
+      .get(`${myHost}/v1/categories/getallcategories`,{ headers: headers })
       .then((response) => {
         if (response.status === 200) {
-          const categoryList = response.data;
+          const categoryList = response.data.data;
           setCateogryList(categoryList);
-          console.log('Retrieved categoryList:', categoryList,{ headers: headers });
+          console.log('Retrieved categoryList:', categoryList);
         } else {
           Toast.fire({
             icon: 'error',
@@ -280,19 +279,23 @@ useEffect(() => {
     
   }
   //get all images from the store
-  function getAllImageList() {
+  function getAllImageList(accessTokens:string) {
     const myHost = sessionStorage.getItem('host');
     const headers = {
-      'Authorization': `Bearer ${accessToken}`,
+      'Authorization': `Bearer ${accessTokens}`,
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/api/v1/images/gealltimages`)
+      .get(`${myHost}/v1/images/getallimages`,{ headers: headers })
       .then((response) => {
         if (response.status === 200) {
-          const imageList = response.data;
+          const imageList = response.data.data;
+          //response all images imagedata convert from base64 to string
+          imageList.forEach((element: any) => {
+          element.imageData = atob(element.imageData);
           setImageList(imageList);
-          console.log('Retrieved imageList:', imageList,{ headers: headers });
+          console.log('Retrieved imageList:', imageList);
+        });
         } else {
           Toast.fire({
             icon: 'error',
@@ -316,7 +319,7 @@ useEffect(() => {
         'Content-Type': 'application/json', 
       };
       axios
-        .put(`${myHost}/api/v1/products/updateproduct`, product, { headers: headers })
+        .put(`${myHost}/v1/products/updateproduct`, product, { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -350,7 +353,7 @@ useEffect(() => {
     };
       const myHost = sessionStorage.getItem('host');
       axios
-        .post(`${myHost}/api/v1/products/addnewproduct`, product, { headers: headers })
+        .post(`${myHost}/v1/products/addnewproduct`, product, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
@@ -386,7 +389,7 @@ useEffect(() => {
     'Content-Type': 'application/json', 
   };
   axios
-    .get(`${myHost}/api/v1/getallproducts`)
+    .get(`${myHost}/v1/getallproducts`)
     .then((response) => {
       if (response.status === 200) {
         const products = response.data;
@@ -415,7 +418,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
       axios
-        .delete(`${myHost}/api/v1/products/${id}`,{ headers: headers })
+        .delete(`${myHost}/v1/products/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -441,7 +444,9 @@ useEffect(() => {
 
    function getAccessToken() { 
     let refreshToken = sessionStorage.getItem('refresh_token');
-    const myHost = sessionStorage.getItem('host');
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8081";
     axios
       .post(
         `${myHost}/api/v1/auth/refresh-token`,
@@ -464,7 +469,8 @@ useEffect(() => {
           // });
 
           sessionStorage.setItem('refresh_token', refresh_token);
-         
+          getAllCategory(access_token);
+          getAllImageList(access_token);
         } else {
           Toast.fire({
             icon: 'error',

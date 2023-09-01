@@ -4,8 +4,6 @@ import Toast from "../components/modules/toast";
 import axios from "axios";
 import ImageTable from '../components/productImageUpload/imageTable';
 import SearchBars from '../components/modules/searchBars';
-import GetAccessToken from '../components/modules/getAccessToken';
-import getAccessToken from '../components/modules/getAccessToken';
 
 interface ProductImageUploadProps {
    
@@ -56,6 +54,11 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
           })
         }
         else{
+          // //convert image to base64
+          // const base64String = btoa(image.imageData);
+          // image.imageData = base64String;
+          console.log("image");
+          console.log(image);
           addProductImageToStore(image);
 
           //testing
@@ -64,8 +67,8 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       } 
   //add new image product to store
   function addProductImageToStore(image: Image) {
-          console.log("New received item : ", image.imageName);
-          console.log("New received item : ", image);
+          console.log("New add image data : ", image.imageData);
+          console.log("New add image item : ", image);
          
           const myHost = sessionStorage.getItem('host');
           const headers = {
@@ -108,16 +111,19 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
 
   //update existing image item
   const updateExisingProductImage = (image: Image) =>{
-        //testing
-         const updatedIndex = images.findIndex(p => p.id === image.id);
-          if (updatedIndex !== -1) {
-            // Create a copy of the products array
-            const updatedProducts = [...images];
-            updatedProducts[updatedIndex] = image;
-            setImages(updatedProducts);
-          }
+        // //testing
+        //  const updatedIndex = images.findIndex(p => p.id === image.id);
+        //   if (updatedIndex !== -1) {
+        //     // Create a copy of the products array
+        //     const updatedProducts = [...images];
+        //     updatedProducts[updatedIndex] = image;
+        //     setImages(updatedProducts);
+        //   }
     
           //real code
+            //convert image to base64
+          const base64String = btoa(image.imageData);
+          image.imageData = base64String;
           updateStoreImage(image);
       
           setIsUpdating(false);
@@ -213,8 +219,12 @@ function getAllProductsImagesFromStore(accessToken1:string) {
     .then((response) => {
       if (response.status === 200) {
         const products = response.data.data;
+        //response all images imagedata convert from base64 to string
+        products.forEach((element: any) => {
+          element.imageData = atob(element.imageData);
+        });
         setImages(products);
-        console.log('Retrieved products:', products);
+        console.log('Retrieved images list:', products);
       } else {
         Toast.fire({
           icon: 'error',
