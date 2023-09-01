@@ -30,19 +30,49 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
 
       const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
+        console.log("file", file);
       
+        // if (file) {
+        //   const reader = new FileReader();
+        //   reader.onload = (e) => {
+        //     if (e.target && typeof e.target.result === "string") {
+        //       const base64Data = e.target.result.split(",")[1]; // Get the Base64 data (remove data:image/jpeg;base64, part)
+        //       const newImage: Image = {
+        //         id: Date.now(),
+        //         imageName: file.name,
+        //         contentType: file.type,
+        //         imageData: base64Data,
+        //       };
+        //       console.log("newImage", newImage);
+        //       // setSelectedImage(file);
+        //       // setPreviewUrl(newImage.imageData);
+        //       setProductImage(newImage);
+            
+        //     }
+        //   };
+      
+        //   reader.readAsDataURL(file); // Read the file as data URL (Base64)
+        // }
+
+
         if (file) {
           const newImage: Image = {
             id: Date.now(),
             imageName: file.name,
             contentType: file.type,
-            imageData: URL.createObjectURL(file)
+            imageData: URL.createObjectURL(file),
           };
-          setSelectedImage(file);
           setPreviewUrl(newImage.imageData);
+          //convert image to base64
+          const base64String = btoa(newImage.imageData);
+          newImage.imageData = base64String;
           setProductImage(newImage);
+          setSelectedImage(file);
+
+       
         }
       };
+      
 
       const handleSubmit = () => {
         if (productImage) {

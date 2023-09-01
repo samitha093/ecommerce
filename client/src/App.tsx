@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Home from './pages/home';
 import Authentication from './pages/authentication';
 import Navbar from './components/navbar/navbar';
@@ -18,6 +18,8 @@ function App() {
   const handleMessageChange = (newMessage: any) => {
     setMessage(newMessage);
   };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   return (
     <BrowserRouter>
       <div>

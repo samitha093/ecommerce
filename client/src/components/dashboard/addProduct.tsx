@@ -263,15 +263,6 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                 ))}
               </select>
             </div>
-
-
-
-
-    
-
-
-
-
             <div className="mt-1">
               <input
                 placeholder="Price"
@@ -299,10 +290,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                 onChange={handlesetSoldQTYChange} 
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
               />
-            </div>
-
-
-                   
+            </div> 
             <div className="mt-1">
                 <select
                   id="imageDropdown"
