@@ -1,7 +1,7 @@
 import React from 'react';
 interface TrasactionsTableProps {
     categorys: ProductCart[];
-   
+    loadDataForUpdate: (product: ProductCart) => void; 
   }
   interface Image {
     id: number;
@@ -29,7 +29,7 @@ interface Product {
   }
  
 
-const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys }) => {
+const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys,loadDataForUpdate }) => {
     
 
     return (
@@ -92,7 +92,7 @@ const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys }) => {
               </td>
               <td className="px-6 py-4">
               <button className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-lg" 
-            //    onClick={() => loadDataForUpdate(category)}              
+                onClick={() => loadDataForUpdate(category)}              
               >
                Edit</button>
               </td>
