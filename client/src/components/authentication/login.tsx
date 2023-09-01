@@ -52,6 +52,8 @@ function Login() {
     };
     
     const myHost = sessionStorage.getItem('host');
+    //test
+    myHost == "http://localhost:8081";
     // Send a POST request to the /loginUser endpoint with the user details
     setIsLoading(true);
     axios.post(`${myHost}/api/v1/auth/login`, userDetails, {
