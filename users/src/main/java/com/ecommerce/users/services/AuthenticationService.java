@@ -145,6 +145,11 @@ public class AuthenticationService {
                         .status("User already verified")
                         .build();
             }
+            if(user.getOtp() != request.getOtp()){
+                return AuthenticationResponse.builder()
+                        .status("Otp not matched")
+                        .build();
+            }
             user.setIsVerified(true);
             //update current user
             repository.save(user);

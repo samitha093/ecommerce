@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VerifyUserRequest {
     private String email;
+    private int otp;
 
 }

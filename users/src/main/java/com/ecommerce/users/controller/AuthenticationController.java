@@ -11,10 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -85,21 +82,28 @@ public class AuthenticationController {
     public void refreshToken(HttpServletRequest request,HttpServletResponse response ) throws IOException {
         service.refreshToken(request, response);
     }
-    @PostMapping("/verify-user")
+    @GetMapping("/verify-user/{email}/{otp}")
     public ResponseEntity<String> verifyUser(
-            @RequestBody VerifyUserRequest request,
-            HttpServletResponse httpResponse // Inject HttpServletResponse
+            @PathVariable("email") String email,
+            @PathVariable("otp") int otp
     ) {
+        System.out.println("verifyUser request: " + email + " " + otp);
+        // Create a VerifyUserRequest object if needed
+        VerifyUserRequest request = new VerifyUserRequest();
+        request.setEmail(email);
+        request.setOtp(otp);
+
         AuthenticationResponse response = service.verifyUser(request);
+
         if (response.getStatus().equals("User verified successfully")) {
             return ResponseEntity.ok()
-             .body(response.getStatus());
-        }
-        else {
+                    .body(response.getStatus());
+        } else {
             return ResponseEntity.badRequest()
                     .body(response.getStatus());
         }
     }
+
     //otp add
     @PostMapping("/otp-add")
     public ResponseEntity<String> otpAdd(
