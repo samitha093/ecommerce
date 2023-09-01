@@ -29,6 +29,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private Boolean isVerified;
+    private int otp;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -62,6 +63,9 @@ public class User implements UserDetails {
     //get verification status
     public boolean getIsVerified() {
         return isVerified;
+    }
+    public int getOtp() {
+        return otp;
     }
 
     @Override

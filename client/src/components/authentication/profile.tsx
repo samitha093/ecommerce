@@ -140,7 +140,11 @@ function Profile() {
               icon: 'success',
               title: 'User Otp send successfully'
             }) 
-            console.log(response.data);        
+            console.log(response.data);  
+            var otpNo = response.data.data;
+            //convert to integer
+            otpNo = parseInt(otpNo);
+            otpUpdate(userEmail, otpNo);      
           }
           else{
             Toast.fire({
@@ -197,6 +201,42 @@ function Profile() {
         });
     
   }
+//otp update
+  function otpUpdate(userEmail: string, otpNo:Int16Array) {
+    const otpDetails = {
+      email: userEmail,
+      otp: otpNo,
+    };
+    console.log(otpDetails);
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8081";
+      axios.post(`${myHost}/api/v1/auth/otp-add`, otpDetails)
+      .then((response) => {
+        if(response.status == 200){
+          Toast.fire({
+            icon: 'success',
+            title: 'Otp Updated successfully'
+          })
+     
+        }
+        else{
+          Toast.fire({
+            icon: 'error',
+            title: 'Otp Updated failed'
+          })
+        }
+
+      })
+      .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Server Error'
+          })
+ 
+      });
+  
+}
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
       <div style={containerStyle}>

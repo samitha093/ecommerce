@@ -1,6 +1,7 @@
 package com.ecommerce.users.controller;
 
 import com.ecommerce.users.request.AuthenticationRequest;
+import com.ecommerce.users.request.OptAddRequest;
 import com.ecommerce.users.request.RegisterRequest;
 import com.ecommerce.users.request.VerifyUserRequest;
 import com.ecommerce.users.response.AuthenticationResponse;
@@ -93,6 +94,22 @@ public class AuthenticationController {
         if (response.getStatus().equals("User verified successfully")) {
             return ResponseEntity.ok()
              .body(response.getStatus());
+        }
+        else {
+            return ResponseEntity.badRequest()
+                    .body(response.getStatus());
+        }
+    }
+    //otp add
+    @PostMapping("/otp-add")
+    public ResponseEntity<String> otpAdd(
+            @RequestBody OptAddRequest request,
+            HttpServletResponse httpResponse // Inject HttpServletResponse
+    ) {
+        AuthenticationResponse response = service.otpAdd(request);
+        if (response.getStatus().equals("User otp added successfully")) {
+            return ResponseEntity.ok()
+                    .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()

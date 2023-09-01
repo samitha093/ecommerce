@@ -2,6 +2,7 @@ package com.ecommerce.users.services;
 import com.ecommerce.users.entity.User;
 import com.ecommerce.users.repository.UserRepository;
 import com.ecommerce.users.request.AuthenticationRequest;
+import com.ecommerce.users.request.OptAddRequest;
 import com.ecommerce.users.request.RegisterRequest;
 import com.ecommerce.users.request.VerifyUserRequest;
 import com.ecommerce.users.response.AuthenticationResponse;
@@ -44,6 +45,7 @@ public class AuthenticationService {
         }
         var user = User.builder()
                 .isVerified(false)
+                .otp(0)
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -158,20 +160,32 @@ public class AuthenticationService {
         }
     }
 
-//    public AuthenticationResponse verifyUser(VerifyUserRequest request) {
-//        Optional<User> userOptional = repository.findByEmail(request.getEmail());
-//
-//        if (userOptional.isPresent()) {
-//            User user = userOptional.get();
-//            user.setIsVerified(true);
-//            repository.save(user); // Save the updated user
-//            return AuthenticationResponse.builder()
-//                    .status("User login Success")
-//                    .build();
-//        } else {
-//            return AuthenticationResponse.builder()
-//                    .status("User not found")
-//                    .build();
-//        }
-//    }
+
+    //otp add
+    public AuthenticationResponse otpAdd(OptAddRequest request) {
+        Optional<User> userOptional = repository.findByEmail(request.getEmail());
+
+        if (userOptional.isPresent()) {
+
+            User user = userOptional.get();
+            if(user.getOtp() != 0){
+                return AuthenticationResponse.builder()
+                        .status("Otp already  verified")
+                        .build();
+            }
+            user.setOtp(request.getOtp());
+            //update current user
+            repository.save(user);
+            return AuthenticationResponse.builder()
+                    .status("User otp added successfully")
+                    .build();
+
+        } else {
+            // User not found, return a response indicating that the user doesn't exist
+            return AuthenticationResponse.builder()
+                    .status("User otp not added")
+                    .build();
+        }
+    }
+
 }
