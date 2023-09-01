@@ -224,9 +224,16 @@ const loadDataForUpdate = (category: Category) =>{
    }
 //search category by id
 const searchCategoryByKey = (itemKey: string) =>{
-    console.log("searçh category by id : ",itemKey);
-    const categoryId = parseInt(itemKey, 10);
-    getCategoryByUsingImageId(categoryId);
+    console.log("searçh category by name: ",itemKey);
+    //filter arraÿ by name
+    categorys.filter((val) => {
+        if(itemKey === ""){
+            getAllCategorysFromStore(accessToken);
+        }
+        else if(val.name.toLowerCase().includes(itemKey.toLowerCase())){
+            setCategorys([val]);
+        }
+    })
   }
 //get category By id
   const getCategoryByUsingImageId = (categoryId: number) => {
@@ -318,7 +325,7 @@ useEffect(() => {
           </div>
           <div className="col-span-4" style={{ marginRight: '200px' }}>
           <SearchBars
-           placeholder="Search category by ID"
+           placeholder="Search category by Name"
           searchProductByKey={searchCategoryByKey}/>
           </div>
       </div>

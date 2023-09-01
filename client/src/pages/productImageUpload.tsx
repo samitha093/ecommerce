@@ -54,9 +54,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
           })
         }
         else{
-          // //convert image to base64
-          // const base64String = btoa(image.imageData);
-          // image.imageData = base64String;
+          
           console.log("image");
           console.log(image);
           addProductImageToStore(image);
