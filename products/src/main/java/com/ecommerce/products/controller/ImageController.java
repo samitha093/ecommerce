@@ -1,8 +1,11 @@
 package com.ecommerce.products.controller;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,8 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.products.dto.ImageDTO;
 import com.ecommerce.products.dto.mapper.ImageDTOMapper;
@@ -28,6 +33,16 @@ import com.ecommerce.products.validation.ImageRequestValidator;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
+
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/images")
@@ -37,6 +52,51 @@ public class ImageController {
     private final ImageService imageService;
     private final ImageDTOMapper imageMapper;
     private final ImageRequestValidator ImageRequestValidator;
+
+    @Value("${upload.directory}")
+    private String uploadDirectory;
+
+    @GetMapping("/images/{imageName:.+}")
+    public ResponseEntity<Resource> viewImage(@PathVariable String imageName) throws IOException {
+        Path imagePath = Paths.get(uploadDirectory, imageName);
+        Resource imageResource = new FileSystemResource(imagePath);
+
+        System.out.println(imageResource);
+
+        if (imageResource.exists() && imageResource.isReadable()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(imageResource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/uploadImage")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please select a file to upload.");
+        }
+
+        try {
+            String originalFileName = file.getOriginalFilename();
+            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            
+            // Generate a random filename using UUID
+            String randomFileName = UUID.randomUUID().toString() + extension;
+
+            Path imagePath = Paths.get(uploadDirectory, randomFileName);
+            File destFile = imagePath.toFile();
+
+            // Save the uploaded file to the specified directory
+            file.transferTo(destFile);
+
+            return ResponseEntity.ok("http://localhost:8082/v1/images/images/" + randomFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());
+        }
+    }
     
     //ADD NEW IMAGE
     @PostMapping("/addnewimage")
