@@ -48,7 +48,8 @@ public class JwtService {
         Map<String, Object> adminClaims = new HashMap<>();
 
         adminClaims.put("role", userDetails.getRole());
-        adminClaims.put("id", userDetails.getId());
+        adminClaims.put("id", String.valueOf(userDetails.getId()));
+        adminClaims.put("isVerified", String.valueOf(userDetails.getIsVerified()));
 
         return buildAccessToken(adminClaims, userDetails, jwtExpiration);
     }

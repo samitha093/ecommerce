@@ -4,8 +4,6 @@ import Toast from "../components/modules/toast";
 import axios from "axios";
 import ImageTable from '../components/productImageUpload/imageTable';
 import SearchBars from '../components/modules/searchBars';
-import GetAccessToken from '../components/modules/getAccessToken';
-import getAccessToken from '../components/modules/getAccessToken';
 
 interface ProductImageUploadProps {
    
@@ -26,7 +24,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Image>();
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string >('');
     const divStyle1: DivStyle = {
         backgroundColor: 'white', 
         padding: '10px', 
@@ -56,32 +54,34 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
           })
         }
         else{
+          
+          console.log("image");
+          console.log(image);
           addProductImageToStore(image);
-          getAllProductsImagesFromStore();
 
           //testing
-          setImages((prevProducts) => [...prevProducts, image]);
+          // setImages((prevProducts) => [...prevProducts, image]);
         }
       } 
   //add new image product to store
   function addProductImageToStore(image: Image) {
-          console.log("New received item : ", image.imageName);
-          console.log("New received item : ", image);
+          console.log("New add image data : ", image.imageData);
+          console.log("New add image item : ", image);
          
           const myHost = sessionStorage.getItem('host');
-          const accessToken = sessionStorage.getItem('access-token');           
           const headers = {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json', 
           };
          axios
-              .post(`${myHost}/api/v1/images/addnewimage`, image,{headers})
+              .post(`${myHost}/v1/images/addnewimage`, image,{headers})
               .then((response) => {
                 if(response.status == 200){
                   Toast.fire({
                     icon: 'success',
                     title: 'New product Image added successfully'
                   })
+                  getAllProductsImagesFromStore(accessToken);
                   return true;
                 }
                 else{
@@ -109,18 +109,21 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
 
   //update existing image item
   const updateExisingProductImage = (image: Image) =>{
-        //testing
-         const updatedIndex = images.findIndex(p => p.id === image.id);
-          if (updatedIndex !== -1) {
-            // Create a copy of the products array
-            const updatedProducts = [...images];
-            updatedProducts[updatedIndex] = image;
-            setImages(updatedProducts);
-          }
+        // //testing
+        //  const updatedIndex = images.findIndex(p => p.id === image.id);
+        //   if (updatedIndex !== -1) {
+        //     // Create a copy of the products array
+        //     const updatedProducts = [...images];
+        //     updatedProducts[updatedIndex] = image;
+        //     setImages(updatedProducts);
+        //   }
     
           //real code
+            //convert image to base64
+          const base64String = btoa(image.imageData);
+          image.imageData = base64String;
           updateStoreImage(image);
-          getAllProductsImagesFromStore();
+      
           setIsUpdating(false);
         }
 
@@ -135,13 +138,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       };
     
       axios
-        .put(`${myHost}/api/v1/images/updateimage/${imageId}`, image, { headers: headers })
+        .put(`${myHost}/v1/images/updateimage/${imageId}`, image, { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
               icon: 'success',
               title: 'Product image updated successfully',
             });
+            getAllProductsImagesFromStore(accessToken);
           } else {
             Toast.fire({
               icon: 'error',
@@ -164,7 +168,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
     
     //real code
     removeItemImageFromStore(id);    
-    getAllProductsImagesFromStore();
+    
     setIsDelete(true);
   }   
   //delete product item from store
@@ -176,14 +180,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/api/v1/images/deleteimage/${id}`,{ headers: headers })
+        .delete(`${myHost}/v1/images/deleteimage/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
               icon: 'success',
               title: 'Product image deleted successfully'
             });
-            
+            getAllProductsImagesFromStore(accessToken);
             // Perform any necessary updates in your state or UI here after successful deletion
           } else {
             Toast.fire({
@@ -201,20 +205,24 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
     
    }
 //get all products images from the store
-function getAllProductsImagesFromStore() {
+function getAllProductsImagesFromStore(accessToken1:string) {
   const myHost = sessionStorage.getItem('host');
   // Define the headers with the access token
   const headers = {
-    'Authorization': `Bearer ${accessToken}`,
+    'Authorization': `Bearer ${accessToken1}`,
     'Content-Type': 'application/json',
   };
   axios
-    .get(`${myHost}/api/v1/images/getallimages`, { headers: headers })
+    .get(`${myHost}/v1/images/getallimages`, { headers: headers })
     .then((response) => {
       if (response.status === 200) {
-        const products = response.data;
+        const products = response.data.data;
+        //response all images imagedata convert from base64 to string
+        products.forEach((element: any) => {
+          element.imageData = atob(element.imageData);
+        });
         setImages(products);
-        console.log('Retrieved products:', products);
+        console.log('Retrieved images list:', products);
       } else {
         Toast.fire({
           icon: 'error',
@@ -245,7 +253,7 @@ const getProductImageByUsingImageId = (imageId: number) => {
       'Content-Type': 'application/json',
     };
     axios
-      .get(`${myHost}/api/v1/images/getimagebyid/${imageId}`, { headers: headers }) 
+      .get(`${myHost}/v1/images/getimagebyid/${imageId}`, { headers: headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -268,7 +276,9 @@ const getProductImageByUsingImageId = (imageId: number) => {
 
   function getAccessToken() { 
     let refreshToken = sessionStorage.getItem('refresh_token');
-    const myHost = sessionStorage.getItem('host');
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8081";
     axios
       .post(
         `${myHost}/api/v1/auth/refresh-token`,
@@ -285,13 +295,13 @@ const getProductImageByUsingImageId = (imageId: number) => {
           const refresh_token = response.headers['refresh-token'];
           const access_token = response.headers['access-token'];
           setAccessToken(access_token);
-          Toast.fire({
-            icon: 'success',
-            title: 'Refresh token function run successfully',
-          });
+          // Toast.fire({
+          //   icon: 'success',
+          //   title: 'Refresh token function run successfully',
+          // });
 
           sessionStorage.setItem('refresh_token', refresh_token);
-         
+          getAllProductsImagesFromStore(access_token);
         } else {
           Toast.fire({
             icon: 'error',

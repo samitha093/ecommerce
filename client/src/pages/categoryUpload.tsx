@@ -24,7 +24,7 @@ const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
     const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
     const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
     const [currentCategory, setCurrentCategory] = useState<Category>();
-    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [accessToken, setAccessToken] = useState<string>("");
   
     const defaultCategory: Category = {
         id: 0,
@@ -53,9 +53,9 @@ const addNewCategory = (category: Category) =>{
     }
     else{
       addCategoryToStore(category);
-      getAllCategorysFromStore();
+      
       //for testing
-      setCategorys((prevProducts) => [...prevProducts, category]);
+      // setCategorys((prevProducts) => [...prevProducts, category]);
     }
   }
   //add new category to store
@@ -69,13 +69,14 @@ const addNewCategory = (category: Category) =>{
         'Content-Type': 'application/json', 
       };
       axios
-        .post(`${myHost}/api/v1/categories/addnewcategory`, category, { headers: headers })
+        .post(`${myHost}/v1/categories/addnewcategory`, category, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
               icon: 'success',
               title: 'New category added successfully'
             })
+            getAllCategorysFromStore(accessToken);
             return true;
           }
           else{
@@ -96,18 +97,19 @@ const addNewCategory = (category: Category) =>{
         });
  }
  //get all categories from the store
-function getAllCategorysFromStore() {
+function getAllCategorysFromStore(accessToken1:string) {
     const myHost = sessionStorage.getItem('host');
     // Define the headers with the access token
     const headers = {
-      'Authorization': `Bearer ${accessToken}`,
+      'Authorization': `Bearer ${accessToken1}`,
       'Content-Type': 'application/json',
     };
+    console.log("headers : ",headers);
     axios
-      .get(`${myHost}/api/v1/categories/getallcategories`,{headers})
+      .get(`${myHost}/v1/categories/getallcategories`,{headers})
       .then((response) => {
         if (response.status === 200) {
-          const categorys = response.data;
+          const categorys = response.data.data;
           setCategorys(categorys);
           console.log('Retrieved categories:', categorys);
         } else {
@@ -137,7 +139,7 @@ const updateExisingCategory = (category: Category) =>{
     
           //real code
           updateCategoryItem(category);
-          getAllCategorysFromStore(); 
+          // getAllCategorysFromStore(accessToken); 
           setIsUpdating(false);
         }
 //update category in the store
@@ -150,13 +152,14 @@ function updateCategoryItem(category: Category) {
       'Content-Type': 'application/json',
     };
     axios
-      .put(`${myHost}/api/v1/categories/updatecategory/${categoryId}`, category, { headers })
+      .put(`${myHost}/v1/categories/updatecategory/${categoryId}`, category, { headers })
       .then((response) => {
         if (response.status === 200) {
           Toast.fire({
             icon: 'success',
             title: 'Category item updated successfully',
           });
+          getAllCategorysFromStore(accessToken);
         } else {
           Toast.fire({
             icon: 'error',
@@ -185,7 +188,7 @@ const loadDataForUpdate = (category: Category) =>{
     
     //real code
     removeCategoryFromStore(id);    
-    getAllCategorysFromStore();
+    getAllCategorysFromStore(accessToken);
     setIsDelete(true);
   }
   //delete category from store
@@ -197,7 +200,7 @@ const loadDataForUpdate = (category: Category) =>{
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/api/v1/categories/deletecategory/${id}` , { headers: headers })
+        .delete(`${myHost}/v1/categories/deletecategory/${id}` , { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -221,9 +224,16 @@ const loadDataForUpdate = (category: Category) =>{
    }
 //search category by id
 const searchCategoryByKey = (itemKey: string) =>{
-    console.log("searçh category by id : ",itemKey);
-    const categoryId = parseInt(itemKey, 10);
-    getCategoryByUsingImageId(categoryId);
+    console.log("searçh category by name: ",itemKey);
+    //filter arraÿ by name
+    categorys.filter((val) => {
+        if(itemKey === ""){
+            getAllCategorysFromStore(accessToken);
+        }
+        else if(val.name.toLowerCase().includes(itemKey.toLowerCase())){
+            setCategorys([val]);
+        }
+    })
   }
 //get category By id
   const getCategoryByUsingImageId = (categoryId: number) => {
@@ -234,7 +244,7 @@ const searchCategoryByKey = (itemKey: string) =>{
         'Content-Type': 'application/json',
       };
       axios
-        .get(`${myHost}/api/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
+        .get(`${myHost}/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
         .then((response) => {
           if (response.status === 200) {
             const categorys = response.data;
@@ -256,7 +266,10 @@ const searchCategoryByKey = (itemKey: string) =>{
     };
     function getAccessToken() { 
       let refreshToken = sessionStorage.getItem('refresh_token');
-      const myHost = sessionStorage.getItem('host');
+      var myHost = sessionStorage.getItem('host');
+      //test
+      myHost = "http://localhost:8081";
+
       axios
         .post(
           `${myHost}/api/v1/auth/refresh-token`,
@@ -273,11 +286,11 @@ const searchCategoryByKey = (itemKey: string) =>{
             const refresh_token = response.headers['refresh-token'];
             const access_token = response.headers['access-token'];
             setAccessToken(access_token);
-            Toast.fire({
-              icon: 'success',
-              title: 'Refresh token function run successfully',
-            });
-  
+            // Toast.fire({
+            //   icon: 'success',
+            //   title: 'Refresh token function run successfully',
+            // });
+            getAllCategorysFromStore(access_token);
             sessionStorage.setItem('refresh_token', refresh_token);
            
           } else {
@@ -299,6 +312,7 @@ const searchCategoryByKey = (itemKey: string) =>{
 
 useEffect(() => {
     getAccessToken();
+   
   }
   , []);
 
@@ -311,7 +325,7 @@ useEffect(() => {
           </div>
           <div className="col-span-4" style={{ marginRight: '200px' }}>
           <SearchBars
-           placeholder="Search category by ID"
+           placeholder="Search category by Name"
           searchProductByKey={searchCategoryByKey}/>
           </div>
       </div>
