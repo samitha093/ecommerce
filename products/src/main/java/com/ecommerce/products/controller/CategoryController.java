@@ -209,7 +209,7 @@ public class CategoryController {
     }
 
     //GET ALL CATEGORIES
-    @GetMapping("/getallategories")
+    @GetMapping("/getallcategories")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> getCategories(
         @RequestHeader("Authorization") String tokenHeader

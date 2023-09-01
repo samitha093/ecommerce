@@ -72,9 +72,9 @@ function Profile() {
         password: password,
         role:"USER"
       };
-    const myHost = sessionStorage.getItem('host');
+      var myHost = sessionStorage.getItem('host');
     //test
-    myHost == "http://localhost:8081";
+    myHost = "http://localhost:8081";
       axios
         .post(`${myHost}/api/v1/auth/register`, userDetails)
         .then((response) => {

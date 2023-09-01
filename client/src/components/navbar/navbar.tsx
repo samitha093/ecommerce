@@ -82,7 +82,10 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   //pass parameter to this function
   function getAccessToken(routeName: string) {
     let refreshToken = sessionStorage.getItem('refresh_token');
-    const myHost = sessionStorage.getItem('host');
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8081";
+
     axios
       .post(
         `${myHost}/api/v1/auth/refresh-token`,
