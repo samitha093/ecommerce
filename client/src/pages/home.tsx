@@ -27,6 +27,8 @@ interface Product {
 
 interface ProductCart extends Product {
   isSelected: boolean;
+  totalPrice : number;
+  selectedQTY : number;
 }
 
 
@@ -40,7 +42,9 @@ interface ProductCart extends Product {
   const convertProductsToProductCart = (products: Product[]): ProductCart[] => {
     return products.map((product) => ({
       ...product,
-      isSelected: false, // You can set the default value for isSelected here
+      isSelected: false, 
+      totalPrice: product.price,
+      selectedQTY: 1,
     }));
   };
   
@@ -199,7 +203,8 @@ interface ProductCart extends Product {
     const selectedProduct = productCartItems.filter((product) => product.isSelected === true);
     console.log(selectedProduct);
     setSelectedProduct(selectedProduct);
-  
+    //add to session storage
+    sessionStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
   }
   return (
     <div>
