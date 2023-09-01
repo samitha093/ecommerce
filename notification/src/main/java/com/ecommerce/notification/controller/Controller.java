@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecommerce.notification.request.Commonrequest;
 import com.ecommerce.notification.request.OTPRequest;
 import com.ecommerce.notification.response.ApiResponse;
-import com.ecommerce.notification.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/v1/notification")
 public class Controller {
 
-    private final NotificationService notificationService;
+    private final com.ecommerce.notification.service.notificationService notificationService;
 
     @PostMapping("/sendemail")
     public ResponseEntity<ApiResponse<Object>> sendNotification(

@@ -62,6 +62,13 @@ function Profile() {
   };
 //register
   function handleRegisterClick() {
+
+    // sendEmailNotification(
+    //   "Welcome to the Nest. Please verify your email address by entering the OTP code below. OTP code is valid for 5 minutes.", 
+    //   "Nest Email Verification",
+    //    "lakshanisuru170@gmail.com")
+
+
     if (password !== confirmPassword) {
       setPasswordMatch(false);
     } else {
@@ -94,13 +101,11 @@ function Profile() {
 
             const decodedToken: any = jwtDecode(refresh_token);
             console.log(decodedToken);  
-            //send otp
-            sendVerificationEmail(useremail)
-            //send email
-            sendEmailNotification(
-              "Welcome to the Nest. Please verify your email address by entering the OTP code below. OTP code is valid for 5 minutes.", 
-              "Nest Email Verification",
-               useremail)
+            sendVerificationEmail(useremail);
+            // sendEmailNotification(
+            //   "Welcome to the Nest. Please verify your email address by entering the OTP code below. OTP code is valid for 5 minutes.", 
+            //   "Nest Email Verification",
+            //    useremail)
             localStorage.setItem('isLogin', 'true');
             navigate('/');
           }
@@ -127,14 +132,15 @@ function Profile() {
         email: userEmail,
       };
       axios
-        .post(`http://localhost:8083/api/v1/notification/otpsend`, otpEmai)
+        .post(`http://localhost:8083/v1/notification/otpsend`, otpEmai)
         .then((response) => {
           if(response.status == 200){
 
             Toast.fire({
               icon: 'success',
               title: 'User Otp send successfully'
-            })         
+            }) 
+            console.log(response.data);        
           }
           else{
             Toast.fire({
@@ -161,9 +167,10 @@ function Profile() {
         email: useremail,
         subject: emailSubject,
       };
+      console.log(emailDetails);
 
       axios
-        .post(`http://localhost:8083/api/v1/notification/sendemail`, emailDetails)
+        .post(`http://localhost:8083/v1/notification/sendemail`, emailDetails)
         .then((response) => {
           if(response.status == 200){
 
