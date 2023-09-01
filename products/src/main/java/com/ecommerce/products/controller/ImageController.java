@@ -266,7 +266,7 @@ public class ImageController {
     }
 
     //GET ALL IMAGES
-    @GetMapping("/gealltimages")
+    @GetMapping("/getallimages")
     @ResponseBody
     public ResponseEntity<ApiResponse<Object>> getImages(
         @RequestHeader("Authorization") String tokenHeader

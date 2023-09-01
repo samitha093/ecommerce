@@ -11,7 +11,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 
 @Service
-public class NotificationService {
+public class notificationService {
 
     @Autowired private JavaMailSender javaMailSender;
 

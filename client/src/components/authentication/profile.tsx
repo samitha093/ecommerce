@@ -20,7 +20,7 @@ function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(false);
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -60,8 +60,10 @@ function Profile() {
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
   };
-
+//register
   function handleRegisterClick() {
+    setIsLoading(true);
+
     if (password !== confirmPassword) {
       setPasswordMatch(false);
     } else {
@@ -72,12 +74,13 @@ function Profile() {
         password: password,
         role:"USER"
       };
-      const myHost = sessionStorage.getItem('host');
+      var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8081";
       axios
         .post(`${myHost}/api/v1/auth/register`, userDetails)
         .then((response) => {
           if(response.status == 200){
-
             Toast.fire({
               icon: 'success',
               title: 'New user added successfully'
@@ -93,15 +96,19 @@ function Profile() {
 
             const decodedToken: any = jwtDecode(refresh_token);
             console.log(decodedToken);  
+
             localStorage.setItem('isLogin', 'true');
-            navigate('/dashboard');
+            navigate('/');
+            setIsLoading(false);
           }
           else{
             Toast.fire({
               icon: 'error',
               title: 'Email already exists'
             })
+            setIsLoading(false);
           }
+
 
         })
         .catch(() => {
@@ -109,10 +116,121 @@ function Profile() {
               icon: 'error',
               title: 'Email already exists'
             })
-   
+            setIsLoading(false);
         });
     }
   }
+//send email verification
+  function sendVerificationEmail(userEmail: string) {
+      const otpEmai = {
+        email: userEmail,
+      };
+      axios
+        .post(`http://localhost:8083/v1/notification/otpsend`, otpEmai)
+        .then((response) => {
+          if(response.status == 200){
+
+            Toast.fire({
+              icon: 'success',
+              title: 'User Otp send successfully'
+            }) 
+            console.log(response.data);  
+            var otpNo = response.data.data;
+            //convert to integer
+            otpNo = parseInt(otpNo);
+              
+          }
+          else{
+            Toast.fire({
+              icon: 'error',
+              title: 'User Otp send failed'
+            })
+          }
+
+        })
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Server Error'
+            })
+   
+        });
+    
+  }
+
+  //send email
+  function sendEmailNotification(emailBody: string, emailSubject: string, useremail: string) {
+      const emailDetails = {
+        body: emailBody,
+        email: useremail,
+        subject: emailSubject,
+      };
+      console.log(emailDetails);
+
+      axios
+        .post(`http://localhost:8083/v1/notification/sendemail`, emailDetails)
+        .then((response) => {
+          if(response.status == 200){
+
+            Toast.fire({
+              icon: 'success',
+              title: 'Email send successfully'
+            })
+       
+          }
+          else{
+            Toast.fire({
+              icon: 'error',
+              title: 'Email send failed'
+            })
+          }
+
+        })
+        .catch(() => {
+            Toast.fire({
+              icon: 'error',
+              title: 'Server Error'
+            })
+   
+        });
+    
+  }
+//otp update
+  function otpUpdate(userEmail: string, otpNo:Int16Array) {
+    const otpDetails = {
+      email: userEmail,
+      otp: otpNo,
+    };
+    console.log(otpDetails);
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8081";
+      axios.post(`${myHost}/api/v1/auth/otp-add`, otpDetails)
+      .then((response) => {
+        if(response.status == 200){
+          Toast.fire({
+            icon: 'success',
+            title: 'Otp Updated successfully'
+          })
+     
+        }
+        else{
+          Toast.fire({
+            icon: 'error',
+            title: 'Otp Updated failed'
+          })
+        }
+
+      })
+      .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Server Error'
+          })
+ 
+      });
+  
+}
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
       <div style={containerStyle}>
