@@ -7,6 +7,7 @@ import Dashboard from './pages/dashboard';
 import ProductImageUpload from './pages/productImageUpload';
 import { useEffect, useState } from 'react';
 import CategoryUpload from './pages/categoryUpload';
+import Transactions from './pages/transactions';
 
 function App() {
   useEffect(() => {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/dashboard"  element={<Dashboard/>} />
         <Route path="/productImageUpload"  element={<ProductImageUpload/>} />
         <Route path="/categoryUpload"  element={<CategoryUpload/>} />
+        <Route path="/cart"  element={<Transactions/>} />
       </Routes>
       </div>
     </BrowserRouter>
