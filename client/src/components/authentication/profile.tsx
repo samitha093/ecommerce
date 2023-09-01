@@ -20,7 +20,7 @@ function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(false);
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -62,12 +62,7 @@ function Profile() {
   };
 //register
   function handleRegisterClick() {
-
-    // sendEmailNotification(
-    //   "Welcome to the Nest. Please verify your email address by entering the OTP code below. OTP code is valid for 5 minutes.", 
-    //   "Nest Email Verification",
-    //    "lakshanisuru170@gmail.com")
-
+    setIsLoading(true);
 
     if (password !== confirmPassword) {
       setPasswordMatch(false);
@@ -101,20 +96,19 @@ function Profile() {
 
             const decodedToken: any = jwtDecode(refresh_token);
             console.log(decodedToken);  
-            sendVerificationEmail(useremail);
-            // sendEmailNotification(
-            //   "Welcome to the Nest. Please verify your email address by entering the OTP code below. OTP code is valid for 5 minutes.", 
-            //   "Nest Email Verification",
-            //    useremail)
+
             localStorage.setItem('isLogin', 'true');
             navigate('/');
+            setIsLoading(false);
           }
           else{
             Toast.fire({
               icon: 'error',
               title: 'Email already exists'
             })
+            setIsLoading(false);
           }
+
 
         })
         .catch(() => {
@@ -122,7 +116,7 @@ function Profile() {
               icon: 'error',
               title: 'Email already exists'
             })
-   
+            setIsLoading(false);
         });
     }
   }
@@ -144,7 +138,7 @@ function Profile() {
             var otpNo = response.data.data;
             //convert to integer
             otpNo = parseInt(otpNo);
-            otpUpdate(userEmail, otpNo);      
+              
           }
           else{
             Toast.fire({
