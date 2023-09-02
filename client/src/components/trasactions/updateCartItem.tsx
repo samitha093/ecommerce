@@ -46,7 +46,7 @@ interface Product {
       };
       useEffect(() => {
         setCurrentProduct(currentProduct);
-        console.log("currentProduct add file ", currentProduct);
+        // console.log("currentProduct add file ", currentProduct);
         setProductName(currentProduct.name || '');
         setTotalPrice(currentProduct.totalPrice || 0);
         setPrice(currentProduct.price || 0);
@@ -59,33 +59,33 @@ interface Product {
         } else {
           setPreviewUrl(undefined);
         }
-        // //get category id and map to category name
-        // const category = categoryList.find((options) => options.id === currentProduct.categoryId);
-        // setSelectedOption(category?.name || '');
-        // //category name print
-        // console.log("category name ",selectedOption);
-        console.log("currentProduct add file ", currentProduct);
+ 
       }, [currentProduct]);
 
-    //   const handleSubmit = (value:number) => {
-    //     SetProductQty(value);
-    //     setTotalPrice(value * price);
-    // }
+
     const handleItemQTYChange = (event: any) => {
-        SetProductQty(event.target.value);
+      var productQty = event.target.value;
+      var productQtyAsInteger = parseInt(productQty, 10);
+      
+        //productQty convert to integer
+
+        SetProductQty(productQtyAsInteger);
         setTotalPrice(event.target.value * price);
       };
       const handleSubmit = () => {
+        //productQty convert to integer
+        
         currentProduct.selectedQTY = productQty;
         currentProduct.totalPrice = totalPrice;
         updateExisingProduct(currentProduct);
+        console.log("currentProduct test ", currentProduct);
       }
     return (
         <div className="grid grid-cols-2 gap-0 content-center ..." >
         <div style={containerStyle}>
           <div className="h-56 grid grid-cols-1 gap-0 mt-0">
             <div style={{ textAlign: 'center' }}>
-              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>Update Product</h3>
+              <h3 style={{ fontSize: '25px', fontWeight: 'bold',textAlign:'center', color: '#001C30' }}>Update </h3>
             </div>
             <div className="mt-1 ">
               <input
@@ -134,8 +134,8 @@ interface Product {
             <div style={{ textAlign: 'center' }} className="mt-8">
             <button
               onClick={handleSubmit}
-              style={{ padding: '15px', width: '130px' }}
-              className={`text-white font-bold py-2 px-4 rounded ${true ? 'bg-blue-900 hover:bg-green-700' : 'bg-gray-400'}`}   
+              
+              className={`text-white font-bold py-2 px-4 rounded ${true ? 'bg-blue-600 hover:bg-red-500' : 'bg-gray-400'}`}   
             >
                 Update
             </button>

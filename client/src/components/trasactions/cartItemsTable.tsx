@@ -30,12 +30,10 @@ interface Product {
  
 
 const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys,loadDataForUpdate }) => {
-    
-
     return (
         <div className="relative overflow-x-auto">
       <div style={{ textAlign: 'center' }}>
-        <h4 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', color: '#001C30' }}>Store</h4>
+        <h4 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', color: '#001C30' }}>Cart</h4>
       </div>
       <table className="w-full text-sm text-left text-black-900 dark:text-gray-900">
         <thead className="text-xs text-gray-100 uppercase bg-gray-100 dark:bg-gray-200 dark:text-gray-400">
