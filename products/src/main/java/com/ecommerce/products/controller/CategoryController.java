@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/categories")
+@RequestMapping("/v1/product/categories")
 public class CategoryController {
 
     private final CategoryRequestValidator categoryRequestValidator;

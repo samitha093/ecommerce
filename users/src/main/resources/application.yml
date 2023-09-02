@@ -16,6 +16,12 @@ spring:
         format_sql: true
   database: postgresql
   database-platform: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: user.service
+
+eureka:
+  instance:
+    hostname: localhost
 
 application:
   security:
