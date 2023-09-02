@@ -1,4 +1,6 @@
 import React, { useEffect, useState ,ChangeEvent} from 'react';
+import axios from "axios";
+import Toast from "../../components/modules/toast";
 
 interface AddProductImageUploadProps {
     onAddProductImage: (image: Image) => void;
@@ -20,7 +22,6 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
 
     const [productImage, setProductImage] = useState<Image | null>(null);
 
-
     const containerStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'center',
@@ -31,29 +32,6 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
       const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         console.log("file", file);
-      
-        // if (file) {
-        //   const reader = new FileReader();
-        //   reader.onload = (e) => {
-        //     if (e.target && typeof e.target.result === "string") {
-        //       const base64Data = e.target.result.split(",")[1]; // Get the Base64 data (remove data:image/jpeg;base64, part)
-        //       const newImage: Image = {
-        //         id: Date.now(),
-        //         imageName: file.name,
-        //         contentType: file.type,
-        //         imageData: base64Data,
-        //       };
-        //       console.log("newImage", newImage);
-        //       // setSelectedImage(file);
-        //       // setPreviewUrl(newImage.imageData);
-        //       setProductImage(newImage);
-            
-        //     }
-        //   };
-      
-        //   reader.readAsDataURL(file); // Read the file as data URL (Base64)
-        // }
-
 
         if (file) {
           const newImage: Image = {
@@ -72,7 +50,41 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
        
         }
       };
+      // trasactions checkout to db
+      function uploadNewImageAndGetUrl(checkoutDetails:any) {  
+      const headers = {
+        'Content-Type': 'application/json', 
+      };
+      var myHost = sessionStorage.getItem('host');
       
+        axios
+          .post(`${myHost}/v1/transactions/addtransaction`, checkoutDetails, { headers: headers })
+          .then((response) => {
+            if(response.status == 200){
+              Toast.fire({
+                icon: 'success',
+                title: 'Checkout successfully'
+              })
+              return true;
+            }
+            else{
+              Toast.fire({
+                icon: 'error',
+                title: 'Checkout not successfull'
+              })
+              return false;
+            }
+    
+          })
+          .catch(() => {
+              Toast.fire({
+                icon: 'error',
+                title: 'Server Error'
+              })
+              return false;
+          });
+    }
+
 
       const handleSubmit = () => {
         if (productImage) {
