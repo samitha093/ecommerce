@@ -75,7 +75,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     }
   };
   useEffect(() => {
-    console.log("currentProduct add file ", currentProduct);
+    // console.log("currentProduct add file ", currentProduct);
     setProductName(currentProduct.name || '');
     setId(currentProduct.id || 0);
     setDescription(currentProduct.description || '');
@@ -95,7 +95,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     setSelectedOption(category?.name || '');
     //category name print
     console.log("category name ",selectedOption);
-    console.log("currentProduct add file ", currentProduct);
+    // console.log("currentProduct add file ", currentProduct);
   }, [currentProduct]);
   
     const containerStyle: React.CSSProperties = {
