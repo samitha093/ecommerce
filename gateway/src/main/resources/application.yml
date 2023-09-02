@@ -8,15 +8,15 @@ spring:
         - id: transaction.service
           uri: lb://transaction.service
           predicates:
-            - Path=/v1/transactions/**
+            - Path=/api/v1/transactions/**
         - id: notification.service
           uri: lb://notification.service
           predicates:
-            - Path=/v1/notification/**
+            - Path=/api/v1/notification/**
         - id: product.service
           uri: lb://product.service
           predicates:
-            - Path=/v1/product/**
+            - Path=/api/v1/product/**
         - id: user.service
           uri: lb://user.service
           predicates:
