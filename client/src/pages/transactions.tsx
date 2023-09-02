@@ -178,10 +178,8 @@ function Transactions () {
         const headers = {
           'Content-Type': 'application/json', 
         };
-        var myHost = sessionStorage.getItem('host');
-       
           axios
-            .post(`${myHost}/v1/transactions/addtransaction`, checkoutDetails, { headers: headers })
+            .post(`/api/v1/transactions/addtransaction`, checkoutDetails, { headers: headers })
             .then((response) => {
               if(response.status == 200){
                 Toast.fire({

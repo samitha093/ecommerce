@@ -457,7 +457,6 @@ useEffect(() => {
         title: 'Failed to retrieve products'
       });
     });
-  
 }
 //delete product item from store
   function removeItemFromStore(id: number) {
