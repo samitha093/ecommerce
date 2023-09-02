@@ -32,33 +32,33 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
       const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         console.log("file", file);
+        uploadNewImageAndGetUrl(file!);
+        // if (file) {
+        //   const newImage: Image = {
+        //     id: Date.now(),
+        //     imageName: file.name,
+        //     contentType: file.type,
+        //     imageData: URL.createObjectURL(file),
+        //   };
+        //   setPreviewUrl(newImage.imageData);
+        //   //convert image to base64
+        //   const base64String = btoa(newImage.imageData);
+        //   newImage.imageData = base64String;
+        //   setProductImage(newImage);
+        //   setSelectedImage(file);
+        // }
 
-        if (file) {
-          const newImage: Image = {
-            id: Date.now(),
-            imageName: file.name,
-            contentType: file.type,
-            imageData: URL.createObjectURL(file),
-          };
-          setPreviewUrl(newImage.imageData);
-          //convert image to base64
-          const base64String = btoa(newImage.imageData);
-          newImage.imageData = base64String;
-          setProductImage(newImage);
-          setSelectedImage(file);
 
-       
-        }
       };
       // trasactions checkout to db
-      function uploadNewImageAndGetUrl(checkoutDetails:any) {  
+      function uploadNewImageAndGetUrl(file: File)  {  
       const headers = {
         'Content-Type': 'application/json', 
       };
       var myHost = sessionStorage.getItem('host');
       
         axios
-          .post(`${myHost}/v1/transactions/addtransaction`, checkoutDetails, { headers: headers })
+          .post(`${myHost}/v1/transactions/addtransaction`, file, { headers: headers })
           .then((response) => {
             if(response.status == 200){
               Toast.fire({
