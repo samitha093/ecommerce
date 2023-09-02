@@ -40,6 +40,8 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   };
   const handleLogOutClick = () => {
     handleItemClick('LOGIN');
+    //remove refresh token from session storage
+    sessionStorage.removeItem('refresh_token');
     localStorage.setItem('isLogin', 'false');
     setIsLogin("false");
     navigate('/authentication');
@@ -73,17 +75,18 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   };
 
   const handleNavigateImageUpload = () => {
-    // getAccessToken("productImageUpload");
+    getAccessToken("productImageUpload");
 
-    navigate('/productImageUpload');
+    // navigate('/productImageUpload');
   };
   const handleNavigateCategory = () => {
-    // getAccessToken("categoryUpload");
+    getAccessToken("categoryUpload");
 
-    navigate('/categoryUpload');
+    // navigate('/categoryUpload');
   };
   const handleNavigateCart = () => {
-    navigate('/cart');
+    // navigate('/cart');
+    getAccessToken("cart");
   };
   //pass parameter to this function
   function getAccessToken(routeName: string) {

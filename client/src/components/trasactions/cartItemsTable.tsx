@@ -2,6 +2,8 @@ import React from 'react';
 interface TrasactionsTableProps {
     categorys: ProductCart[];
     loadDataForUpdate: (product: ProductCart) => void; 
+    removeProductById : (id: number) => void; 
+
   }
   interface Image {
     id: number;
@@ -29,7 +31,7 @@ interface Product {
   }
  
 
-const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys,loadDataForUpdate }) => {
+const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys,loadDataForUpdate,removeProductById }) => {
     return (
         <div className="relative overflow-x-auto">
       <div style={{ textAlign: 'center' }}>
@@ -96,7 +98,7 @@ const CartItemsTable: React.FC<TrasactionsTableProps> = ({ categorys,loadDataFor
               </td>
               <td className="px-6 py-4">
               <button className="bg-red-500 text-white px-4 py-2 mt-4 rounded-lg" 
-                //   onClick={() => removeCategoryById(category.id)}
+                  onClick={() => removeProductById(category.id)}
               >
                 Delete</button>
               </td>

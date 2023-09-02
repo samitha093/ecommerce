@@ -109,6 +109,20 @@ function Transactions () {
         setCurrentProduct(product);
         console.log(product);
     }
+
+    const removeProductById = (id: number) => {
+        const updatedProductList = selectedProduct.filter((p) => p.id !== id);
+        setSelectedProduct(updatedProductList);
+        let total = 0;
+        selectedProduct.forEach((p) => {
+            total += p.totalPrice;
+        }
+        );
+        //set last two digits
+        total = Math.round(total * 100) / 100;
+        setTotalBill(total);
+      };
+      
     const defaultProduct: ProductCart = {
         id: 0,
         name: '',
@@ -232,6 +246,7 @@ function Transactions () {
                 <CartItemsTable 
                 categorys={selectedProduct} 
                 loadDataForUpdate={loadDataForUpdate}
+                removeProductById={removeProductById} 
                 />
             </div>
           </div>
