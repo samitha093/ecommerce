@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

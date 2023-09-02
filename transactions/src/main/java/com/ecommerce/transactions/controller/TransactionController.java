@@ -36,4 +36,9 @@ public class TransactionController {
     ) throws Exception{
         return ApiResponse.success("Sucess", transactionService.getTransactionByUserId(UserId));
     }
+
+    @GetMapping("/test")
+    public String test(){
+        return "test ok";
+    }
 }
