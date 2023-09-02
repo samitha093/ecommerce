@@ -45,7 +45,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/images")
+@RequestMapping("/v1/product/images")
 public class ImageController {
 
     private final TokenValidate tokenValidate;
