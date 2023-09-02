@@ -91,7 +91,7 @@ public class ImageController {
             // Save the uploaded file to the specified directory
             file.transferTo(destFile);
 
-            return ResponseEntity.ok("http://localhost:8082/v1/images/images/" + randomFileName);
+            return ResponseEntity.ok("http://localhost:9093/v1/product/images/images/" + randomFileName);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());
