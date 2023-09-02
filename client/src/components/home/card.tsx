@@ -2,15 +2,15 @@ import React from 'react';
 
 interface ProductCardProps {
   product: Product;
+  productSelect: (id: number,isSelected:boolean) => void; 
 }
 
 interface Image {
   id: number;
   imageName: string;
   contentType: string;
-  imageData: string; 
+  imageData: string;
 }
-
 
 interface Product {
   id: number;
@@ -21,8 +21,14 @@ interface Product {
   stockQTY: number;
   soldQTY: number;
   imageListId: Image[];
+  isSelected: boolean;
 }
-const Card: React.FC<ProductCardProps> = ({product}) => {
+
+const Card: React.FC<ProductCardProps> = ({ product ,productSelect}) => {
+  const handleClick = () => {
+    product.isSelected = !product.isSelected;
+    console.log(product);
+  };
 
   return (
     <div className="w-100px h-full flex justify-center items-center">
@@ -36,18 +42,35 @@ const Card: React.FC<ProductCardProps> = ({product}) => {
           />
         </div>
         <div className="px-6 py-4">
-          <div className="font-bold text-xl mb-2">Nutella</div>
-          <p className="text-gray-700 text-base">
-          {product.description}
-          </p>
+          <div className="font-bold text-xl mb-2">{product.name}</div>
+          <p className="text-gray-700 text-base">{product.description}</p>
         </div>
         <div className="px-6 pt-4 pb-2">
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{product.price}</span>
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{product.stockQTY} Units</span>
+          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+            {product.price}
+          </span>
+          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+            {product.stockQTY} Units
+          </span>
         </div>
+        <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => productSelect(product.id,product.isSelected)}
+                style={{
+                  backgroundColor: product.isSelected ? 'red' : 'blue',
+                  color: 'white',
+                  borderRadius: '5px', 
+                  margin: '0 auto 5px', 
+                  padding: '5px 10px', 
+                }}
+              >
+                {product.isSelected ? 'Remove' : 'Add to Cart'}
+              </button>
+            </div>
+
       </div>
     </div>
   );
-}
+};
 
 export default Card;

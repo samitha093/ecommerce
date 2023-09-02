@@ -24,9 +24,30 @@ interface Product {
   soldQTY: number;
   imageListId: Image[]; 
 }
+
+interface ProductCart extends Product {
+  isSelected: boolean;
+  totalPrice : number;
+  selectedQTY : number;
+}
+
+
  function Home() {
   const [products1, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [productCart, setProductCart] = useState<ProductCart[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<ProductCart[]>([]);
+
+  
+  const convertProductsToProductCart = (products: Product[]): ProductCart[] => {
+    return products.map((product) => ({
+      ...product,
+      isSelected: false, 
+      totalPrice: product.price,
+      selectedQTY: 1,
+    }));
+  };
+  
 
   //this is for testing
   const products: Product[] = [
@@ -82,7 +103,6 @@ interface Product {
       ],
     },
   ];
-
   function getAllProductsFromStore() {
     const myHost = sessionStorage.getItem('host');
     const headers = {
@@ -113,8 +133,11 @@ interface Product {
   }
 
   useEffect(() => {
-    getAccessToken();
-    getAllProductsFromStore();
+    // getAccessToken();
+    // getAllProductsFromStore();
+    const productCartItems = convertProductsToProductCart(products)
+    setProductCart(productCartItems);
+
   }, []);
 
   function getAccessToken() { 
@@ -159,15 +182,40 @@ interface Product {
         });
       });
   }
-
-
+  const productSelect = (id: number,isSelected:boolean) => {
+    console.log(id,isSelected);
+    if(isSelected == true){
+      isSelected = false;
+    }
+    else{
+      isSelected = true;
+    }
+    const productCartItems = productCart.map((product) => {
+      if (product.id === id) {
+        product.isSelected = isSelected;
+      }
+      return product;
+    });
+    
+    setProductCart(productCartItems);
+    console.log(productCartItems);
+   //is selected true products filter and add to selectedProduct arry
+    const selectedProduct = productCartItems.filter((product) => product.isSelected === true);
+    console.log(selectedProduct);
+    setSelectedProduct(selectedProduct);
+    //add to session storage
+    sessionStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
+  }
   return (
     <div>
       <Background/>
        <div className="grid grid-cols-4 gap-4 mt-5">
-        {products.map((product) => (
+        {productCart.map((product) => (
           <div key={product.id}>
-            <Card product={product} />
+            <Card
+             product={product} 
+             productSelect={productSelect}
+             />
           </div>
         ))}
       </div>
