@@ -8,11 +8,21 @@ import ProductImageUpload from './pages/productImageUpload';
 import { useEffect, useState } from 'react';
 import CategoryUpload from './pages/categoryUpload';
 import Transactions from './pages/transactions';
+import axios from 'axios';
 
 function App() {
   useEffect(() => {
     var hostname = window.location.hostname;
     sessionStorage.setItem('host', 'http://' + hostname + ':9093');
+
+    // axios get request
+    axios.get('http://localhost:9093/v1/transactions/test')
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const [message, setMessage] = useState('');

@@ -5,14 +5,15 @@ import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @Configuration
-public class config implements WebFluxConfigurer{
+public class config implements WebFluxConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Adjust the path pattern as needed
-                .allowedOrigins("http://localhost:5173") // Add the allowed origin(s) for cross-origin requests
-                .allowedMethods("GET", "POST", "PUT", "DELETE") // Add the allowed HTTP methods
-                .allowedHeaders("*") // Add the allowed request headers, including "Refresh-Token"
-                .exposedHeaders("Refresh-Token", "Access-Token") // Expose both headers
-                .allowCredentials(true); // Allow including credentials such as cookies (if needed)
+        registry.addMapping("/**")
+            .allowedOrigins("http://localhost:5173")
+            .allowedMethods("GET", "POST", "PUT", "DELETE")
+            .allowedHeaders("*")
+            .exposedHeaders("Refresh-Token", "Access-Token")
+            .allowCredentials(true);
     }
 }
+
