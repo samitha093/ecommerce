@@ -179,8 +179,7 @@ function Transactions () {
           'Content-Type': 'application/json', 
         };
         var myHost = sessionStorage.getItem('host');
-        //test
-        myHost = "http://localhost:8084";
+       
           axios
             .post(`${myHost}/v1/transactions/addtransaction`, checkoutDetails, { headers: headers })
             .then((response) => {

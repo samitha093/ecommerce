@@ -12,7 +12,7 @@ import Transactions from './pages/transactions';
 function App() {
   useEffect(() => {
     var hostname = window.location.hostname;
-    sessionStorage.setItem('host', 'http://' + hostname + ':8082');
+    sessionStorage.setItem('host', 'http://' + hostname + ':9093');
   }, []);
 
   const [message, setMessage] = useState('');

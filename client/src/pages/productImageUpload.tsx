@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AddProductImageUpload from '../components/productImageUpload/addProductImage';
 import Toast from "../components/modules/toast";
 import axios from "axios";
-import ImageTable from '../components/productImageUpload/imageTable';
+import ImageTable from '../components/trasactions/imageTable';
 import SearchBars from '../components/modules/searchBars';
 
 interface ProductImageUploadProps {
