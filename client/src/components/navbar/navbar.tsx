@@ -78,7 +78,9 @@ function Navbar({ handleMessageChange }: NavbarProps) {
     navigate('/productImageUpload');
   };
   const handleNavigateCategory = () => {
-    getAccessToken("categoryUpload");
+    // getAccessToken("categoryUpload");
+
+    navigate('/categoryUpload');
   };
   const handleNavigateCart = () => {
     navigate('/cart');
