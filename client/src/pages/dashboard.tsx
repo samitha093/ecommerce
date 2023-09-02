@@ -52,7 +52,9 @@ function Dashboard() {
   const [accessToken, setAccessToken] = useState<string>('');
   const [categoryList, setCateogryList] = useState<Category[]>([]);
   const [imageList, setImageList] = useState<Image[]>([]);
-
+  var myHost = sessionStorage.getItem('host');
+  //test
+  myHost = "http://localhost:8082";
 
 
 const testCategory=[
@@ -115,7 +117,7 @@ useEffect(() => {
   }
   //get product By item name
   const getProductByUsingItemName = (itemName: String) => {
-    const myHost = sessionStorage.getItem('host');
+   
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
@@ -143,7 +145,7 @@ useEffect(() => {
   };
   //get product By item category
   const getProductByUsingItemCategory = (itemName: String) => {
-    const myHost = sessionStorage.getItem('host');
+   
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
@@ -171,7 +173,7 @@ useEffect(() => {
   };
   //get product By item ID
   const getProductByUsingItemID = (itemName: String) => {
-    const myHost = sessionStorage.getItem('host');
+   
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
@@ -251,13 +253,13 @@ useEffect(() => {
 
   //get all categories from the store
   function getAllCategory(accessTokens:string) {
-    const myHost = sessionStorage.getItem('host');
+   
     const headers = {
       'Authorization': `Bearer ${accessTokens}`,
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/categories/getallcategories`,{ headers: headers })
+      .get(`${myHost}/v1/product/categories/getallcategories`,{ headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const categoryList = response.data.data;
@@ -280,13 +282,13 @@ useEffect(() => {
   }
   //get all images from the store
   function getAllImageList(accessTokens:string) {
-    const myHost = sessionStorage.getItem('host');
+   
     const headers = {
       'Authorization': `Bearer ${accessTokens}`,
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/images/getallimages`,{ headers: headers })
+      .get(`${myHost}/v1/product/images/getallimages`,{ headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const imageList = response.data.data;
@@ -313,7 +315,7 @@ useEffect(() => {
   }
 
     function updateStore(product: Product) {
-      const myHost = sessionStorage.getItem('host');
+     
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json', 
@@ -351,7 +353,7 @@ useEffect(() => {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
     };
-      const myHost = sessionStorage.getItem('host');
+     
       axios
         .post(`${myHost}/v1/products/addnewproduct`, product, { headers: headers })
         .then((response) => {
@@ -383,17 +385,23 @@ useEffect(() => {
  }
 //get all products from the store
   function getAllProductsFromStore() {
-  const myHost = sessionStorage.getItem('host');
+ 
   const headers = {
     'Authorization': `Bearer ${accessToken}`,
     'Content-Type': 'application/json', 
   };
   axios
-    .get(`${myHost}/v1/getallproducts`)
+    .get(`${myHost}/v1/products/getallProducts`)
     .then((response) => {
       if (response.status === 200) {
-        const products = response.data;
-        setProducts(products);
+        const products = response.data.data;
+        console.log("all products : ",products);
+        //check product length not equal to 0
+        console.log("products.length : ",products.length);
+        // if(products.length != 0){
+        //   setProducts(products);
+        // }
+        // setProducts(products);
         console.log('Retrieved products:', products,{ headers: headers });
       } else {
         Toast.fire({
@@ -412,7 +420,7 @@ useEffect(() => {
 }
 //delete product item from store
   function removeItemFromStore(id: number) {
-    const myHost = sessionStorage.getItem('host');
+   
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
@@ -444,12 +452,11 @@ useEffect(() => {
 
    function getAccessToken() { 
     let refreshToken = sessionStorage.getItem('refresh_token');
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8081";
+     //test
+    var myHost1 = "http://localhost:8081";
     axios
       .post(
-        `${myHost}/api/v1/auth/refresh-token`,
+        `${myHost1}/api/v1/auth/refresh-token`,
         {},
         {
           headers: {
@@ -469,6 +476,7 @@ useEffect(() => {
           // });
 
           sessionStorage.setItem('refresh_token', refresh_token);
+          getAllProductsFromStore()
           getAllCategory(access_token);
           getAllImageList(access_token);
         } else {
@@ -506,7 +514,7 @@ useEffect(() => {
           <div className="col-span-2" style={divStyle1}>
               <AddProduct  onAddProduct={addNewProduct} 
                updateExisingProduct={updateExisingProduct}
-               isUpdating={isUpdating}
+                isUpdating={isUpdating}
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
                 categoryList={categoryList}

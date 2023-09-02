@@ -25,7 +25,10 @@ const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
     const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
     const [currentCategory, setCurrentCategory] = useState<Category>();
     const [accessToken, setAccessToken] = useState<string>("");
-  
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8082";
+
     const defaultCategory: Category = {
         id: 0,
         name: '',
@@ -40,7 +43,6 @@ const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
         backgroundColor: 'white',
         padding: '10px'
       };
-
 //add new category
 const addNewCategory = (category: Category) =>{
     console.log(category);
@@ -63,13 +65,12 @@ const addNewCategory = (category: Category) =>{
     console.log("New received item : ", category.name);
     console.log("New received item : ", category);
    
-      const myHost = sessionStorage.getItem('host');
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json', 
       };
       axios
-        .post(`${myHost}/v1/categories/addnewcategory`, category, { headers: headers })
+        .post(`${myHost}/v1/product/categories/addnewcategory`, category, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
@@ -98,7 +99,7 @@ const addNewCategory = (category: Category) =>{
  }
  //get all categories from the store
 function getAllCategorysFromStore(accessToken1:string) {
-    const myHost = sessionStorage.getItem('host');
+    
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken1}`,
@@ -106,7 +107,7 @@ function getAllCategorysFromStore(accessToken1:string) {
     };
     console.log("headers : ",headers);
     axios
-      .get(`${myHost}/v1/categories/getallcategories`,{headers})
+      .get(`${myHost}/v1/product/categories/getallcategories`,{headers})
       .then((response) => {
         if (response.status === 200) {
           const categorys = response.data.data;
@@ -144,7 +145,7 @@ const updateExisingCategory = (category: Category) =>{
         }
 //update category in the store
 function updateCategoryItem(category: Category) {
-    const myHost = sessionStorage.getItem('host');
+    
     const categoryId = category.id; // Assuming that 'id' is the image ID property
     // Define the headers with the access token
     const headers = {
@@ -152,7 +153,7 @@ function updateCategoryItem(category: Category) {
       'Content-Type': 'application/json',
     };
     axios
-      .put(`${myHost}/v1/categories/updatecategory/${categoryId}`, category, { headers })
+      .put(`${myHost}/v1/product/categories/updatecategory/${categoryId}`, category, { headers })
       .then((response) => {
         if (response.status === 200) {
           Toast.fire({
@@ -181,32 +182,27 @@ const loadDataForUpdate = (category: Category) =>{
 }
   //remove  category by id
   const removeCategoryById = (id: number) =>{
-    //for testing
-    const updatedProducts = categorys.filter(category => category.id !== id);
-    setCategorys(updatedProducts); 
-    console.log(categorys);
-    
-    //real code
     removeCategoryFromStore(id);    
-    getAllCategorysFromStore(accessToken);
+  
     setIsDelete(true);
   }
   //delete category from store
   function removeCategoryFromStore(id: number) {
-    const myHost = sessionStorage.getItem('host');
+    
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/v1/categories/deletecategory/${id}` , { headers: headers })
+        .delete(`${myHost}/v1/product/categories/deletecategory/${id}` , { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
               icon: 'success',
               title: 'Category deleted successfully'
             });
+            getAllCategorysFromStore(accessToken);
 
           } else {
             Toast.fire({
@@ -237,7 +233,7 @@ const searchCategoryByKey = (itemKey: string) =>{
   }
 //get category By id
   const getCategoryByUsingImageId = (categoryId: number) => {
-      const myHost = sessionStorage.getItem('host');
+      
       // Define the headers with the access token
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
@@ -266,13 +262,12 @@ const searchCategoryByKey = (itemKey: string) =>{
     };
     function getAccessToken() { 
       let refreshToken = sessionStorage.getItem('refresh_token');
-      var myHost = sessionStorage.getItem('host');
+    
       //test
-      myHost = "http://localhost:8081";
-
+      var  myHost1 = "http://localhost:8081";
       axios
         .post(
-          `${myHost}/api/v1/auth/refresh-token`,
+          `${myHost1}/api/v1/auth/refresh-token`,
           {},
           {
             headers: {
@@ -290,9 +285,9 @@ const searchCategoryByKey = (itemKey: string) =>{
             //   icon: 'success',
             //   title: 'Refresh token function run successfully',
             // });
-            getAllCategorysFromStore(access_token);
+  
             sessionStorage.setItem('refresh_token', refresh_token);
-           
+            getAllCategorysFromStore(access_token);
           } else {
             Toast.fire({
               icon: 'error',

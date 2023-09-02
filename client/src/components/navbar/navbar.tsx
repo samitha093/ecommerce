@@ -73,10 +73,14 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   };
 
   const handleNavigateImageUpload = () => {
-    getAccessToken("productImageUpload");
+    // getAccessToken("productImageUpload");
+
+    navigate('/productImageUpload');
   };
   const handleNavigateCategory = () => {
-    getAccessToken("categoryUpload");
+    // getAccessToken("categoryUpload");
+
+    navigate('/categoryUpload');
   };
   const handleNavigateCart = () => {
     navigate('/cart');

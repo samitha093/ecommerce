@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AddProductImageUpload from '../components/productImageUpload/addProductImage';
 import Toast from "../components/modules/toast";
 import axios from "axios";
-import ImageTable from '../components/trasactions/imageTable';
+import ImageTable from '../components/productImageUpload/imageTable';
 import SearchBars from '../components/modules/searchBars';
 
 interface ProductImageUploadProps {
@@ -65,16 +65,16 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       } 
   //add new image product to store
   function addProductImageToStore(image: Image) {
-          console.log("New add image data : ", image.imageData);
-          console.log("New add image item : ", image);
-         
-          const myHost = sessionStorage.getItem('host');
+
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8082";
           const headers = {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json', 
           };
          axios
-              .post(`${myHost}/v1/images/addnewimage`, image,{headers})
+              .post(`${myHost}/v1/product/images/addnewimage`, image,{headers})
               .then((response) => {
                 if(response.status == 200){
                   Toast.fire({
@@ -118,10 +118,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
         //     setImages(updatedProducts);
         //   }
     
-          //real code
-            //convert image to base64
-          const base64String = btoa(image.imageData);
-          image.imageData = base64String;
+
           updateStoreImage(image);
       
           setIsUpdating(false);
@@ -129,7 +126,10 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
 
     //update image in store
     function updateStoreImage(image: Image) {
-      const myHost = sessionStorage.getItem('host');
+      
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8082";
       const imageId = image.id; // Assuming that 'id' is the image ID property
       // Define the headers with the access token
       const headers = {
@@ -138,7 +138,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       };
     
       axios
-        .put(`${myHost}/v1/images/updateimage/${imageId}`, image, { headers: headers })
+        .put(`${myHost}/v1/product/images/updateimage/${imageId}`, image, { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -162,10 +162,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
     }
     //remove image  item
   const removeProductImageById = (id: number) =>{
-    //for testing
-    const updatedProducts = images.filter(image => image.id !== id);
-    setImages(updatedProducts); 
-    
+
     //real code
     removeItemImageFromStore(id);    
     
@@ -173,14 +170,16 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   }   
   //delete product item from store
   function removeItemImageFromStore(id: number) {
-    const myHost = sessionStorage.getItem('host');
+    var myHost = sessionStorage.getItem('host');
+    //test
+    myHost = "http://localhost:8082";
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/v1/images/deleteimage/${id}`,{ headers: headers })
+        .delete(`${myHost}/v1/product/images/deleteimage/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -206,14 +205,16 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
    }
 //get all products images from the store
 function getAllProductsImagesFromStore(accessToken1:string) {
-  const myHost = sessionStorage.getItem('host');
+  var myHost = sessionStorage.getItem('host');
+  //test
+  myHost = "http://localhost:8082";
   // Define the headers with the access token
   const headers = {
     'Authorization': `Bearer ${accessToken1}`,
     'Content-Type': 'application/json',
   };
   axios
-    .get(`${myHost}/v1/images/getallimages`, { headers: headers })
+    .get(`${myHost}/v1/product/images/getallimages`, { headers: headers })
     .then((response) => {
       if (response.status === 200) {
         const products = response.data.data;
