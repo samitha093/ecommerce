@@ -52,19 +52,25 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
       };
       // trasactions checkout to db
       function uploadNewImageAndGetUrl(file: File)  {  
-      const headers = {
-        'Content-Type': 'application/json', 
-      };
-      var myHost = sessionStorage.getItem('host');
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const headers = {
+          'Content-Type': 'multipart/form-data', // Set the correct content type for file uploads
+        };
       
+      var myHost = sessionStorage.getItem('host');
+      myHost = "http://localhost:8082";
         axios
-          .post(`${myHost}/v1/transactions/addtransaction`, file, { headers: headers })
+          .post(`${myHost}/v1/product/images/uploadImage`, formData, { headers: headers })
           .then((response) => {
             if(response.status == 200){
               Toast.fire({
                 icon: 'success',
                 title: 'Checkout successfully'
               })
+              console.log("Image response", response);
               return true;
             }
             else{
