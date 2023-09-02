@@ -74,11 +74,10 @@ function Profile() {
         password: password,
         role:"USER"
       };
-      var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8081";
+ 
+
       axios
-        .post(`${myHost}/api/v1/auth/register`, userDetails)
+        .post(`/api/v1/auth/register`, userDetails)
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
