@@ -25,10 +25,7 @@ const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
     const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
     const [currentCategory, setCurrentCategory] = useState<Category>();
     const [accessToken, setAccessToken] = useState<string>("");
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
-
+    
     const defaultCategory: Category = {
         id: 0,
         name: '',
@@ -70,7 +67,7 @@ const addNewCategory = (category: Category) =>{
         'Content-Type': 'application/json', 
       };
       axios
-        .post(`${myHost}/v1/product/categories/addnewcategory`, category, { headers: headers })
+        .post(`/api/v1/product/categories/addnewcategory`, category, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
@@ -107,7 +104,7 @@ function getAllCategorysFromStore(accessToken1:string) {
     };
     console.log("headers : ",headers);
     axios
-      .get(`${myHost}/v1/product/categories/getallcategories`,{headers})
+      .get(`/api/v1/product/categories/getallcategories`,{headers})
       .then((response) => {
         if (response.status === 200) {
           const categorys = response.data.data;
@@ -153,7 +150,7 @@ function updateCategoryItem(category: Category) {
       'Content-Type': 'application/json',
     };
     axios
-      .put(`${myHost}/v1/product/categories/updatecategory/${categoryId}`, category, { headers })
+      .put(`/api/v1/product/categories/updatecategory/${categoryId}`, category, { headers })
       .then((response) => {
         if (response.status === 200) {
           Toast.fire({
@@ -195,7 +192,7 @@ const loadDataForUpdate = (category: Category) =>{
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/v1/product/categories/deletecategory/${id}` , { headers: headers })
+        .delete(`/api/v1/product/categories/deletecategory/${id}` , { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -240,7 +237,7 @@ const searchCategoryByKey = (itemKey: string) =>{
         'Content-Type': 'application/json',
       };
       axios
-        .get(`${myHost}/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
+        .get(`/api/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
         .then((response) => {
           if (response.status === 200) {
             const categorys = response.data;
@@ -264,10 +261,10 @@ const searchCategoryByKey = (itemKey: string) =>{
       let refreshToken = sessionStorage.getItem('refresh_token');
     
       //test
-      var  myHost1 = "http://localhost:8081";
+     
       axios
         .post(
-          `${myHost1}/api/v1/auth/refresh-token`,
+          `/api/v1/auth/refresh-token`,
           {},
           {
             headers: {

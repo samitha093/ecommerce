@@ -103,7 +103,7 @@ function Profile() {
           else{
             Toast.fire({
               icon: 'error',
-              title: 'Email already exists'
+              title: response.data.message
             })
             setIsLoading(false);
           }
@@ -113,7 +113,7 @@ function Profile() {
         .catch(() => {
             Toast.fire({
               icon: 'error',
-              title: 'Email already exists'
+              title: 'Server Error'
             })
             setIsLoading(false);
         });

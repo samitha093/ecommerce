@@ -66,15 +66,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   //add new image product to store
   function addProductImageToStore(image: Image) {
 
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
+  
           const headers = {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json', 
           };
          axios
-              .post(`${myHost}/v1/product/images/addnewimage`, image,{headers})
+              .post(`/api/v1/product/images/addnewimage`, image,{headers})
               .then((response) => {
                 if(response.status == 200){
                   Toast.fire({
@@ -127,9 +126,8 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
     //update image in store
     function updateStoreImage(image: Image) {
       
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
+ 
       const imageId = image.id; // Assuming that 'id' is the image ID property
       // Define the headers with the access token
       const headers = {
@@ -138,7 +136,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       };
     
       axios
-        .put(`${myHost}/v1/product/images/updateimage/${imageId}`, image, { headers: headers })
+        .put(`/api/v1/product/images/updateimage/${imageId}`, image, { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -170,16 +168,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   }   
   //delete product item from store
   function removeItemImageFromStore(id: number) {
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/v1/product/images/deleteimage/${id}`,{ headers: headers })
+        .delete(`/api/v1/product/images/deleteimage/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -205,23 +201,19 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
    }
 //get all products images from the store
 function getAllProductsImagesFromStore(accessToken1:string) {
-  var myHost = sessionStorage.getItem('host');
-  //test
-  myHost = "http://localhost:8082";
+  
+
   // Define the headers with the access token
   const headers = {
     'Authorization': `Bearer ${accessToken1}`,
     'Content-Type': 'application/json',
   };
   axios
-    .get(`${myHost}/v1/product/images/getallimages`, { headers: headers })
+    .get(`/api/v1/product/images/getallimages`, { headers: headers })
     .then((response) => {
       if (response.status === 200) {
         const products = response.data.data;
-        //response all images imagedata convert from base64 to string
-        products.forEach((element: any) => {
-          element.imageData = atob(element.imageData);
-        });
+
         setImages(products);
         console.log('Retrieved images list:', products);
       } else {
@@ -247,14 +239,13 @@ const searchProductImageByKey = (itemKey: string) =>{
 }
   //get product image By image id
 const getProductImageByUsingImageId = (imageId: number) => {
-    const myHost = sessionStorage.getItem('host');
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
     axios
-      .get(`${myHost}/v1/images/getimagebyid/${imageId}`, { headers: headers }) 
+      .get(`/api/v1/images/getimagebyid/${imageId}`, { headers: headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
@@ -277,12 +268,10 @@ const getProductImageByUsingImageId = (imageId: number) => {
 
   function getAccessToken() { 
     let refreshToken = sessionStorage.getItem('refresh_token');
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8081";
+
     axios
       .post(
-        `${myHost}/api/v1/auth/refresh-token`,
+        `/api/v1/auth/refresh-token`,
         {},
         {
           headers: {
