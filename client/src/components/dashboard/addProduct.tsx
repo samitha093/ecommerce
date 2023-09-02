@@ -134,7 +134,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
         setImageListId([]); 
         setPreviewUrl(undefined);
         selectedImage && URL.revokeObjectURL(selectedImage?.name);
-        // setSelectedImage(null);
+        setSelectedImage(null);
       }
       
       function generateRandomId() {
@@ -212,8 +212,15 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
       imageData:selectedImage?.imageData || ''
     };
     setImageListId(() => [newImage]);
+    var imgUrl = selectedImage?.imageData || '';
+    console.log("Image url ",imgUrl);
+    setPreviewUrl(imgUrl);
+
+
+    setImageListId(() => [newImage]);
+    // setSelectedImage(file);
     setPreviewUrl(newImage.imageData);
-    setSelectedImage1(selectedImage || null);
+    // setSelectedImage1(selectedImage || null);
   };
   
 
@@ -314,7 +321,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
                   accept=".jpg,.jpeg,.png"
                   onChange={handleImageChange}
                 />
-                {selectedImage && (
+                {previewUrl && (
                   <div>
                     <img
                       src={previewUrl}

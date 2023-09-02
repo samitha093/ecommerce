@@ -19,7 +19,7 @@ interface Image {
 const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProductImage,isUpdating,currentProduct,updateExisingProductImage,isDelete}) => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
-
+    const [imageUri, setImageUri] = useState<string | undefined>(undefined); // Correct type for the state
     const [productImage, setProductImage] = useState<Image | null>(null);
 
     const containerStyle: React.CSSProperties = {
@@ -32,45 +32,59 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
       const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         console.log("file", file);
-        uploadNewImageAndGetUrl(file!);
-        // if (file) {
-        //   const newImage: Image = {
-        //     id: Date.now(),
-        //     imageName: file.name,
-        //     contentType: file.type,
-        //     imageData: URL.createObjectURL(file),
-        //   };
-        //   setPreviewUrl(newImage.imageData);
-        //   //convert image to base64
-        //   const base64String = btoa(newImage.imageData);
-        //   newImage.imageData = base64String;
-        //   setProductImage(newImage);
-        //   setSelectedImage(file);
-        // }
+        
+       
+        if (file) {
+          const newImage: Image = {
+            id: Date.now(),
+            imageName: file.name,
+            contentType: file.type,
+            imageData: '',
+          };
+          
+        
+          setSelectedImage(file);
 
+          uploadNewImageAndGetUrl(file,newImage);
 
+        }
       };
-      // trasactions checkout to db
-      function uploadNewImageAndGetUrl(file: File)  {  
-      const headers = {
-        'Content-Type': 'application/json', 
-      };
-      var myHost = sessionStorage.getItem('host');
+      // upload new image and get url
+  function uploadNewImageAndGetUrl(file: File,newImage: Image)  {  
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const headers = {
+          'Content-Type': 'multipart/form-data', // Set the correct content type for file uploads
+        };
       
+      var myHost = sessionStorage.getItem('host');
+      // myHost = "http://localhost:8082";
         axios
-          .post(`${myHost}/v1/transactions/addtransaction`, file, { headers: headers })
+          .post(`${myHost}/v1/product/images/uploadImage`, formData, { headers: headers })
           .then((response) => {
             if(response.status == 200){
               Toast.fire({
                 icon: 'success',
-                title: 'Checkout successfully'
+                title: 'Image url get successfull'
               })
+              var url = response.data;
+              setImageUri(url);
+              setPreviewUrl(url);
+                newImage.imageData = url;
+                //convert image to base64
+                const base64String = btoa(newImage.imageData);
+                newImage.imageData = base64String;
+                // Update 'productImage' state with the modified 'loadImage'
+                setProductImage(newImage);
+              
               return true;
             }
             else{
               Toast.fire({
                 icon: 'error',
-                title: 'Checkout not successfull'
+                title: 'Image url get failed'
               })
               return false;
             }
@@ -90,13 +104,16 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
         if (productImage) {
             if (isUpdating) {
                 console.log("Updating product....");
+                console.log("Cureent product", currentProduct );
                 productImage.id =currentProduct.id;
+                console.log("Updated product", productImage);
                 updateExisingProductImage(productImage);  
                 clearProductDetails();   
               } else {
                 console.log("Adding new product....");
                 
                 onAddProductImage(productImage);
+
                 clearProductDetails();
               }
         } else {
