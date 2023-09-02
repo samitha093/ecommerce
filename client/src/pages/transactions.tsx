@@ -150,7 +150,6 @@ function Transactions () {
       //checkout process 
       const checkoutDataProcess = (deliveryAddress: DeliveryAddressInterface) => {
         console.log("deliveryAddress ", deliveryAddress);
-    
         const checkoutDetails = {
           userId: 1,
           amount: totalBill,
@@ -171,8 +170,7 @@ function Transactions () {
         });
         console.log("checkoutDetails ", checkoutDetails);
     
-        // Call your checkout or API function here with checkoutDetails
-        // Example: addNewTransaction(checkoutDetails);
+        addNewTrasaction(checkoutDetails);
       };
 
       // trasactions checkout to db
@@ -243,16 +241,17 @@ function Transactions () {
           <div className="grid grid-cols-8">
             <div className="col-span-2" style={divStyle3}>
               <h3>Total Bill {totalBill}</h3>
-              <button  
+              {/* <button  
               style={{ padding: '15px', width: '130px' }}
               className={`text-white font-bold py-2 px-4 rounded ${true ? 'bg-blue-900 hover:bg-green-700' : 'bg-gray-400'}`}  >
                     Checkout
-                </button>
-              </div>
-              <div className="col-span-6" style={divStyle3}>
-             <DeliveryAddress 
+                </button> */}
+                <DeliveryAddress 
              deliveryAddressReturn={deliveryAddressReturn}
              />
+              </div>
+              <div className="col-span-6" style={divStyle3}>
+         
              </div>
               
                 </div>

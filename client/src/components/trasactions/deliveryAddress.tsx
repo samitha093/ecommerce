@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Toast from "../../components/modules/toast";
 
 interface DeliveryAddressProps {
      deliveryAddressReturn: (deliveryAddress: DeliveryAddressInterface) => void;
@@ -40,6 +41,9 @@ const DeliveryAddress: React.FC<DeliveryAddressProps> = ({deliveryAddressReturn}
 
   const togglePopup = () => {
     if(isOpen){
+        //check deliveryArress is not empty
+        if(street !== '' && city !== '' && state !== '' && postalCode !== '' && country !== ''){
+
     const deliveryAddress: DeliveryAddressInterface = {
         street: street,
         city: city,
@@ -47,18 +51,32 @@ const DeliveryAddress: React.FC<DeliveryAddressProps> = ({deliveryAddressReturn}
         postalCode: postalCode,
         country: country,
     };
+
     deliveryAddressReturn(deliveryAddress);
-        }
     setIsOpen(!isOpen);
+        }
+        else{
+            Toast.fire({
+                icon: 'error',
+                title: 'Please complete all the fields'
+              })
+        }
+
+    }
+    else{
+        setIsOpen(!isOpen);
+    }
+    
   };
 
   return (
     <div>
       <button
         onClick={togglePopup}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-      >
-        Open Popup
+        style={{ padding: '15px', width: '130px' }}
+        className={`text-white font-bold py-2 px-4 rounded ${true ? 'bg-blue-900 hover:bg-green-700' : 'bg-gray-400'}`}  >
+      
+        Checkout
       </button>
 
       {isOpen && (
