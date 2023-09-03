@@ -11,8 +11,7 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLogin, setIsLogin] = useState("false");
   const navigate = useNavigate();
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isVerified, setIsVerified] = useState("false");
+
 
   const handleMouseEnter = () => {
     const loginState = localStorage.getItem('isLogin');
@@ -108,18 +107,26 @@ function Navbar({ handleMessageChange }: NavbarProps) {
           const refresh_token = response.headers['refresh-token'];
           const access_token = response.headers['access-token'];
           sessionStorage.setItem('refresh_token', refresh_token);
-          setAccessToken(access_token);
+       
           const decodedToken: any = jwtDecode(access_token);
           let isVerified = decodedToken.isVerified;
-          if(isVerified == "true"){
-            setIsVerified("true");
+          let userRole = decodedToken.role;
+          var isValidateRoute = false;
+          if(userRole == "ADMIN" && (routeName == "dashboard" || routeName == "productImageUpload" || routeName == "categoryUpload" || routeName == "cart")){
+            isValidateRoute= true;
+          }
+          else if(userRole == "USER" && routeName == "cart"){
+            isValidateRoute= true;
+          }
+          if(isVerified == "true" && isValidateRoute == true){
+          
             navigate('/'+routeName);
           }
           else{
-            setIsVerified("false");
+          
             Toast.fire({
               icon: 'error',
-              title: 'Please verify your email',
+              title: 'You are not authorized to access this page',
             });
           }
         } else {

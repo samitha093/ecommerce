@@ -21,6 +21,7 @@ function Profile() {
   const [passwordMatch, setPasswordMatch] = useState(true);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState('');
   const imageStyle: React.CSSProperties = {
     width: '400px',
     borderRadius: '10px',
@@ -60,6 +61,10 @@ function Profile() {
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
   };
+  const handleRoleChange = (event: any) => {
+    setRole(event.target.value);
+  };
+
 //register
   function handleRegisterClick() {
     setIsLoading(true);
@@ -72,10 +77,10 @@ function Profile() {
         username: username,
         email: useremail,
         password: password,
-        role:"USER"
+        role:role
       };
  
-
+      console.log(userDetails);
       axios
         .post(`/api/v1/auth/register`, userDetails)
         .then((response) => {
@@ -253,6 +258,19 @@ function Profile() {
               style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '50px', width: '300px' }}
             />
           </div>
+          <div className="mt-1">
+              <select
+                id="dropdown"
+                name="dropdown"
+                value={role}
+                onChange={handleRoleChange}
+                style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
+              >
+                <option value="">Select Role</option>
+                <option value="USER">User</option>
+                <option value="ADMIN">Admin</option>               
+              </select>
+            </div>
           <div className="mt-2" style={{ textAlign: 'left' }}>
             <input
               placeholder="Email"
