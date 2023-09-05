@@ -63,29 +63,24 @@ function Navbar({ handleMessageChange }: NavbarProps) {
     else if(loginState == 'true'){
       setIsLogin(loginState);
     }
-   
   }, [isLogin]);
   
-  
-
   const handleNavigateDashboard = () => {
     getAccessToken("dashboard");
-      
+    // navigate('/dashboard');    
   };
 
   const handleNavigateImageUpload = () => {
     getAccessToken("productImageUpload");
-
     // navigate('/productImageUpload');
   };
   const handleNavigateCategory = () => {
     getAccessToken("categoryUpload");
-
     // navigate('/categoryUpload');
   };
   const handleNavigateCart = () => {
-    // navigate('/cart');
     getAccessToken("cart");
+    // navigate('/cart');
   };
   //pass parameter to this function
   function getAccessToken(routeName: string) {

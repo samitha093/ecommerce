@@ -4,8 +4,6 @@ import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
 import SearchBars from "../components/modules/searchBars";
-import GetAccessToken from "../components/modules/getAccessToken";
-import getAccessToken from "../components/modules/getAccessToken";
 
 interface DivStyle {
   backgroundColor: string;
@@ -55,7 +53,7 @@ function Dashboard() {
     padding: '10px', 
   };
   const [products, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
-  const [products1, setProducts1] = useState<Product[]>([]); // Initialize products state as an empty array
+  const [productsCopy, setProductsCopy] = useState<Product[]>([]); // Initialize products state as an empty array
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -63,7 +61,6 @@ function Dashboard() {
   const [categoryList, setCateogryList] = useState<Category[]>([]);
   const [imageList, setImageList] = useState<Image[]>([]);
  
-
 const testCategory=[
   {
     "id": 1,
@@ -116,12 +113,38 @@ useEffect(() => {
     soldQTY: 0,
     imageListId: [] // Set it as an empty array
   };
-  const searchProductByKey = (itemKey: String) =>{
-    console.log("searchProductByKey : ",itemKey);
-    getProductByUsingItemName(itemKey);
-    getProductByUsingItemCategory(itemKey);
-    getProductByUsingItemID(itemKey);
-  }
+  const searchProductByKey = (itemName: string) => {
+    console.log("Search category by Name: ", itemName);
+
+    if (itemName !== '') {
+        // Split the search term into individual words
+        const searchWords = itemName.toLowerCase().split(' ');
+
+        // Filter the products array to find products where any part of the name matches
+        const filteredProducts = productsCopy.filter((product) => {
+            const productName = product.name.toLowerCase();
+
+            // Check if any of the search words are included in the product name
+            return searchWords.some((word) => productName.includes(word));
+        });
+        console.log("searchWords : ",searchWords);
+        console.log("filteredProducts : ",filteredProducts);
+
+        if (filteredProducts.length > 0) {
+            // You can do something with the filtered products here
+            console.log("Filtered products by Name:", filteredProducts);
+            setProducts(filteredProducts);
+        } else {
+            setProducts([]);
+            console.log("No products found with the provided name.");
+        }
+    } else {
+        // If the search term is an empty string, set products to the original products array
+        setProducts(productsCopy);
+    }
+};
+
+  
   //get product By item name
   const getProductByUsingItemName = (itemName: String) => {
    
@@ -135,6 +158,7 @@ useEffect(() => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
+          setProductsCopy(products);  
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -163,6 +187,7 @@ useEffect(() => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
+          setProductsCopy(products);
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -191,6 +216,7 @@ useEffect(() => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
+          setProductsCopy(products);
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -428,6 +454,7 @@ useEffect(() => {
   });
   console.log("Analsized data : ",products);
   setProducts(products);
+  setProductsCopy(products);
   }
  
 
