@@ -68,6 +68,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
       setPreviewUrl(newImage.imageData);
     }
   };
+  
   useEffect(() => {
     // console.log("currentProduct add file ", currentProduct);
     setProductName(currentProduct.name || '');
@@ -320,11 +321,6 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
               </div>
             
           <div className="mt-1">
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png"
-                  onChange={handleImageChange}
-                />
                 {previewUrl && (
                   <div>
                     <img

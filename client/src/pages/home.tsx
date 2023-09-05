@@ -1,5 +1,5 @@
 import Background from "../components/home/background";
-import Card from "../components/home/card";
+import Card from "../components/modules/card";
 import { useEffect, useState } from "react";
 import Toast from "../components/modules/toast";
 import axios from "axios";
@@ -226,10 +226,12 @@ function getAllProductsFromStore() {
   return (
     <div>
       <Background/>
-       <div className="grid grid-cols-4 gap-4 mt-5">
+       <div 
+        className="grid grid-cols-4 gap-0 mt-5"
+       >
         {productCart.map((product) => (
           <div key={product.id}>
-            <Card
+            <Card  
              product={product} 
              productSelect={productSelect}
              />
