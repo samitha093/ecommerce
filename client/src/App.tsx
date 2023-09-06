@@ -13,21 +13,21 @@ import axios from 'axios';
 function App() {
 
 
-  // // axios get request
-  // const bearerToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6dHJ1ZSwiaWF0IjoxNjkzNjQ1MzQyLCJleHAiOjE2OTM2NDg5NDJ9.ck4Y7uKlWUC9MW0wNTqxvZedUkjWCOxytOWnKzA5MTA';
+  // axios get request
+  const bearerToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6dHJ1ZSwiaWF0IjoxNjkzNjQ1MzQyLCJleHAiOjE2OTM2NDg5NDJ9.ck4Y7uKlWUC9MW0wNTqxvZedUkjWCOxytOWnKzA5MTA';
 
-  // // Axios GET request with authentication
-  // axios.get('/api/v1/transactions/test', {
-  //   headers: {
-  //     Authorization: `Bearer ${bearerToken}`,
-  //   },
-  // })
-  //   .then((response) => {
-  //     console.log(response);
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //   });
+  // Axios GET request with authentication
+  axios.get('/api/v1/transactions/test', {
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
 
   const [message, setMessage] = useState('');
