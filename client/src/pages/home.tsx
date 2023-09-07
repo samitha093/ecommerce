@@ -107,7 +107,7 @@ interface ProductCart extends Product {
 function getAllProductsFromStore() {
  
   const headers = {
-    'Authorization': `Bearer ${accessToken}`,
+    'Authorization': `Bearer`,
     'Content-Type': 'application/json', 
   };
   axios
@@ -155,7 +155,7 @@ function getAllProductsFromStore() {
 
   }
   useEffect(() => {
-    getAccessToken();
+    getAllProductsFromStore();
   }, []);
 
   function getAccessToken() { 
