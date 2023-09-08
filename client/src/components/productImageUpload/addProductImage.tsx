@@ -59,10 +59,9 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
           'Content-Type': 'multipart/form-data', // Set the correct content type for file uploads
         };
       
-      var myHost = sessionStorage.getItem('host');
-      // myHost = "http://localhost:8082";
+
         axios
-          .post(`${myHost}/v1/product/images/uploadImage`, formData, { headers: headers })
+          .post(`/api/v1/product/images/uploadImage`, formData, { headers: headers })
           .then((response) => {
             if(response.status == 200){
               Toast.fire({
@@ -73,9 +72,6 @@ const AddProductImageUpload: React.FC<AddProductImageUploadProps> = ({onAddProdu
               setImageUri(url);
               setPreviewUrl(url);
                 newImage.imageData = url;
-                //convert image to base64
-                const base64String = btoa(newImage.imageData);
-                newImage.imageData = base64String;
                 // Update 'productImage' state with the modified 'loadImage'
                 setProductImage(newImage);
               

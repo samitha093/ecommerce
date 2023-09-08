@@ -4,8 +4,6 @@ import Toast from "../components/modules/toast";
 import axios from "axios";
 import CategoryTable from '../components/categoryUpload/categoryTable';
 import SearchBars from '../components/modules/searchBars';
-import GetAccessToken from '../components/modules/getAccessToken';
-import getAccessToken from '../components/modules/getAccessToken';
 
 interface CategoryUploadProps {
    
@@ -21,13 +19,29 @@ interface Category {
   }
 const CategoryUpload: React.FC<CategoryUploadProps> = ({  }) => {
     const [categorys, setCategorys] = useState<Category[]>([]); // Initialize categorys state as an empty array
+    const [categorysCopy, setCategorysCopy] = useState<Category[]>([]); // Initialize categorys state as an empty array
     const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
     const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
     const [currentCategory, setCurrentCategory] = useState<Category>();
     const [accessToken, setAccessToken] = useState<string>("");
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
+    const testCategory=[
+      {
+        "id": 1,
+        "name": "Electronics",
+        "description": "Category for electronic products"
+      },
+      {
+        "id": 2,
+        "name": "Clothing",
+        "description": "Category for clothing items"
+      },
+      {
+        "id": 3,
+        "name": "Books",
+        "description": "Category for books and reading materials"
+      }
+    ]
 
     const defaultCategory: Category = {
         id: 0,
@@ -70,7 +84,7 @@ const addNewCategory = (category: Category) =>{
         'Content-Type': 'application/json', 
       };
       axios
-        .post(`${myHost}/v1/product/categories/addnewcategory`, category, { headers: headers })
+        .post(`/api/v1/product/categories/addnewcategory`, category, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
@@ -107,11 +121,12 @@ function getAllCategorysFromStore(accessToken1:string) {
     };
     console.log("headers : ",headers);
     axios
-      .get(`${myHost}/v1/product/categories/getallcategories`,{headers})
+      .get(`/api/v1/product/categories/getallcategories`,{headers})
       .then((response) => {
         if (response.status === 200) {
           const categorys = response.data.data;
           setCategorys(categorys);
+          setCategorysCopy(categorys);
           console.log('Retrieved categories:', categorys);
         } else {
           Toast.fire({
@@ -136,6 +151,7 @@ const updateExisingCategory = (category: Category) =>{
             const updatedProducts = [...categorys];
             updatedProducts[updatedIndex] = category;
             setCategorys(updatedProducts);
+            setCategorysCopy(updatedProducts);
           }
     
           //real code
@@ -153,7 +169,7 @@ function updateCategoryItem(category: Category) {
       'Content-Type': 'application/json',
     };
     axios
-      .put(`${myHost}/v1/product/categories/updatecategory/${categoryId}`, category, { headers })
+      .put(`/api/v1/product/categories/updatecategory/${categoryId}`, category, { headers })
       .then((response) => {
         if (response.status === 200) {
           Toast.fire({
@@ -195,7 +211,7 @@ const loadDataForUpdate = (category: Category) =>{
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/v1/product/categories/deletecategory/${id}` , { headers: headers })
+        .delete(`/api/v1/product/categories/deletecategory/${id}` , { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -218,19 +234,33 @@ const loadDataForUpdate = (category: Category) =>{
           });
         });
    }
-//search category by id
-const searchCategoryByKey = (itemKey: string) =>{
-    console.log("searçh category by name: ",itemKey);
-    //filter arraÿ by name
-    categorys.filter((val) => {
-        if(itemKey === ""){
-            getAllCategorysFromStore(accessToken);
-        }
-        else if(val.name.toLowerCase().includes(itemKey.toLowerCase())){
-            setCategorys([val]);
-        }
-    })
+
+// Search category by Name
+const searchCategoryByKey = (itemName: string) => {
+  console.log("Search category by Name: ", itemName);
+
+  if (itemName !== '') {
+    // Filter the categorys array to find categories with names that contain the search term (case-insensitive)
+    const filteredCategorys = categorysCopy.filter((category) =>
+      category.name.toLowerCase().includes(itemName.toLowerCase())
+    );
+
+    if (filteredCategorys.length > 0) {
+      // You can do something with the filtered categories here
+      console.log("Filtered categories by Name:", filteredCategorys);
+      setCategorys(filteredCategorys);
+
+    } else {
+      setCategorys([]);
+      console.log("No categories found with the provided name.");
+    }
   }
+  else {
+    // If the search term is an empty string, set categorys to the original categorys array
+    setCategorys(categorysCopy);
+  }
+}
+
 //get category By id
   const getCategoryByUsingImageId = (categoryId: number) => {
       
@@ -240,11 +270,12 @@ const searchCategoryByKey = (itemKey: string) =>{
         'Content-Type': 'application/json',
       };
       axios
-        .get(`${myHost}/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
+        .get(`/api/v1/categories/getcategorybyid/${categoryId}`,{headers}) 
         .then((response) => {
           if (response.status === 200) {
             const categorys = response.data;
             setCategorys(categorys);
+            setCategorysCopy(categorys);
             console.log('Retrieved category:', categorys);
           } else {
             Toast.fire({
@@ -264,10 +295,10 @@ const searchCategoryByKey = (itemKey: string) =>{
       let refreshToken = sessionStorage.getItem('refresh_token');
     
       //test
-      var  myHost1 = "http://localhost:8081";
+     
       axios
         .post(
-          `${myHost1}/api/v1/auth/refresh-token`,
+          `/api/v1/auth/refresh-token`,
           {},
           {
             headers: {
@@ -307,6 +338,8 @@ const searchCategoryByKey = (itemKey: string) =>{
 
 useEffect(() => {
     getAccessToken();
+    // setCategorys(testCategory);
+    // setCategorysCopy(testCategory);
    
   }
   , []);

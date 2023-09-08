@@ -49,14 +49,8 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
   const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
   //selected image
   const [selectedImageId, setSelectedImageId] = useState<number>(0);
-  const [selectedImage1, setSelectedImage1] = useState<Image | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
 
-  const handleSelectChangeImage1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedImageId = parseInt(event.target.value);
-    const selectedImage = imageList.find((image) => image.id === selectedImageId);
-  
-    setSelectedImage1(selectedImage || null);
-  };
   //test image set
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -74,6 +68,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
       setPreviewUrl(newImage.imageData);
     }
   };
+  
   useEffect(() => {
     // console.log("currentProduct add file ", currentProduct);
     setProductName(currentProduct.name || '');
@@ -92,9 +87,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     }
     //get category id and map to category name
     const category = categoryList.find((options) => options.id === currentProduct.categoryId);
-    setSelectedOption(category?.name || '');
-    //category name print
-    console.log("category name ",selectedOption);
+
     // console.log("currentProduct add file ", currentProduct);
   }, [currentProduct]);
   
@@ -164,7 +157,9 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
             soldQTY: soldQTY,
             imageListId:imageListId
           };
-
+          productDetails.price = parseFloat(productDetails.price.toString());
+          productDetails.stockQTY = parseInt(productDetails.stockQTY.toString());
+          productDetails.soldQTY = parseInt(productDetails.soldQTY.toString());
           console.log("Updated product");
           console.log(productDetails);
           updateExisingProduct(productDetails);
@@ -178,11 +173,14 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
             name: productName,
             description: description,
             categoryId: categoryId,
-            price: price,
+            price:  price, 
             stockQTY: stockQTY,
             soldQTY: soldQTY,
             imageListId:imageListId
           };
+          productDetails.price = parseFloat(productDetails.price.toString());
+          productDetails.stockQTY = parseInt(productDetails.stockQTY.toString());
+          productDetails.soldQTY = parseInt(productDetails.soldQTY.toString());
           console.log("New product");
           console.log(productDetails);
           onAddProduct(productDetails); 
@@ -195,9 +193,16 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
 
   // Function to handle changing the selected option
   const handleSelectChangeCategoryName = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
-    setCategoryId(parseInt(event.target.value));
-    console.log("selected option ",event.target.value);
+    var catId = parseInt(event.target.value);
+    setCategoryId(catId);
+    console.log("selected option ",catId);
+    setSelectedCategoryName(event.target.value);
+    categoryList.map((category) => {
+      if (category.id === catId) {
+        setCategoryName(category.name);
+      }
+    });
+
     
   };
 
@@ -258,7 +263,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
               <select
                 id="dropdown"
                 name="dropdown"
-                value={selectedImageId}
+                value={selectedCategoryName}
                 onChange={handleSelectChangeCategoryName}
                 style={{ border: '1px solid #7FFFD4', borderRadius: '5px', height: '40px', width: '300px' }}
               >
@@ -316,11 +321,6 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
               </div>
             
           <div className="mt-1">
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png"
-                  onChange={handleImageChange}
-                />
                 {previewUrl && (
                   <div>
                     <img

@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Adjust the path pattern as needed
+        registry.addMapping("/**") // Adjust the path pattern as needed
                 .allowedOrigins("http://localhost:5173") // Add the allowed origin(s) for cross-origin requests
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Add the allowed HTTP methods
                 .allowedHeaders("*") // Add the allowed request headers, including "Refresh-Token"

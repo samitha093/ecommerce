@@ -21,6 +21,7 @@ interface DivStyle {
 const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   
   const [images, setImages] = useState<Image[]>([]); // Initialize products state as an empty array
+  const [imagesCopy, setImagesCopy] = useState<Image[]>([]); 
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Image>();
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
@@ -35,6 +36,18 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
         padding: '10px'
       };
       
+const imageListData= [{
+          id: 1693196011602,
+          imageName: "Screenshot (22).png",
+          contentType: "image/png",
+          imageData: "blob:http://localhost:5173/a3343de4-cdd6-4651-b99e-482c468c0868"
+        },
+        {id: 1693196249071,
+        imageName: "Screenshot (28).png",
+        contentType: "image/png",
+        imageData: "blob:http://localhost:5173/33b515fa-1f1b-4233-b143-d002826e5dae"
+        },
+        ]
   // Define a default product object
   const defaultProduct: Image = {
     id: 0,
@@ -66,15 +79,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   //add new image product to store
   function addProductImageToStore(image: Image) {
 
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
+  
           const headers = {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json', 
           };
          axios
-              .post(`${myHost}/v1/product/images/addnewimage`, image,{headers})
+              .post(`/api/v1/product/images/addnewimage`, image,{headers})
               .then((response) => {
                 if(response.status == 200){
                   Toast.fire({
@@ -127,9 +139,8 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
     //update image in store
     function updateStoreImage(image: Image) {
       
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
+ 
       const imageId = image.id; // Assuming that 'id' is the image ID property
       // Define the headers with the access token
       const headers = {
@@ -138,7 +149,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
       };
     
       axios
-        .put(`${myHost}/v1/product/images/updateimage/${imageId}`, image, { headers: headers })
+        .put(`/api/v1/product/images/updateimage/${imageId}`, image, { headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -170,16 +181,14 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
   }   
   //delete product item from store
   function removeItemImageFromStore(id: number) {
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8082";
+    
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
       axios
-        .delete(`${myHost}/v1/product/images/deleteimage/${id}`,{ headers: headers })
+        .delete(`/api/v1/product/images/deleteimage/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
@@ -205,24 +214,21 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({  }) => {
    }
 //get all products images from the store
 function getAllProductsImagesFromStore(accessToken1:string) {
-  var myHost = sessionStorage.getItem('host');
-  //test
-  myHost = "http://localhost:8082";
+  
+
   // Define the headers with the access token
   const headers = {
     'Authorization': `Bearer ${accessToken1}`,
     'Content-Type': 'application/json',
   };
   axios
-    .get(`${myHost}/v1/product/images/getallimages`, { headers: headers })
+    .get(`/api/v1/product/images/getallimages`, { headers: headers })
     .then((response) => {
       if (response.status === 200) {
         const products = response.data.data;
-        //response all images imagedata convert from base64 to string
-        products.forEach((element: any) => {
-          element.imageData = atob(element.imageData);
-        });
+
         setImages(products);
+        setImagesCopy(products);
         console.log('Retrieved images list:', products);
       } else {
         Toast.fire({
@@ -240,25 +246,49 @@ function getAllProductsImagesFromStore(accessToken1:string) {
   
 }
 //search image by id
-const searchProductImageByKey = (itemKey: string) =>{
-  console.log("searchProductImageByKey : ",itemKey);
-  const imageID = parseInt(itemKey, 10);
-  getProductImageByUsingImageId(imageID);
+
+const searchProductImageByKey = (itemName: string) => {
+  console.log("Search category by Name: ", itemName);
+
+  if (itemName !== '') {
+    // Filter the categorys array to find categories with names that contain the search term (case-insensitive)
+    const filteredCategorys = imagesCopy.filter((image) =>
+      image.imageName.toLowerCase().includes(itemName.toLowerCase())
+    );
+
+    if (filteredCategorys.length > 0) {
+      // You can do something with the filtered categories here
+      console.log("Filtered categories by Name:", filteredCategorys);
+      setImages(filteredCategorys);
+
+
+    } else {
+      setImages([]);
+      console.log("No categories found with the provided name.");
+    }
+  }
+  else {
+    // If the search term is an empty string, set categorys to the original categorys array
+    setImages(imagesCopy);
+
+    console.log("Image copy ")
+  }
 }
+
   //get product image By image id
 const getProductImageByUsingImageId = (imageId: number) => {
-    const myHost = sessionStorage.getItem('host');
     // Define the headers with the access token
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
     axios
-      .get(`${myHost}/v1/images/getimagebyid/${imageId}`, { headers: headers }) 
+      .get(`/api/v1/images/getimagebyid/${imageId}`, { headers: headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
           setImages(products);
+          setImagesCopy(products);
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -277,12 +307,10 @@ const getProductImageByUsingImageId = (imageId: number) => {
 
   function getAccessToken() { 
     let refreshToken = sessionStorage.getItem('refresh_token');
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8081";
+
     axios
       .post(
-        `${myHost}/api/v1/auth/refresh-token`,
+        `/api/v1/auth/refresh-token`,
         {},
         {
           headers: {
@@ -321,6 +349,10 @@ const getProductImageByUsingImageId = (imageId: number) => {
   }
   useEffect(() => {
     getAccessToken();
+
+    // //test
+    // setImages(imageListData);
+    // setImagesCopy(imageListData);
   }
   , []);
 
@@ -333,7 +365,7 @@ const getProductImageByUsingImageId = (imageId: number) => {
           </div>
           <div className="col-span-4" style={{ marginRight: '200px' }}>       
           <SearchBars
-           placeholder="Search Image by ID"
+           placeholder="Search Image by Name"
           searchProductByKey={searchProductImageByKey}/>
           </div>
       </div>
