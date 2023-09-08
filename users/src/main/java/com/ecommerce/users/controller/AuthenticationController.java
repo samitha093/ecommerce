@@ -42,23 +42,21 @@ public class AuthenticationController {
             System.out.println("user registered successfully");
 
 
-            // Send a POST request to the notification service
-            String userEmail = request.getEmail();
-            System.out.println("userEmail: " + userEmail);
-            String host = "http://localhost:8083/v1/notification/otpsend";
+                // Send a POST request to the notification service
+                String userEmail = request.getEmail();
+                System.out.println("userEmail: " + userEmail);
+                String host = "http://localhost:8083/v1/notification/otpsend";
 
-            // Create an instance of RestTemplate
-            RestTemplate restTemplate = new RestTemplate();
+                // Create an instance of RestTemplate
+                RestTemplate restTemplate = new RestTemplate();
 
-            // Set the request body (user email) as JSON
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON); // Set the content type to JSON
-            String jsonRequest = "{\"email\": \"" + userEmail + "\"}"; // JSON format
-            HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequest, headers);
-
-            // Send a POST request to the notification service
-
+                // Set the request body (user email) as JSON
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON); // Set the content type to JSON
+                String jsonRequest = "{\"email\": \"" + userEmail + "\"}"; // JSON format
             try {
+                HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequest, headers);
+
                 // Send a POST request to the notification service
                 ResponseEntity<String> responseEntity = restTemplate.exchange(host, HttpMethod.POST, requestEntity, String.class);
 
@@ -92,7 +90,9 @@ public class AuthenticationController {
 
             } catch (RestClientException e) {
                 // Handle exceptions, e.g., connection errors, here
-                System.err.println("Error sending the notification: " + e.getMessage());
+                System.err.println("Error sending the email: " + e.getMessage());
+                return ResponseEntity.badRequest()
+                        .body("Error sending the email: " + e.getMessage());
             } catch (JsonMappingException e) {
                 throw new RuntimeException(e);
             } catch (JsonProcessingException e) {
@@ -104,7 +104,7 @@ public class AuthenticationController {
             return ResponseEntity.badRequest()
                     .body(response.getStatus());
         }
-        return null;
+
     }
 
     @Value("${application.security.jwt.expiration}")

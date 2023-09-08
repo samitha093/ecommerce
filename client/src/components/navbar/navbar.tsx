@@ -11,8 +11,7 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLogin, setIsLogin] = useState("false");
   const navigate = useNavigate();
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isVerified, setIsVerified] = useState("false");
+
 
   const handleMouseEnter = () => {
     const loginState = localStorage.getItem('isLogin');
@@ -40,6 +39,8 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   };
   const handleLogOutClick = () => {
     handleItemClick('LOGIN');
+    //remove refresh token from session storage
+    sessionStorage.removeItem('refresh_token');
     localStorage.setItem('isLogin', 'false');
     setIsLogin("false");
     navigate('/authentication');
@@ -62,39 +63,32 @@ function Navbar({ handleMessageChange }: NavbarProps) {
     else if(loginState == 'true'){
       setIsLogin(loginState);
     }
-   
   }, [isLogin]);
   
-  
-
   const handleNavigateDashboard = () => {
     getAccessToken("dashboard");
-      
+    // navigate('/dashboard');    
   };
 
   const handleNavigateImageUpload = () => {
-    // getAccessToken("productImageUpload");
-
-    navigate('/productImageUpload');
+    getAccessToken("productImageUpload");
+    // navigate('/productImageUpload');
   };
   const handleNavigateCategory = () => {
-    // getAccessToken("categoryUpload");
-
-    navigate('/categoryUpload');
+    getAccessToken("categoryUpload");
+    // navigate('/categoryUpload');
   };
   const handleNavigateCart = () => {
-    navigate('/cart');
+    getAccessToken("cart");
+    // navigate('/cart');
   };
   //pass parameter to this function
   function getAccessToken(routeName: string) {
     let refreshToken = sessionStorage.getItem('refresh_token');
-    var myHost = sessionStorage.getItem('host');
-    //test
-    myHost = "http://localhost:8081";
-
+ 
     axios
       .post(
-        `${myHost}/api/v1/auth/refresh-token`,
+        `/api/v1/auth/refresh-token`,
         {},
         {
           headers: {
@@ -108,18 +102,26 @@ function Navbar({ handleMessageChange }: NavbarProps) {
           const refresh_token = response.headers['refresh-token'];
           const access_token = response.headers['access-token'];
           sessionStorage.setItem('refresh_token', refresh_token);
-          setAccessToken(access_token);
+       
           const decodedToken: any = jwtDecode(access_token);
           let isVerified = decodedToken.isVerified;
-          if(isVerified == "true"){
-            setIsVerified("true");
+          let userRole = decodedToken.role;
+          var isValidateRoute = false;
+          if(userRole == "ADMIN" && (routeName == "dashboard" || routeName == "productImageUpload" || routeName == "categoryUpload" || routeName == "cart")){
+            isValidateRoute= true;
+          }
+          else if(userRole == "USER" && routeName == "cart"){
+            isValidateRoute= true;
+          }
+          if(isVerified == "true" && isValidateRoute == true){
+          
             navigate('/'+routeName);
           }
           else{
-            setIsVerified("false");
+          
             Toast.fire({
               icon: 'error',
-              title: 'Please verify your email',
+              title: 'You are not authorized to access this page',
             });
           }
         } else {
