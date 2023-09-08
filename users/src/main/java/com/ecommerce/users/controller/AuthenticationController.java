@@ -81,7 +81,7 @@ public class AuthenticationController {
                     httpResponse.setHeader("Refresh-Token", response.getRefreshToken());
                     // Return the ResponseEntity with the response body
                     return ResponseEntity.ok()
-                            .body(response.getRefreshToken());
+                            .body(response.getStatus());
                 }
                 else {
                     return ResponseEntity.badRequest()
@@ -128,8 +128,8 @@ public class AuthenticationController {
 
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
-                    .body(response.getRefreshToken()+","+response.getAccessToken());
-            // .body(response.getStatus());
+//                    .body(response.getRefreshToken()+","+response.getAccessToken());
+             .body(response.getStatus());
         }
         else {
             return ResponseEntity.badRequest()
@@ -141,6 +141,7 @@ public class AuthenticationController {
     public void refreshToken(HttpServletRequest request,HttpServletResponse response ) throws IOException {
         service.refreshToken(request, response);
     }
+
     //user verification using email endpoint
     @GetMapping("/verify-user/{email}/{otp}")
     public ResponseEntity<String> verifyUser(

@@ -50,6 +50,13 @@ const DeliveryAddress: React.FC<DeliveryAddressProps> = ({ deliveryAddressReturn
                 };
 
                 deliveryAddressReturn(deliveryAddress);
+                //clear the fields
+                setStreet('');
+                setCity('');
+                setState('');
+                setPostalCode('');
+                setCountry('');
+                
                 setIsOpen(!isOpen);
             } else {
                 Toast.fire({
