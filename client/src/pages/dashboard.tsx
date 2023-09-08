@@ -4,8 +4,6 @@ import ProductTable from "../components/dashboard/productTable";
 import axios from "axios";
 import Toast from "../components/modules/toast";
 import SearchBars from "../components/modules/searchBars";
-import GetAccessToken from "../components/modules/getAccessToken";
-import getAccessToken from "../components/modules/getAccessToken";
 
 interface DivStyle {
   backgroundColor: string;
@@ -36,6 +34,15 @@ interface Product {
   imageListId: Image[]; 
 }
 
+interface SaveProduct {
+  name: string;
+  description: string;
+  categoryId: number;
+  price: number;
+  stockQTY: number;
+  imageIDList: number[]; 
+}
+
 function Dashboard() {
   const divStyle1: DivStyle = {
     backgroundColor: 'white', 
@@ -46,17 +53,14 @@ function Dashboard() {
     padding: '10px', 
   };
   const [products, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
+  const [productsCopy, setProductsCopy] = useState<Product[]>([]); // Initialize products state as an empty array
   const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
   const [isDelete, setIsDelete] = useState(false); // State to track whether it's an update or new add
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [accessToken, setAccessToken] = useState<string>('');
   const [categoryList, setCateogryList] = useState<Category[]>([]);
   const [imageList, setImageList] = useState<Image[]>([]);
-  var myHost = sessionStorage.getItem('host');
-  //test
-  myHost = "http://localhost:8082";
-
-
+ 
 const testCategory=[
   {
     "id": 1,
@@ -109,12 +113,38 @@ useEffect(() => {
     soldQTY: 0,
     imageListId: [] // Set it as an empty array
   };
-  const searchProductByKey = (itemKey: String) =>{
-    console.log("searchProductByKey : ",itemKey);
-    getProductByUsingItemName(itemKey);
-    getProductByUsingItemCategory(itemKey);
-    getProductByUsingItemID(itemKey);
-  }
+  const searchProductByKey = (itemName: string) => {
+    console.log("Search category by Name: ", itemName);
+
+    if (itemName !== '') {
+        // Split the search term into individual words
+        const searchWords = itemName.toLowerCase().split(' ');
+
+        // Filter the products array to find products where any part of the name matches
+        const filteredProducts = productsCopy.filter((product) => {
+            const productName = product.name.toLowerCase();
+
+            // Check if any of the search words are included in the product name
+            return searchWords.some((word) => productName.includes(word));
+        });
+        console.log("searchWords : ",searchWords);
+        console.log("filteredProducts : ",filteredProducts);
+
+        if (filteredProducts.length > 0) {
+            // You can do something with the filtered products here
+            console.log("Filtered products by Name:", filteredProducts);
+            setProducts(filteredProducts);
+        } else {
+            setProducts([]);
+            console.log("No products found with the provided name.");
+        }
+    } else {
+        // If the search term is an empty string, set products to the original products array
+        setProducts(productsCopy);
+    }
+};
+
+  
   //get product By item name
   const getProductByUsingItemName = (itemName: String) => {
    
@@ -123,11 +153,12 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/products/getproductsbyname/${itemName}`, { headers: headers }) 
+      .get(`/api/v1/product/getproductsbyname/${itemName}`, { headers: headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
+          setProductsCopy(products);  
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -151,11 +182,12 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/products/getproductsbycategory/${itemName}`, { headers: headers })
+      .get(`/api/v1/product/getproductsbycategory/${itemName}`, { headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
+          setProductsCopy(products);
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -179,11 +211,12 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/products/getproductbyid/${itemName}`, { headers }) 
+      .get(`/api/v1/product/getproductbyid/${itemName}`, { headers }) 
       .then((response) => {
         if (response.status === 200) {
           const products = response.data;
           setProducts(products);
+          setProductsCopy(products);
           console.log('Retrieved products:', products);
         } else {
           Toast.fire({
@@ -201,48 +234,70 @@ useEffect(() => {
   };
   //remove  item
   const removeProductById = (id: number) =>{
-    //for testing
-    const updatedProducts = products.filter(product => product.id !== id);
-    setProducts(updatedProducts); 
-    console.log(products);
-    
+
+    console.log("removeProductById : ",id);
     //real code
     removeItemFromStore(id);    
-    getAllProductsFromStore();
+  
     setIsDelete(true);
   }
   //add new item
   const addNewProduct = (product: Product) =>{
     console.log(product);
     //get response of add item to store
-    if(product.name == '' || product.description == '' || product.categoryId == 0 || product.price == 0 || product.stockQTY == 0 || product.soldQTY == 0 || product.imageListId.length == 0 ){
+    if(product.name == '' || product.description == ''){
       Toast.fire({
         icon: 'error',
-        title: 'Please fill all the fields'
+        title: 'Please fill all the field'
       })
     } 
     else{
-      addItemToStore(product);
-      getAllProductsFromStore();
-    
-      //for testing
-    setProducts((prevProducts) => [...prevProducts, product]);
+      const idArry:number[] = [];
+      product.imageListId.map((item) => {
+        idArry.push(item.id);
+      });
+
+      const saveNewProduct: SaveProduct = {
+        name: product.name,
+        description: product.description,
+        categoryId: product.categoryId,
+        price: product.price,
+        stockQTY: product.stockQTY,
+        imageIDList: idArry,
+      }
+
+      console.log("saveNewProduct : ",saveNewProduct);
+      addItemToStore(saveNewProduct);
+  
     }
+  }
+
+  const updateDataTemplete = (product: Product) =>{
+    console.log("tempplete : ",product);
+    const idArry:number[] = [];
+    product.imageListId.map((item) => {
+      idArry.push(item.id);
+    });
+    const productId = product.id;
+    const saveNewProduct: SaveProduct = {
+      name: product.name,
+      description: product.description,
+      categoryId: product.categoryId,
+      price: product.price,
+      stockQTY: product.stockQTY,
+      imageIDList: idArry,
+    }
+
+    console.log("updated product : ",saveNewProduct);
+      updateStore(saveNewProduct,productId);
+     
   }
     //update existing item
   const updateExisingProduct = (product: Product) =>{
-    //testing
-    const updatedIndex = products.findIndex(p => p.id === product.id);
-      if (updatedIndex !== -1) {
-        // Create a copy of the products array
-        const updatedProducts = [...products];
-        updatedProducts[updatedIndex] = product;
-        setProducts(updatedProducts);
-      }
+    updateDataTemplete(product);
 
-      //real code
-      updateStore(product);
-      getAllProductsFromStore(); 
+      // //real code
+
       setIsUpdating(false);
     }
     //update product data load
@@ -259,7 +314,7 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/product/categories/getallcategories`,{ headers: headers })
+      .get(`/api/v1/product/categories/getallcategories`,{ headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const categoryList = response.data.data;
@@ -288,16 +343,13 @@ useEffect(() => {
       'Content-Type': 'application/json', 
     };
     axios
-      .get(`${myHost}/v1/product/images/getallimages`,{ headers: headers })
+      .get(`/api/v1/product/images/getallimages`,{ headers: headers })
       .then((response) => {
         if (response.status === 200) {
           const imageList = response.data.data;
-          //response all images imagedata convert from base64 to string
-          imageList.forEach((element: any) => {
-          element.imageData = atob(element.imageData);
           setImageList(imageList);
-          console.log('Retrieved imageList:', imageList);
-        });
+
+
         } else {
           Toast.fire({
             icon: 'error',
@@ -314,21 +366,21 @@ useEffect(() => {
     
   }
 
-    function updateStore(product: Product) {
+    function updateStore(product: SaveProduct,productId: number) {
      
       const headers = {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json', 
       };
       axios
-        .put(`${myHost}/v1/products/updateproduct`, product, { headers: headers })
-        .then((response) => {
+      .put(`/api/v1/product/updateproduct/${productId}`, product, { headers: headers })
+      .then((response) => {
           if (response.status === 200) {
             Toast.fire({
               icon: 'success',
               title: 'Product updated successfully'
             });
-            
+            getAllProductsFromStore();
           } else {
             Toast.fire({
               icon: 'error',
@@ -345,23 +397,24 @@ useEffect(() => {
       
   
     }
+ 
+  function addItemToStore(product: SaveProduct) {
 
-  function addItemToStore(product: Product) {
-    console.log("New received item : ", product.name);
-    console.log("New received item : ", product);
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
     };
      
       axios
-        .post(`${myHost}/v1/products/addnewproduct`, product, { headers: headers })
+        .post(`/api/v1/product/addnewproduct`, product, { headers: headers })
         .then((response) => {
           if(response.status == 200){
             Toast.fire({
               icon: 'success',
               title: 'New product added successfully'
             })
+            getAllProductsFromStore();
+
             return true;
           }
           else{
@@ -380,9 +433,31 @@ useEffect(() => {
             })
             return false;
         });
-    
-
  }
+ 
+ //received data analysis
+  const dataExtract = (receivedData: any) =>{
+  console.log("receivedData : ",receivedData);
+  const products: Product[] = []; 
+  receivedData.map((item: any) => {
+    const product: Product = {
+      id: item.id,
+      name: item.productName,
+      description: item.description,
+      categoryId: item.category.id,
+      price: item.price,
+      stockQTY: item.stockQTY,
+      soldQTY: item.soldQTY,
+      imageListId: item.imageList, 
+    };
+    products.push(product);
+  });
+  console.log("Analsized data : ",products);
+  setProducts(products);
+  setProductsCopy(products);
+  }
+ 
+
 //get all products from the store
   function getAllProductsFromStore() {
  
@@ -391,18 +466,11 @@ useEffect(() => {
     'Content-Type': 'application/json', 
   };
   axios
-    .get(`${myHost}/v1/products/getallProducts`)
+    .get(`/api/v1/product/getallProducts`, { headers: headers })
     .then((response) => {
       if (response.status === 200) {
-        const products = response.data.data;
-        console.log("all products : ",products);
-        //check product length not equal to 0
-        console.log("products.length : ",products.length);
-        // if(products.length != 0){
-        //   setProducts(products);
-        // }
-        // setProducts(products);
-        console.log('Retrieved products:', products,{ headers: headers });
+        const receivedProducts = response.data.data;
+        dataExtract(receivedProducts);
       } else {
         Toast.fire({
           icon: 'error',
@@ -416,24 +484,22 @@ useEffect(() => {
         title: 'Failed to retrieve products'
       });
     });
-  
 }
 //delete product item from store
   function removeItemFromStore(id: number) {
-   
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json', 
     };
       axios
-        .delete(`${myHost}/v1/products/${id}`,{ headers: headers })
+        .delete(`/api/v1/product/deleteproduct/${id}`,{ headers: headers })
         .then((response) => {
           if (response.status === 200) {
             Toast.fire({
               icon: 'success',
               title: 'Product deleted successfully'
             });
-            
+            getAllProductsFromStore();
             // Perform any necessary updates in your state or UI here after successful deletion
           } else {
             Toast.fire({
@@ -452,11 +518,9 @@ useEffect(() => {
 
    function getAccessToken() { 
     let refreshToken = sessionStorage.getItem('refresh_token');
-     //test
-    var myHost1 = "http://localhost:8081";
     axios
       .post(
-        `${myHost1}/api/v1/auth/refresh-token`,
+        `/api/v1/auth/refresh-token`,
         {},
         {
           headers: {
@@ -513,7 +577,7 @@ useEffect(() => {
         <div className="grid grid-cols-8">
           <div className="col-span-2" style={divStyle1}>
               <AddProduct  onAddProduct={addNewProduct} 
-               updateExisingProduct={updateExisingProduct}
+                updateExisingProduct={updateExisingProduct}
                 isUpdating={isUpdating}
                 currentProduct={currentProduct || defaultProduct} 
                 isDelete={isDelete}
