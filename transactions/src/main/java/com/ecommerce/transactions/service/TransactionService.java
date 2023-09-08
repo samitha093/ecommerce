@@ -21,7 +21,7 @@ public class TransactionService {
     private final NotifyService notifyService;
 
 
-    public Transaction addTransaction(TransactionRequest transactionRequest) {
+    public Transaction addTransaction(TransactionRequest transactionRequest, String emailString, String nameString) {
 
         Transaction transaction = new Transaction();
         transaction.setUserId(transactionRequest.getUserId());
@@ -48,7 +48,7 @@ public class TransactionService {
         transaction.setOrders(orders);
 
         Transaction trs = transactionRepository.save(transaction);
-        notifyService.sendNotification(trs);
+        notifyService.sendNotification(trs, emailString, nameString);
         return trs;
     }
 
