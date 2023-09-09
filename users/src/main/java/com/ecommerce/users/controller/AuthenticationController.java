@@ -28,7 +28,9 @@ import java.io.IOException;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-
+    // Inject the value from application.yml
+    @Value("${otp.url}")
+    private String otpUrl;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(
@@ -45,7 +47,9 @@ public class AuthenticationController {
                 // Send a POST request to the notification service
                 String userEmail = request.getEmail();
                 System.out.println("userEmail: " + userEmail);
-                String host = "http://localhost:8083/v1/notification/otpsend";
+                //get url from application properties in opt : url
+
+                String host = otpUrl;
 
                 // Create an instance of RestTemplate
                 RestTemplate restTemplate = new RestTemplate();
