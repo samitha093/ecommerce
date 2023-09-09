@@ -40,7 +40,7 @@ const Card: React.FC<ProductCardProps> = ({ product ,productSelect}) => {
         //color code add for background color
         backgroundColor: 'lightgrey',
         padding: '10px',   
-        height: '320px', 
+        height: '340px', 
         width: '250px',
         borderRadius: '15px', 
 
