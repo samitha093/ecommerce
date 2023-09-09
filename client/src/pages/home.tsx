@@ -292,7 +292,7 @@ function getAllProductsFromStore() {
           <div className="col-span-8" >
           <div style={centeredContainerStyle}>
         <SearchBars
-              placeholder="Search Product Name"
+              placeholder="Search Product By Name"
               searchProductByKey={searchProductByKey}/>
         </div>
           
