@@ -50,7 +50,7 @@ public class notificationService {
             String emailBody1 = "Your Activation Link is: ";
             String emailBody2 = "Please do not share this activation link with anyone.";
             String myotp = otpGenarator();
-            String OTP = "http://localhost:8081/api/v1/auth/verify-user/"+email+"/"+myotp;
+            String OTP = "http://localhost:9093/v1/auth/verify-user/"+email+"/"+myotp;
 
 
             String htmlContent = loadHtmlFromResource("email.html", emailBody1, emailBody2, OTP);
