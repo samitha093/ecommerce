@@ -14,7 +14,6 @@ const SearchBars: React.FC<AppProps> = ({ searchProductByKey, placeholder }) => 
     };
 
     const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        // Trigger search on every keyup event (including when a letter is deleted)
         searchProductByKey(searchValue);
     };
 

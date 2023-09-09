@@ -36,7 +36,6 @@ interface Product {
     const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
     const [productQty, SetProductQty] = useState<number>(currentProduct.selectedQTY || 0);
     const [totalPrice, setTotalPrice] = useState<number>(currentProduct.totalPrice || 0);
-    const [currentUpdatedProduct, setCurrentProduct] = useState<ProductCart>();
 
     const containerStyle: React.CSSProperties = {
         display: 'flex',
@@ -45,14 +44,11 @@ interface Product {
        
       };
       useEffect(() => {
-        setCurrentProduct(currentProduct);
-        // console.log("currentProduct add file ", currentProduct);
         setProductName(currentProduct.name || '');
         setTotalPrice(currentProduct.totalPrice || 0);
         setPrice(currentProduct.price || 0);
         SetProductQty(currentProduct.selectedQTY || 0);
-        // setSoldQTY(currentProduct.soldQTY || 0);
-        // setImageListId(currentProduct.imageListId || []);
+
       
         if (currentProduct.imageListId && currentProduct.imageListId.length > 0) {
           setPreviewUrl(currentProduct.imageListId[0].imageData);

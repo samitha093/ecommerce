@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,ChangeEvent} from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface AddProductProps {
   onAddProduct: (product: Product) => void;
@@ -45,29 +45,10 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
   const [imageListId, setImageListId] = useState<Image[]>(currentProduct.imageListId || []);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
-  // Initialize state for the selected option
-  const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
-  //selected image
   const [selectedImageId, setSelectedImageId] = useState<number>(0);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
 
-  //test image set
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-  
-    if (file) {
-      const newImage: Image = {
-        id: Date.now(),
-        imageName: file.name,
-        contentType: file.type,
-        imageData: URL.createObjectURL(file)
-      };
-  
-      setImageListId(() => [newImage]);
-      setSelectedImage(file);
-      setPreviewUrl(newImage.imageData);
-    }
-  };
+
   
   useEffect(() => {
     // console.log("currentProduct add file ", currentProduct);
@@ -85,9 +66,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
     } else {
       setPreviewUrl(undefined);
     }
-    //get category id and map to category name
-    const category = categoryList.find((options) => options.id === currentProduct.categoryId);
-
+ 
     // console.log("currentProduct add file ", currentProduct);
   }, [currentProduct]);
   
@@ -106,10 +85,7 @@ const AddProduct: React.FC<AddProductProps> = ({onAddProduct,updateExisingProduc
       const handlePriceChange = (event: any) => {
         setPrice(event.target.value);
       };
-      const handleCategoryIdChange = (event: any) => {
 
-        setCategoryId(event.target.value);
-      };
       const handlesetStockQTYChange = (event: any) => {
         setStockQTY(event.target.value);
       };

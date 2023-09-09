@@ -286,20 +286,14 @@ function getAllProductsFromStore() {
            
           </div>
       </div>
-     
        <div className="grid grid-cols-4 gap-0 mt-5">
-   
           <div className="col-span-8" >
           <div style={centeredContainerStyle}>
         <SearchBars
               placeholder="Search Product By Name"
               searchProductByKey={searchProductByKey}/>
         </div>
-          
-  
       </div>
-   
-   
         {productCart.map((product) => (
           <div key={product.id}>
             <Card  

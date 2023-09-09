@@ -285,9 +285,6 @@ function Transactions () {
           Cart & Transactions  </h1>
           </div>
           <div  className="col-span-4"  style={{ marginRight: '200px' }}>
-            {/* <SearchBars
-             placeholder="Search Product Name , Category , ID"
-            searchProductByKey={searchProductByKey}/> */}
             </div>
         </div>
           <div className="grid grid-cols-8">

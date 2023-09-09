@@ -43,9 +43,8 @@ const Card: React.FC<ProductCardProps> = ({ product ,productSelect}) => {
         height: '340px', 
         width: '250px',
         borderRadius: '15px', 
-
       }}
-
+      
       className="max-w-sm rounded overflow-hidden shadow-lg transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-xl">
         <div className="flex justify-center">
           <img
@@ -67,8 +66,6 @@ const Card: React.FC<ProductCardProps> = ({ product ,productSelect}) => {
           Stock: {product.stockQTY} Units
         </span>
       </div>
-
-
         <div style={{ textAlign: 'center' }}>
               <button
                 onClick={() => productSelect(product.id,product.isSelected)}

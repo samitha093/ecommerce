@@ -338,9 +338,6 @@ const searchCategoryByKey = (itemName: string) => {
 
 useEffect(() => {
     getAccessToken();
-    // setCategorys(testCategory);
-    // setCategorysCopy(testCategory);
-   
   }
   , []);
 

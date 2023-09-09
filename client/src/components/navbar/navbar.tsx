@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import Toast from '../modules/toast';
 import axios from "axios";
 import jwtDecode from 'jwt-decode';
@@ -67,20 +67,20 @@ function Navbar({ handleMessageChange }: NavbarProps) {
   
   const handleNavigateDashboard = () => {
     getAccessToken("dashboard");
-    // navigate('/dashboard');    
+    
   };
 
   const handleNavigateImageUpload = () => {
     getAccessToken("productImageUpload");
-    // navigate('/productImageUpload');
+   
   };
   const handleNavigateCategory = () => {
     getAccessToken("categoryUpload");
-    // navigate('/categoryUpload');
+
   };
   const handleNavigateCart = () => {
     getAccessToken("cart");
-    // navigate('/cart');
+   
   };
   //pass parameter to this function
   function getAccessToken(routeName: string) {
