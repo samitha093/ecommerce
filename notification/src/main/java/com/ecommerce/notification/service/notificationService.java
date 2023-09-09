@@ -61,7 +61,7 @@ public class notificationService {
             helper.setFrom("Notification Ecommerce <notificationecommerce91@gmail.com>");
 
             javaMailSender.send(message);
-            return OTP;
+            return myotp;
         } catch (Exception e) {
             e.printStackTrace();
             return "Error while Sending Mail";
