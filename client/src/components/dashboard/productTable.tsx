@@ -3,8 +3,8 @@ import React from 'react';
 
   interface ProductTableProps {
     products: Product[];
-    removeProductById: (id: number) => void; // Correct type for the prop
-    loadDataForUpdate: (product: Product) => void; // Correct type for the prop
+    removeProductById: (id: number) => void; 
+    loadDataForUpdate: (product: Product) => void; 
    
   }
 

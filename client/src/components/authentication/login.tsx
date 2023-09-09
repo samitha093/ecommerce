@@ -3,7 +3,7 @@ import Toast from "../modules/toast";
 import axios, { AxiosResponse } from "axios";
 import jwtDecode from 'jwt-decode';
 import Loading from "../modules/loading";
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 
 interface AuthResponse {
@@ -94,7 +94,7 @@ function Login() {
         console.error("Email or password not correct");
         Toast.fire({
           icon: 'error',
-          title: 'Server Error'
+          title: 'Email not found'
         })
         setIsLoading(false);
       });

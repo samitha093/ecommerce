@@ -61,41 +61,8 @@ function Dashboard() {
   const [categoryList, setCateogryList] = useState<Category[]>([]);
   const [imageList, setImageList] = useState<Image[]>([]);
  
-const testCategory=[
-  {
-    "id": 1,
-    "name": "Electronics",
-    "description": "Category for electronic products"
-  },
-  {
-    "id": 2,
-    "name": "Clothing",
-    "description": "Category for clothing items"
-  },
-  {
-    "id": 3,
-    "name": "Books",
-    "description": "Category for books and reading materials"
-  }
-]
-
-const imageListData= [{
-      id: 1693196011602,
-      imageName: "Screenshot (22).png",
-      contentType: "image/png",
-      imageData: "blob:http://localhost:5173/a3343de4-cdd6-4651-b99e-482c468c0868"
-    },
-    {id: 1693196249071,
-    imageName: "Screenshot (28).png",
-    contentType: "image/png",
-    imageData: "blob:http://localhost:5173/33b515fa-1f1b-4233-b143-d002826e5dae"
-    },
-]
 //set image list and category list
 useEffect(() => {
-  // //test
-  // setCateogryList(testCategory);
-  // setImageList(imageListData);
 
   //original
   getAccessToken();
@@ -145,93 +112,6 @@ useEffect(() => {
 };
 
   
-  //get product By item name
-  const getProductByUsingItemName = (itemName: String) => {
-   
-    const headers = {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json', 
-    };
-    axios
-      .get(`/api/v1/product/getproductsbyname/${itemName}`, { headers: headers }) 
-      .then((response) => {
-        if (response.status === 200) {
-          const products = response.data;
-          setProducts(products);
-          setProductsCopy(products);  
-          console.log('Retrieved products:', products);
-        } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'Failed to retrieve products'
-          });
-        }
-      })
-      .catch(() => {
-        Toast.fire({
-          icon: 'error',
-          title: 'Failed to retrieve products'
-        });
-      });
-  };
-  //get product By item category
-  const getProductByUsingItemCategory = (itemName: String) => {
-   
-    const headers = {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json', 
-    };
-    axios
-      .get(`/api/v1/product/getproductsbycategory/${itemName}`, { headers: headers })
-      .then((response) => {
-        if (response.status === 200) {
-          const products = response.data;
-          setProducts(products);
-          setProductsCopy(products);
-          console.log('Retrieved products:', products);
-        } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'Failed to retrieve products'
-          });
-        }
-      })
-      .catch(() => {
-        Toast.fire({
-          icon: 'error',
-          title: 'Failed to retrieve products'
-        });
-      });
-  };
-  //get product By item ID
-  const getProductByUsingItemID = (itemName: String) => {
-   
-    const headers = {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json', 
-    };
-    axios
-      .get(`/api/v1/product/getproductbyid/${itemName}`, { headers }) 
-      .then((response) => {
-        if (response.status === 200) {
-          const products = response.data;
-          setProducts(products);
-          setProductsCopy(products);
-          console.log('Retrieved products:', products);
-        } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'Failed to retrieve products'
-          });
-        }
-      })
-      .catch(() => {
-        Toast.fire({
-          icon: 'error',
-          title: 'Failed to retrieve products'
-        });
-      });
-  };
   //remove  item
   const removeProductById = (id: number) =>{
 
@@ -534,10 +414,6 @@ useEffect(() => {
           const refresh_token = response.headers['refresh-token'];
           const access_token = response.headers['access-token'];
           setAccessToken(access_token);
-          // Toast.fire({
-          //   icon: 'success',
-          //   title: 'Refresh token function run successfully',
-          // });
 
           sessionStorage.setItem('refresh_token', refresh_token);
           getAllProductsFromStore()
@@ -586,8 +462,7 @@ useEffect(() => {
                />
           </div>
           <div className="col-span-6" style={divStyle2}>
-           <ProductTable 
-           
+           <ProductTable          
             products={products}
             removeProductById={removeProductById} 
             loadDataForUpdate={loadDataForUpdate} />

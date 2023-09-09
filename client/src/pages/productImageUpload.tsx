@@ -350,9 +350,6 @@ const getProductImageByUsingImageId = (imageId: number) => {
   useEffect(() => {
     getAccessToken();
 
-    // //test
-    // setImages(imageListData);
-    // setImagesCopy(imageListData);
   }
   , []);
 

@@ -23,27 +23,15 @@ function getAccessToken() {
             const refresh_token = response.headers['refresh-token'];
             const access_token = response.headers['access-token'];
             setAccessToken(access_token);
-            // Toast.fire({
-            //   icon: 'success',
-            //   title: 'Refresh token function run successfully',
-            // });
   
             sessionStorage.setItem('refresh_token', refresh_token);
            
           } else {
-            // Toast.fire({
-            //   icon: 'error',
-            //   title: 'Refresh token function failed',
-            // });
-            // console.log('Refresh-Token header not found ');
-            
+
           }
         })
         .catch(() => {
-          // Toast.fire({
-          //   icon: 'error',
-          //   title: 'Refresh token function error',
-          // });
+
         });
         return accessToken;
     }

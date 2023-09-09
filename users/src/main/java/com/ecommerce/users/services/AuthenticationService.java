@@ -125,7 +125,7 @@ public class AuthenticationService {
 
 
                 response.getWriter().write("Refresh token and Access token successfully returned");
-//                response.getWriter().write(accessToken);
+
             }
             else {
                 System.out.println("is valid token False");
