@@ -47,9 +47,10 @@ public class notificationService {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
 
-            String emailBody1 = "Your OTP is ";
-            String emailBody2 = "Please do not share this OTP with anyone. This OTP is valid for 5 minutes.";
-            String OTP = otpGenarator();
+            String emailBody1 = "Your Activation Link is: ";
+            String emailBody2 = "Please do not share this activation link with anyone.";
+            String myotp = otpGenarator();
+            String OTP = "http://localhost:8081/api/v1/auth/verify-user/"+email+"/"+myotp;
 
 
             String htmlContent = loadHtmlFromResource("email.html", emailBody1, emailBody2, OTP);
