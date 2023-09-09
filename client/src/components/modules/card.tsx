@@ -61,7 +61,7 @@ const Card: React.FC<ProductCardProps> = ({ product ,productSelect}) => {
         </div>
         <div className="px-6 pt-4 pb-2 text-center">
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-          Price: ${product.price.toFixed(2)}
+          Price: Rs.{product.price.toFixed(2)}
         </span>
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
           Stock: {product.stockQTY} Units

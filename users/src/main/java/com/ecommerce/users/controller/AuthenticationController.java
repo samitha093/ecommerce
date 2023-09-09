@@ -129,7 +129,7 @@ public class AuthenticationController {
             // Return the ResponseEntity with the response body
             return ResponseEntity.ok()
 //                    .body(response.getRefreshToken()+","+response.getAccessToken());
-             .body(response.getStatus());
+             .body(response.getAccessToken());
         }
         else {
             return ResponseEntity.badRequest()
