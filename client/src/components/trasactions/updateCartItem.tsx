@@ -79,6 +79,13 @@ interface Product {
         currentProduct.totalPrice = totalPrice;
         updateExisingProduct(currentProduct);
         console.log("currentProduct test ", currentProduct);
+        //clear the form
+        setProductName('');
+        setPrice(0);
+        SetProductQty(0);
+        setTotalPrice(0);
+        setPreviewUrl(undefined);
+        
       }
     return (
         <div className="grid grid-cols-2 gap-0 content-center ..." >

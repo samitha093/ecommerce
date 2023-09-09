@@ -6,7 +6,12 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import getAccessToken from "../components/modules/getAccessToken";
 import { get } from "http";
+import SearchBars from "../components/modules/searchBars";
 
+interface DivStyle {
+  backgroundColor: string;
+  padding: string;
+}
 interface Image {
   id: number;
   imageName: string;
@@ -34,10 +39,18 @@ interface ProductCart extends Product {
 
  function Home() {
   const [products, setProducts] = useState<Product[]>([]); // Initialize products state as an empty array
+
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [productCart, setProductCart] = useState<ProductCart[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<ProductCart[]>([]);
+  const [productsCopy, setProductsCopy] = useState<ProductCart[]>([]); // Initialize products state as an empty array
 
+  const [selectedProduct, setSelectedProduct] = useState<ProductCart[]>([]);
+  const centeredContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    height: '10vh', 
+  };
   
   const convertProductsToProductCart = (products: Product[]): ProductCart[] => {
     return products.map((product) => ({
@@ -47,7 +60,14 @@ interface ProductCart extends Product {
       selectedQTY: 1,
     }));
   };
-  
+  const divStyle1: DivStyle = {
+    backgroundColor: 'white', 
+    padding: '10px', 
+  };
+  const divStyle2: DivStyle = {
+    backgroundColor: 'white',
+    padding: '10px', 
+  };
 
   // //this is for testing
   // const products: Product[] = [
@@ -149,10 +169,11 @@ function getAllProductsFromStore() {
   });
   console.log("Analsized data : ",products);
   setProducts(products);
+  
   const productCartItems = convertProductsToProductCart(products)
   setProductCart(productCartItems);
   console.log("received items af ter converting " ,productCartItems);
-
+  setProductsCopy(productCartItems);
   }
   useEffect(() => {
     getAllProductsFromStore();
@@ -195,7 +216,7 @@ function getAllProductsFromStore() {
       .catch(() => {
         Toast.fire({
           icon: 'error',
-          title: 'Refresh token function error',
+          title: 'Please login to your Account',
         });
       });
   }
@@ -223,12 +244,62 @@ function getAllProductsFromStore() {
     //add to session storage
     sessionStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
   }
+
+  const searchProductByKey = (itemName: string) => {
+    console.log("Search category by Name: ", itemName);
+
+    if (itemName !== '') {
+      // Split the search term into individual words
+      const searchWords = itemName.toLowerCase().split(' ');
+
+      // Filter the products array to find products where any part of the name matches
+      const filteredProducts = productsCopy.filter((product) => {
+          const productName = product.name.toLowerCase();
+
+          // Check if any of the search words are included in the product name
+          return searchWords.some((word) => productName.includes(word));
+      });
+      console.log("searchWords : ",searchWords);
+      console.log("filteredProducts : ",filteredProducts);
+
+      if (filteredProducts.length > 0) {
+          // You can do something with the filtered products here
+          console.log("Filtered products by Name:", filteredProducts);
+          setProductCart(filteredProducts);
+      } else {
+        setProductCart([]);
+          console.log("No products found with the provided name.");
+      }
+  } else {
+      // If the search term is an empty string, set products to the original products array
+      setProductCart(productsCopy);
+  }
+  }
+      
   return (
-    <div>
-      <Background/>
-       <div 
-        className="grid grid-cols-4 gap-0 mt-5"
-       >
+    <div>  
+      <div className="grid grid-cols-8">
+          <div className="col-span-8" style={divStyle1}>
+          <Background/>
+          </div>
+          <div className="col-span-6" style={divStyle2}>
+           
+          </div>
+      </div>
+     
+       <div className="grid grid-cols-4 gap-0 mt-5">
+   
+          <div className="col-span-8" >
+          <div style={centeredContainerStyle}>
+        <SearchBars
+              placeholder="Search Product By Name"
+              searchProductByKey={searchProductByKey}/>
+        </div>
+          
+  
+      </div>
+   
+   
         {productCart.map((product) => (
           <div key={product.id}>
             <Card  

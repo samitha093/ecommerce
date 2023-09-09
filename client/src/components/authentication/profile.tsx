@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import Toast from "../modules/toast";
 import jwtDecode from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom';
+import Loading from "../modules/loading";
 
 
 
@@ -72,7 +73,7 @@ function Profile() {
     if (password !== confirmPassword) {
       setPasswordMatch(false);
     } else {
-      setPasswordMatch(true);
+     
       const userDetails = {
         username: username,
         email: useremail,
@@ -84,6 +85,7 @@ function Profile() {
       axios
         .post(`/api/v1/auth/register`, userDetails)
         .then((response) => {
+          
           if(response.status == 200){
             Toast.fire({
               icon: 'success',
@@ -102,8 +104,9 @@ function Profile() {
             console.log(decodedToken);  
 
             localStorage.setItem('isLogin', 'true');
-            navigate('/');
             setIsLoading(false);
+            navigate('/');
+            
           }
           else{
             Toast.fire({
@@ -111,16 +114,18 @@ function Profile() {
               title: response.data.message
             })
             setIsLoading(false);
+           
           }
 
-
+          console.log(response.status);
         })
         .catch(() => {
             Toast.fire({
               icon: 'error',
-              title: 'Server Error'
+              title: "Email already exist"
             })
             setIsLoading(false);
+            
         });
     }
   }
@@ -237,6 +242,7 @@ function Profile() {
 }
   return (
     <div className="grid grid-cols-2 gap-0 content-center ...">
+      <Loading isLoading={isLoading} />
       <div style={containerStyle}>
         <img src={imageUrl} style={imageStyle} />
       </div>

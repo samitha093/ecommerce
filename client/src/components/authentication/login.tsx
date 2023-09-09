@@ -91,7 +91,7 @@ function Login() {
      
     })
       .catch((error) => {
-        console.error("Error login user:", error);
+        console.error("Email or password not correct");
         Toast.fire({
           icon: 'error',
           title: 'Server Error'

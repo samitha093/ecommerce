@@ -4,6 +4,7 @@ import UpdateCartItems from '../components/trasactions/updateCartItem';
 import DeliveryAddress from '../components/trasactions/deliveryAddress';
 import axios from "axios";
 import Toast from "../components/modules/toast";
+import Loading from '../components/modules/loading';
 
 interface DivStyle {
     backgroundColor: string;
@@ -79,6 +80,8 @@ function Transactions () {
     const [isUpdating, setIsUpdating] = useState(false); // State to track whether it's an update or new add
     const [currentProduct, setCurrentProduct] = useState<ProductCart>();
     const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddressInterface>();
+    const [accessToken, setAccessToken] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);
     //total bill
     const [totalBill, setTotalBill] = useState<number>(0);
 
@@ -92,6 +95,7 @@ function Transactions () {
     , []);
 
     useEffect(() => {
+         getAccessToken();
         //calculate total bill
         let total = 0;
         selectedProduct.forEach((p) => {
@@ -109,7 +113,47 @@ function Transactions () {
         setCurrentProduct(product);
         console.log(product);
     }
-
+    function getAccessToken() { 
+      let refreshToken = sessionStorage.getItem('refresh_token');
+      axios
+        .post(
+          `/api/v1/auth/refresh-token`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            // Check if the header exists before accessing it
+            const refresh_token = response.headers['refresh-token'];
+            const access_token = response.headers['access-token'];
+            setAccessToken(access_token);
+            // Toast.fire({
+            //   icon: 'success',
+            //   title: 'Refresh token function run successfully',
+            // });
+  
+            sessionStorage.setItem('refresh_token', refresh_token);
+      
+          } else {
+            Toast.fire({
+              icon: 'error',
+              title: 'Refresh token function failed',
+            });
+            console.log('Refresh-Token header not found ');
+            
+          }
+        })
+        .catch(() => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Please login to your Account',
+          });
+        });
+    }
     const removeProductById = (id: number) => {
         const updatedProductList = selectedProduct.filter((p) => p.id !== id);
         setSelectedProduct(updatedProductList);
@@ -163,6 +207,7 @@ function Transactions () {
       }
       //checkout process 
       const checkoutDataProcess = (deliveryAddress: DeliveryAddressInterface) => {
+        setIsLoading(true);
         console.log("deliveryAddress ", deliveryAddress);
         const checkoutDetails = {
           userId: 1,
@@ -183,6 +228,7 @@ function Transactions () {
           checkoutDetails.orders.push(order);
         });
         console.log("checkoutDetails ", checkoutDetails);
+      
     
         addNewTrasaction(checkoutDetails);
       };
@@ -190,6 +236,7 @@ function Transactions () {
       // trasactions checkout to db
       function addNewTrasaction(checkoutDetails:any) {  
         const headers = {
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json', 
         };
           axios
@@ -200,6 +247,12 @@ function Transactions () {
                   icon: 'success',
                   title: 'Checkout successfully'
                 })
+               
+                //remove selected product from session storage  
+                sessionStorage.removeItem('selectedProduct');
+                //setSelectedProduct set to empty array
+                setSelectedProduct([]);
+                setIsLoading(false);
                 return true;
               }
               else{
@@ -207,6 +260,7 @@ function Transactions () {
                   icon: 'error',
                   title: 'Checkout not successfull'
                 })
+                setIsLoading(false);
                 return false;
               }
       
@@ -216,12 +270,15 @@ function Transactions () {
                   icon: 'error',
                   title: 'Server Error'
                 })
+                setIsLoading(false);
                 return false;
             });
      }
 
     return (
         <div>
+             <Loading isLoading={isLoading} />
+       
         <div className="grid grid-cols-8 gap-4">
         <div className="col-span-4" style={divStyle1}>
             <h1 className="text-4xl font-bold text-blue-500 text-center">
